@@ -6,8 +6,8 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "chess.js": "^1.0.0-beta.3",
-    "cm-chess": "github:goodvibs/cm-chess#master",
+    "chess.js": "^1.0.0-beta.6",
+    "cm-chess": "^3.3.3",
     "react": "^18.2.0",
     "react-chessboard": "^2.0.7",
     "react-dom": "^18.2.0",
@@ -15,7 +15,8 @@
     "stockfish": "^15.0.0",
     "stockfish.js": "^10.0.2",
     "uglify-js": "^3.17.4",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "zustand": "^5.0.3"
   },
   "scripts": {
     "start": "react-scripts start",
