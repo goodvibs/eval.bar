@@ -1,4 +1,5 @@
-import {useGameStore} from "../stores/gameStore";
+import {useGameStore} from "../../stores/gameStore";
+import {MoveHistoryHeader} from "./MoveHistoryHeader";
 
 export function MoveHistory() {
     const { moveHistory, currentMoveIndex, goToMove } = useGameStore();
@@ -14,10 +15,8 @@ export function MoveHistory() {
     }
 
     return (
-        <div className="bg-slate-800 rounded-lg overflow-hidden">
-            <div className="p-2 bg-slate-700 border-b border-slate-600">
-                <h3 className="text-sm font-medium text-slate-300">Moves</h3>
-            </div>
+        <div className="flex flex-col flex-1 bg-slate-800 rounded-lg overflow-hidden">
+            <MoveHistoryHeader />
 
             <div className="p-2 flex flex-wrap gap-1 max-h-[200px] overflow-y-auto scrollbar-thin hover:scrollbar-thumb-slate-600 scrollbar-thumb-transparent scrollbar-track-transparent">
                 {moveGroups.map(({ number, white, black }, groupIndex) => (

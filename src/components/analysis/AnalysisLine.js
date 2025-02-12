@@ -6,13 +6,12 @@ export function AnalysisLine({ line, isMainLine, onMoveClick }) {
 
     if (!line || !line.moves) return null;
 
-    // Create a chess instance from current position to get move number and side to move
     const chess = new Chess(currentFen);
     const currentMoveNumber = chess.moveNumber();
     const isBlackToMove = chess.turn() === 'b';
 
     const formatScore = (score) => {
-        if (typeof score === 'string') return score; // For mate scores
+        if (typeof score === 'string') return score;
         return score > 0 ? `+${score.toPrecision(3)}` : score.toPrecision(3);
     };
 
@@ -21,6 +20,36 @@ export function AnalysisLine({ line, isMainLine, onMoveClick }) {
         return score > 0.5 ? 'text-emerald-400' :
             score < -0.5 ? 'text-red-400' :
                 'text-slate-300';
+    };
+
+    // Function to determine move number and notation
+    const getMoveNumbering = (idx) => {
+        const isFirstMove = idx === 0;
+
+        if (isBlackToMove) {
+            // If Black to move, first move is Black's move
+            if (isFirstMove) {
+                return {
+                    number: currentMoveNumber,
+                    notation: '..'
+                };
+            }
+            // Subsequent moves start with White's move of next number
+            const moveNumber = currentMoveNumber + Math.floor((idx + 1) / 2);
+            const isBlackMove = idx % 2 === 0; // Shifted by 1 because first move was Black's
+            return {
+                number: moveNumber,
+                notation: isBlackMove ? '..' : ''
+            };
+        } else {
+            // If White to move, normal numbering
+            const moveNumber = currentMoveNumber + Math.floor(idx / 2);
+            const isBlackMove = idx % 2 === 1;
+            return {
+                number: moveNumber,
+                notation: isBlackMove ? '..' : ''
+            };
+        }
     };
 
     return (
@@ -33,11 +62,8 @@ export function AnalysisLine({ line, isMainLine, onMoveClick }) {
             <div className="flex-1 overflow-x-auto scrollbar-thin hover:scrollbar-thumb-slate-600 scrollbar-thumb-transparent scrollbar-track-transparent">
                 <div className="flex gap-1 text-slate-300 pr-2 whitespace-nowrap">
                     {line.moves.map((move, idx) => {
-                        // Calculate if we need to show the move number
-                        const moveNumber = currentMoveNumber + Math.floor(idx / 2);
-                        const isFirstMove = idx === 0;
-                        const isBlackMove = (isBlackToMove && isFirstMove) || (!isFirstMove && idx % 2 === 1);
-                        const showMoveNumber = !isBlackMove || isFirstMove;
+                        const { number, notation } = getMoveNumbering(idx);
+                        const showMoveNumber = notation === '' || idx === 0;
 
                         return (
                             <button
@@ -47,7 +73,7 @@ export function AnalysisLine({ line, isMainLine, onMoveClick }) {
                             >
                                 {showMoveNumber && (
                                     <span className="text-slate-500 mr-1">
-                    {moveNumber}.{isBlackMove ? '..' : ''}
+                    {number}.{notation}
                   </span>
                                 )}
                                 {move}

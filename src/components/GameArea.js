@@ -1,8 +1,6 @@
 import React from "react";
-import {Chessboard} from "react-chessboard";
-import {ChessboardControls} from "./ChessboardControls";
 import {AnalysisPanel} from "./analysis/AnalysisPanel";
-import {MoveHistory} from "./MoveHistory";
+import {MoveHistory} from "./moves/MoveHistory";
 import {useGameStore} from "../stores/gameStore";
 import {ChessboardControlPanel} from "./ChessboardControlPanel";
 
