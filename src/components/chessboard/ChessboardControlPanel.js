@@ -1,7 +1,7 @@
 import {Chessboard} from "react-chessboard";
 import {ChessboardControls} from "./ChessboardControls";
 import React from "react";
-import {useGameStore} from "../stores/gameStore";
+import {useGameStore} from "../../stores/gameStore";
 
 export function ChessboardControlPanel() {
     const {

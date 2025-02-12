@@ -2,7 +2,7 @@ import React from "react";
 import {AnalysisPanel} from "./analysis/AnalysisPanel";
 import {MoveHistory} from "./moves/MoveHistory";
 import {useGameStore} from "../stores/gameStore";
-import {ChessboardControlPanel} from "./ChessboardControlPanel";
+import {ChessboardControlPanel} from "./chessboard/ChessboardControlPanel";
 
 export function GameArea() {
     const {
