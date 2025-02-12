@@ -9,6 +9,10 @@ export const useEngineStore = create((set, get) => ({
     currentLines: [],
     engineThinking: '',
 
+    setMultiPV: (value) => {
+        set({ multipv: value });
+    },
+
     startAnalysis: () => {
         const { multipv } = get();
         console.log('Starting analysis with MultiPV:', multipv);

@@ -1,14 +1,14 @@
 import {TabButton} from "./TabButton";
-import {ImportPanel} from "./import/ImportPanel";
+import {ImportPanel} from "../import/ImportPanel";
 import {GameLibrary} from "./GameLibrary";
 import React from "react";
-import {useGameStore} from "../stores/gameStore";
+import {useGameStore} from "../../stores/gameStore";
+import {ChesscomPanel} from "./ChesscomPanel";
 
 export function Sidebar() {
     const [currTab, setCurrTab] = React.useState(0);
     const { resetGame } = useGameStore();
 
-    // Reset game when switching to new game tab
     React.useEffect(() => {
         if (currTab === 0) {
             resetGame();
@@ -16,7 +16,7 @@ export function Sidebar() {
     }, [currTab, resetGame]);
 
     return (
-        <div className="w-72 flex flex-col gap-4 text-slate-50">
+        <div className="flex flex-col gap-4 text-slate-50">
             <div className="flex gap-1 border-b border-slate-500">
                 <TabButton
                     active={currTab === 0}
@@ -25,13 +25,18 @@ export function Sidebar() {
                 />
                 <TabButton
                     active={currTab === 1}
-                    label="Import"
+                    label="Chess.com"
                     onClick={() => setCurrTab(1)}
                 />
                 <TabButton
                     active={currTab === 2}
-                    label="Library"
+                    label="Import"
                     onClick={() => setCurrTab(2)}
+                />
+                <TabButton
+                    active={currTab === 3}
+                    label="Library"
+                    onClick={() => setCurrTab(3)}
                 />
             </div>
 
@@ -45,8 +50,9 @@ export function Sidebar() {
                     </button>
                 </div>
             )}
-            {currTab === 1 && <ImportPanel />}
-            {currTab === 2 && <GameLibrary />}
+            {currTab === 1 && <ChesscomPanel />}
+            {currTab === 2 && <ImportPanel />}
+            {currTab === 3 && <GameLibrary />}
         </div>
     );
 }

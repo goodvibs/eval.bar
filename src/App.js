@@ -2,7 +2,7 @@ import React from "react";
 import {Navigation} from "./components/Navigation";
 import {EvaluationBar} from "./components/EvaluationBar";
 import {GameArea} from "./components/GameArea";
-import {Sidebar} from "./components/Sidebar";
+import {Sidebar} from "./components/games/Sidebar";
 
 export default function App() {
 

@@ -12,10 +12,6 @@ export function AnalysisPanel() {
         isAnalyzing,
         depth,
         engineThinking,
-        startAnalysis,
-        stopAnalysis,
-        multipv,
-        setMultiPV
     } = useEngineStore();
 
     const { loadPosition } = useGameStore();

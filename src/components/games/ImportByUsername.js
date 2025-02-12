@@ -1,4 +1,4 @@
-import Collapsible from "./Collapsible";
+import Collapsible from "../Collapsible";
 
 export function ImportByUsername({
                                      currCollapsible,

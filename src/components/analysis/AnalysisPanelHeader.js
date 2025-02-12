@@ -10,13 +10,6 @@ export function AnalysisPanelHeader({ isAnalyzing, depth, currentLines }) {
         return eval_ > 0 ? `+${eval_.toPrecision(3)}` : eval_.toPrecision(3);
     };
 
-    const getEvalColor = (eval_) => {
-        if (typeof eval_ === 'string') return 'text-red-400';
-        return eval_ > 0.5 ? 'text-emerald-400' :
-            eval_ < -0.5 ? 'text-red-400' :
-                'text-slate-300';
-    };
-
     const handleAnalysisClick = () => {
         if (isAnalyzing) {
             stopAnalysis();
@@ -25,12 +18,14 @@ export function AnalysisPanelHeader({ isAnalyzing, depth, currentLines }) {
         }
     };
 
+    let isWhiteWinning = eval_ >= 0;
+
     return (
         <div className="px-3 py-2 bg-slate-700 border-b border-slate-600 flex items-center justify-between">
             <div className="flex items-center gap-4">
                 {/* Evaluation display */}
                 <div className="flex items-center gap-2">
-          <span className={`font-mono text-lg font-bold ${getEvalColor(eval_)}`}>
+          <span className={"font-mono text-lg font-bold " + isWhiteWinning ? "bg-slate-50 text-slate-900" : "bg-slate-900 text-slate-50"}>
             {formatEval(eval_)}
           </span>
                 </div>
@@ -47,9 +42,10 @@ export function AnalysisPanelHeader({ isAnalyzing, depth, currentLines }) {
             {/* Controls */}
             <div className="flex items-center gap-2">
                 <select
-                    className="bg-slate-600 text-slate-200 text-sm rounded px-2 py-1 border border-slate-500"
+                    className="bg-slate-600 text-slate-200 text-sm rounded px-2 py-1 border border-slate-500 disabled:opacity-50"
                     value={multipv}
                     onChange={(e) => setMultiPV(Number(e.target.value))}
+                    disabled={isAnalyzing}
                 >
                     <option value={1}>1 line</option>
                     <option value={2}>2 lines</option>

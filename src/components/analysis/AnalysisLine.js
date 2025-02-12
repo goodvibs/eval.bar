@@ -15,13 +15,6 @@ export function AnalysisLine({ line, isMainLine, onMoveClick }) {
         return score > 0 ? `+${score.toPrecision(3)}` : score.toPrecision(3);
     };
 
-    const getScoreColor = (score) => {
-        if (typeof score === 'string') return 'text-red-400';
-        return score > 0.5 ? 'text-emerald-400' :
-            score < -0.5 ? 'text-red-400' :
-                'text-slate-300';
-    };
-
     // Function to determine move number and notation
     const getMoveNumbering = (idx) => {
         const isFirstMove = idx === 0;
@@ -52,10 +45,12 @@ export function AnalysisLine({ line, isMainLine, onMoveClick }) {
         }
     };
 
+    let isWhiteWinning = true;
+
     return (
         <div className="flex p-2 hover:bg-slate-700 transition-colors text-sm">
             <div className="flex-none w-20">
-        <span className={`font-mono ${isMainLine ? "font-bold" : ""} ${getScoreColor(line.score)}`}>
+        <span className={`font-mono ${isMainLine ? "font-bold" : ""} ` + isWhiteWinning ? "bg-slate-50 text-slate-900" : "bg-slate-900 text-slate-50"}>
           {formatScore(line.score)}
         </span>
             </div>
