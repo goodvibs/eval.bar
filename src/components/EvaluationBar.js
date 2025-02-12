@@ -19,7 +19,8 @@ export function EvaluationBar() {
         // and make small advantages more visible
         const maxAdvantage = 5; // +5 pawns will show as winning
         const normalized = Math.min(Math.max(eval_, -maxAdvantage), maxAdvantage);
-        const percentage = (1 / (1 + Math.exp(-normalized))) * 100;
+        const coefficient = 0.2;
+        const percentage = (1 / (1 + Math.exp(-normalized * coefficient))) * 100;
         return percentage;
     };
 

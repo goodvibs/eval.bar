@@ -5,12 +5,14 @@ import {AnalysisControls} from "./AnalysisControls";
 import {Chess} from "chess.js";
 import {useEngineStore} from "../../stores/useEngineStore";
 import {useStockfish} from "../../hooks/useStockfish";
+import {usePositionSync} from "../../hooks/usePositionSync";
 
 export function AnalysisPanel() {
     const { currentLines, isAnalyzing, depth, engineThinking } = useEngineStore();
     const { loadPosition } = useGameStore();
 
     useStockfish();
+    usePositionSync();
 
     const handleMoveClick = (moves) => {
         const game = new Chess();

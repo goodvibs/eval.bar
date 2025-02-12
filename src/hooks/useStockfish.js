@@ -6,7 +6,7 @@ export function useStockfish() {
 
     useEffect(() => {
         if (!window.stockfish) {
-            window.stockfish = new Worker('stockfish.js');
+            window.stockfish = new Worker('stockfish.wasm.js');
 
             // Initial UCI setup
             window.stockfish.postMessage('uci');
