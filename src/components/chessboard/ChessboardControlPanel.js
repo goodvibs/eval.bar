@@ -34,7 +34,7 @@ export function ChessboardControlPanel() {
     const [orientedWhite, setOrientedWhite] = React.useState(true);
 
     return (
-        <div className="flex flex-col w-fit border-slate-500 border rounded-lg p-4">
+        <div className="flex flex-col w-fit border-slate-500 border rounded-lg p-2 pb-0">
             <Chessboard
                 position={currentFen}
                 boardWidth={500}
