@@ -8,7 +8,7 @@ export function ImportPanel() {
 
     return (
         <div className="flex flex-col gap-4">
-            <div className="flex flex-col bg-slate-600 rounded overflow-hidden">
+            <div className="flex flex-col border border-slate-500 rounded-lg overflow-hidden">
                 <ImportSourceSelect />
                 <UsernameSelect />
             </div>
