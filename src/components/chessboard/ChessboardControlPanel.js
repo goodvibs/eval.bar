@@ -19,6 +19,10 @@ export function ChessboardControlPanel() {
         });
     }
 
+    function firstMove() {
+        goToMove(-1);
+    }
+
     function previousMove() {
         if (currentMoveIndex > -1) {
             goToMove(currentMoveIndex - 1);
@@ -29,6 +33,11 @@ export function ChessboardControlPanel() {
         if (currentMoveIndex < moveHistory.length - 1) {
             goToMove(currentMoveIndex + 1);
         }
+    }
+
+    function lastMove() {
+        let index = moveHistory.length > 0 ? moveHistory.length - 1 : 0;
+        goToMove(index);
     }
 
     const [orientedWhite, setOrientedWhite] = React.useState(true);
@@ -45,8 +54,10 @@ export function ChessboardControlPanel() {
             />
 
             <ChessboardControls
+                firstMove={firstMove}
                 previousMove={previousMove}
                 nextMove={nextMove}
+                lastMove={lastMove}
                 orientedWhite={orientedWhite}
                 setOrientedWhite={setOrientedWhite}
             />

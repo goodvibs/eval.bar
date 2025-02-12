@@ -25,17 +25,38 @@ export const useGameStore = create((set, get) => ({
     makeMove: (move) => {
         const { game } = get();
         const result = game.move(move);
+        let moveHistory = get().moveHistory;
+        let currentMoveIndex = get().currentMoveIndex;
+        if (currentMoveIndex !== moveHistory.length - 1) {
+            moveHistory = moveHistory.slice(0, currentMoveIndex + 1);
+            set({
+                moveHistory: [...moveHistory],
+            })
+        }
 
         if (result) {
             set({
                 currentFen: game.fen(),
                 currentPgn: game.pgn(),
-                moveHistory: [...get().moveHistory, result],
-                currentMoveIndex: get().currentMoveIndex + 1
+                moveHistory: [...moveHistory, result],
+                currentMoveIndex: currentMoveIndex + 1
             });
             return true;
         }
         return false;
+    },
+
+    goToMove: (index) => {
+        const {game, moveHistory} = get();
+        const moves = moveHistory.slice(0, index + 1);
+
+        game.reset();
+        moves.forEach(move => game.move(move));
+        set({
+            currentFen: game.fen(),
+            currentPgn: game.pgn(),
+            currentMoveIndex: index
+        });
     },
 
     // Load a game from PGN
