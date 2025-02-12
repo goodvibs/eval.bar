@@ -3,55 +3,50 @@ import {useEngineStore} from "../stores/useEngineStore";
 export function EvaluationBar() {
     const { currentLines } = useEngineStore();
 
-    // Get evaluation from the main line (first line)
     const mainLine = currentLines[0];
     const eval_ = mainLine?.score ?? 0;
 
-    // Convert evaluation to a percentage for the bar width
     const getEvalPercent = (eval_) => {
         if (typeof eval_ === 'string') {
-            // Handle mate scores
-            return eval_.startsWith('M') ? 100 : 0;
+            return eval_.startsWith('M') ? 98 : 2;
         }
-
-        // Convert centipawns to percentage
-        // Using sigmoid-like function to keep it between 0-100
-        // and make small advantages more visible
-        const maxAdvantage = 5; // +5 pawns will show as winning
-        const normalized = Math.min(Math.max(eval_, -maxAdvantage), maxAdvantage);
         const coefficient = 0.2;
-        const percentage = (1 / (1 + Math.exp(-normalized * coefficient))) * 100;
-        return percentage;
-    };
-
-    // Get background colors based on evaluation
-    const getColors = (eval_) => {
-        if (typeof eval_ === 'string') {
-            // Mate scores
-            return {
-                white: 'bg-red-500',
-                black: 'bg-red-900'
-            };
-        }
-
-        return {
-            white: 'bg-slate-200',
-            black: 'bg-slate-900'
-        };
+        const percentage = (1 / (1 + Math.exp(-eval_ * coefficient))) * 100;
+        return Math.min(Math.max(percentage, 2), 98);
     };
 
     const percentage = getEvalPercent(eval_);
-    const colors = getColors(eval_);
+
+    // Create marker positions (as percentages)
+    const markers = [10, 20, 30, 40, 50, 60, 70, 80, 90].map(pos => ({
+        position: pos,
+        // Opacity increases as we get closer to the center (60%)
+        opacity: 1 - Math.abs(60 - pos) / 60
+    }));
 
     return (
-        <div className="flex h-2">
+        <div className="flex h-1.5 relative">
+            {/* Base evaluation bar */}
             <div
-                className={`${colors.white} transition-all duration-300`}
+                className="bg-slate-200 transition-all duration-300"
                 style={{ width: `${percentage}%` }}
             />
             <div
-                className={`${colors.black} flex-1 transition-all duration-300`}
+                className="bg-slate-900 flex-1 transition-all duration-300"
             />
+
+            {/* Marker bars */}
+            {markers.map(({ position, opacity }) => (
+                <div
+                    key={position}
+                    className="absolute top-0 bottom-0 w-px border border-slate-500 bg-slate-500"
+                    style={{
+                        left: `${position}%`,
+                        opacity: opacity,
+                        pointerEvents: 'none' // Ensures markers don't interfere with interactions
+                    }}
+                />
+            ))}
         </div>
     );
 }
