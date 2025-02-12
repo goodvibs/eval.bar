@@ -26,7 +26,8 @@ export function ChesscomPanel() {
         try {
             const [year, month] = selectedDate.split('-');
             const fetchedGames = await fetchChesscomGames(username, year, month);
-            setGames(fetchedGames);
+            let reversedGames = fetchedGames.reverse();
+            setGames(reversedGames);
         } catch (error) {
             setError('Failed to fetch games. Please check the username and try again.');
         } finally {
@@ -48,7 +49,7 @@ export function ChesscomPanel() {
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Enter username"
+                    placeholder="IMRosen"
                     className="p-2 bg-slate-700 rounded text-slate-200 border border-slate-600"
                 />
             </div>
