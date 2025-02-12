@@ -15,10 +15,10 @@ export function MoveHistory() {
     }
 
     return (
-        <div className="flex flex-col flex-1 bg-slate-800 rounded-lg overflow-hidden">
+        <div className="flex flex-col flex-1 bg-slate-800 rounded-lg">
             <MoveHistoryHeader />
 
-            <div className="p-2 flex flex-wrap gap-1 max-h-[200px] overflow-y-auto scrollbar-thin hover:scrollbar-thumb-slate-600 scrollbar-thumb-transparent scrollbar-track-transparent">
+            <div className="p-2 flex flex-wrap gap-1 overflow-y-auto">
                 {moveGroups.map(({ number, white, black }, groupIndex) => (
                     <div key={number} className="flex gap-1 items-center">
                         <span className="text-slate-500 text-sm">{number}.</span>
