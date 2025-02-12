@@ -7,6 +7,7 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "chess.js": "^1.0.0-beta.6",
     "cm-chess": "^3.3.3",
     "react": "^18.2.0",
@@ -45,8 +46,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
   }
 }
