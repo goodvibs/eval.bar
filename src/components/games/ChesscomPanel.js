@@ -62,6 +62,7 @@ export function ChesscomPanel() {
                     value={selectedDate}
                     onChange={(e) => setSelectedDate(e.target.value)}
                     className="p-2 bg-slate-700 rounded text-slate-200 border border-slate-600"
+                    placeholder='YYYY-MM'
                 />
             </div>
 

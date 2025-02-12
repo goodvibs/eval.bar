@@ -59,7 +59,7 @@ export function AnalysisPanelHeader({ isAnalyzing, depth, currentLines }) {
                     className={`px-3 py-1 text-sm rounded transition-colors ${
                         isAnalyzing
                             ? 'bg-red-600 hover:bg-red-700 text-white'
-                            : 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                            : 'bg-green-600 hover:bg-green-500 text-white'
                     }`}
                 >
                     {isAnalyzing ? 'Stop' : 'Analyze'}
