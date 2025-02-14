@@ -10,7 +10,7 @@ export function GameArea() {
     } = useGameStore();
 
     return (
-        <div className="flex gap-4">
+        <div className="flex justify-center flex-wrap gap-4">
             <div className="flex flex-col gap-4">
                 {/* Game metadata */}
                 {metadata.white && metadata.black && (

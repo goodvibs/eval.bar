@@ -1,7 +1,7 @@
-import {Chessboard} from "react-chessboard";
-import {ChessboardControls} from "./ChessboardControls";
+import { Chessboard } from "react-chessboard";
+import { ChessboardControls } from "./ChessboardControls";
 import React from "react";
-import {useGameStore} from "../../stores/gameStore";
+import { useGameStore } from "../../stores/gameStore";
 
 export function ChessboardControlPanel() {
     const {
@@ -41,14 +41,33 @@ export function ChessboardControlPanel() {
     }
 
     const [orientedWhite, setOrientedWhite] = React.useState(true);
+    const [boardWidth, setBoardWidth] = React.useState(500);
+    const containerRef = React.useRef(null);
+
+    // Resize observer to update board size dynamically
+    React.useEffect(() => {
+        const resizeObserver = new ResizeObserver((entries) => {
+            if (entries.length > 0) {
+                setBoardWidth(entries[0].contentRect.width);
+            }
+        });
+
+        if (containerRef.current) {
+            resizeObserver.observe(containerRef.current);
+        }
+
+        return () => {
+            resizeObserver.disconnect();
+        };
+    }, []);
 
     return (
-        <div className="flex flex-col w-fit border-slate-500 border rounded-lg p-2 pb-0">
+        <div ref={containerRef} className="flex flex-col duration-300 transition-all w-[450px] sm:w-[560px] md:w-[300px] lg:w-[500px] xl:w-[560px] 2xl:w-[700px] border-slate-500 border rounded-lg p-2 pb-0">
             <Chessboard
                 position={currentFen}
-                boardWidth={500}
-                customLightSquareStyle={{backgroundColor: "#cbd5e1"}}
-                customDarkSquareStyle={{backgroundColor: "#64748b"}}
+                boardWidth={boardWidth}
+                customLightSquareStyle={{ backgroundColor: "#cbd5e1" }}
+                customDarkSquareStyle={{ backgroundColor: "#64748b" }}
                 boardOrientation={orientedWhite ? "white" : "black"}
                 onPieceDrop={onPieceDrop}
             />
