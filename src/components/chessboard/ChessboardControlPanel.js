@@ -62,7 +62,7 @@ export function ChessboardControlPanel() {
     }, []);
 
     return (
-        <div ref={containerRef} className="flex flex-col duration-300 transition-all w-[450px] sm:w-[560px] md:w-[300px] lg:w-[500px] xl:w-[560px] 2xl:w-[700px] border-slate-500 border rounded-lg p-2 pb-0">
+        <div ref={containerRef} className="flex flex-col duration-300 transition-all w-[450px] sm:w-[560px] md:w-[336px] lg:w-[500px] xl:w-[560px] 2xl:w-[700px] border-slate-500 border rounded-lg p-2 pb-0">
             <Chessboard
                 position={currentFen}
                 boardWidth={boardWidth}
