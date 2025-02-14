@@ -33,7 +33,7 @@ export function AnalysisPanel() {
                 currentLines={currentLines}
             />
 
-            <div className="flex flex-col divide-y divide-slate-700 max-h-[300px] overflow-y-auto scrollbar-thin hover:scrollbar-thumb-slate-600 scrollbar-thumb-transparent scrollbar-track-transparent">
+            <div className="flex flex-col divide-y divide-slate-700">
                 {currentLines.map((line, idx) => (
                     <AnalysisLine
                         key={idx}
@@ -45,7 +45,7 @@ export function AnalysisPanel() {
             </div>
 
             {isAnalyzing && engineThinking && (
-                <div className="p-2 text-xs font-mono text-slate-400 border-t border-slate-700 overflow-x-auto whitespace-nowrap scrollbar-thin hover:scrollbar-thumb-slate-600 scrollbar-thumb-transparent scrollbar-track-transparent">
+                <div className="p-2 text-xs font-mono text-slate-400 overflow-x-auto scrollbar-none border-t border-slate-700 whitespace-nowrap">
                     {engineThinking}
                 </div>
             )}

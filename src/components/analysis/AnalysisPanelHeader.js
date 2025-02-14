@@ -21,21 +21,19 @@ export function AnalysisPanelHeader({ isAnalyzing, depth, currentLines }) {
     let isWhiteWinning = eval_ >= 0;
 
     return (
-        <div className="px-3 py-2 bg-slate-700 border-b border-slate-600 flex items-center justify-between">
+        <div className="bg-slate-700 border-b gap-4 border-slate-600 flex items-center justify-between">
             <div className="flex items-center gap-4">
                 {/* Evaluation display */}
-                <div className="flex items-center gap-2">
-          <span className={"font-mono text-lg font-bold " + isWhiteWinning ? "bg-slate-50 text-slate-900" : "bg-slate-900 text-slate-50"}>
-            {formatEval(eval_)}
-          </span>
+                <div className={`flex font-mono p-2 text-lg font-bold ${isWhiteWinning ? "bg-slate-50 text-slate-900" : "bg-slate-900 text-slate-50"}`}>
+                    {formatEval(eval_)}
                 </div>
 
                 {/* Engine info */}
-                <div className="flex flex-col">
-                    <span className="text-xs font-medium text-slate-300">Stockfish 16</span>
+                <div className="flex flex-col min-w-fit">
+                    <span className="text-xs font-medium text-slate-300 flex text-nowrap">Stockfish 16</span>
                     <span className="text-xs text-slate-400">
-            {isAnalyzing ? `Analyzing depth ${depth}` : 'Ready'}
-          </span>
+                        {isAnalyzing ? `Analyzing depth ${depth}` : 'Ready'}
+                    </span>
                 </div>
             </div>
 

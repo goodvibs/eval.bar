@@ -45,37 +45,33 @@ export function AnalysisLine({ line, isMainLine, onMoveClick }) {
         }
     };
 
-    let isWhiteWinning = true;
+    let isWhiteWinning = line.score >= 0;
 
     return (
-        <div className="flex p-2 hover:bg-slate-700 transition-colors text-sm">
-            <div className="flex-none w-20">
-        <span className={`font-mono ${isMainLine ? "font-bold" : ""} ` + isWhiteWinning ? "bg-slate-50 text-slate-900" : "bg-slate-900 text-slate-50"}>
-          {formatScore(line.score)}
-        </span>
+        <div className="flex items-center hover:bg-slate-700 transition-colors text-sm gap-2">
+            <div className={`flex font-mono px-0.5 ${isMainLine ? "font-bold" : ""} ${isWhiteWinning ? "bg-slate-50 text-slate-900" : "bg-slate-900 text-slate-50"}`}>
+              {formatScore(line.score)}
             </div>
-            <div className="flex-1 overflow-x-auto scrollbar-thin hover:scrollbar-thumb-slate-600 scrollbar-thumb-transparent scrollbar-track-transparent">
-                <div className="flex gap-1 text-slate-300 pr-2 whitespace-nowrap">
-                    {line.moves.map((move, idx) => {
-                        const { number, notation } = getMoveNumbering(idx);
-                        const showMoveNumber = notation === '' || idx === 0;
+            <div className="flex gap-1 text-slate-300 whitespace-nowrap overflow-x-auto scrollbar-none">
+                {line.moves.map((move, idx) => {
+                    const { number, notation } = getMoveNumbering(idx);
+                    const showMoveNumber = notation === '' || idx === 0;
 
-                        return (
-                            <button
-                                key={idx}
-                                onClick={() => onMoveClick(line.moves.slice(0, idx + 1))}
-                                className="hover:text-white hover:underline transition-colors flex-none"
-                            >
-                                {showMoveNumber && (
-                                    <span className="text-slate-500 mr-1">
-                    {number}.{notation}
-                  </span>
-                                )}
-                                {move}
-                            </button>
-                        );
-                    })}
-                </div>
+                    return (
+                        <button
+                            key={idx}
+                            onClick={() => onMoveClick(line.moves.slice(0, idx + 1))}
+                            className="hover:text-white hover:underline transition-colors flex-none"
+                        >
+                            {showMoveNumber && (
+                                <span className="text-slate-500 mr-1">
+                                        {number}.{notation}
+                                    </span>
+                            )}
+                            {move}
+                        </button>
+                    );
+                })}
             </div>
         </div>
     );
