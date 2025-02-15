@@ -5,14 +5,31 @@ import {useGameStore} from "../stores/gameStore";
 import {ChessboardControlPanel} from "./chessboard/ChessboardControlPanel";
 
 export function GameArea() {
-    const {
-        metadata
-    } = useGameStore();
+    const { metadata } = useGameStore();
+    const [firstContainerHeight, setFirstContainerHeight] = React.useState(0);
+    const firstContainerRef = React.useRef(null);
+
+    // Update height when first container changes
+    React.useEffect(() => {
+        // Use ResizeObserver to detect actual content size changes
+        const resizeObserver = new ResizeObserver((entries) => {
+            if (entries[0]) {
+                setFirstContainerHeight(entries[0].target.offsetHeight);
+            }
+        });
+
+        if (firstContainerRef.current) {
+            resizeObserver.observe(firstContainerRef.current);
+        }
+
+        return () => {
+            resizeObserver.disconnect();
+        };
+    }, [metadata]); // Re-run when metadata changes as it affects container height
 
     return (
-        <div className="flex justify-center flex-wrap gap-4">
-            <div className="flex flex-col gap-4">
-                {/* Game metadata */}
+        <main className="flex justify-center flex-wrap gap-4">
+            <div ref={firstContainerRef} className="flex h-fit flex-col gap-4">
                 {metadata.white && metadata.black && (
                     <div className="flex justify-between items-center text-slate-300">
                         <div className="text-lg">
@@ -27,10 +44,13 @@ export function GameArea() {
                 <ChessboardControlPanel />
             </div>
 
-            <div className="flex flex-col w-96 gap-4">
+            <div
+                className="flex flex-col w-96 gap-4"
+                style={{ height: firstContainerHeight || 'auto' }}
+            >
                 <AnalysisPanel />
                 <MoveHistory />
             </div>
-        </div>
+        </main>
     );
 }

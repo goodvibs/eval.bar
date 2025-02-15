@@ -19,15 +19,13 @@ export default function App() {
             <Navigation onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
             <EvaluationBar />
 
-            <div className="flex-1 flex items-center justify-center xl:items-start p-2 overflow-hidden">
+            <div className="flex items-center justify-center lg:items-start p-2 overflow-hidden">
                 <Sidebar
                     isOpen={isSidebarOpen}
                     onClose={() => setIsSidebarOpen(false)}
                 />
 
-                <main className="flex-1 min-w-0">
-                    <GameArea />
-                </main>
+                <GameArea />
             </div>
         </div>
     );

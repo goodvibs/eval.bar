@@ -52,7 +52,7 @@ export function ChessboardControlPanel() {
     return (
         <div
             ref={containerRef}
-            className="flex flex-col duration-300 transition-all max-w-full border-slate-500 border rounded-lg p-2 pb-0"
+            className="flex flex-col duration-300 transition-all w-fit max-w-full border-slate-500 border rounded-lg p-2 pb-0"
         >
             <Chessboard
                 position={currentFen}
