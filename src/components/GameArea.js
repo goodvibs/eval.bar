@@ -28,7 +28,7 @@ export function GameArea() {
     }, [metadata]); // Re-run when metadata changes as it affects container height
 
     return (
-        <main className="flex justify-center flex-wrap gap-4">
+        <main className="flex flex-1 justify-center flex-wrap gap-4 p-4">
             <div ref={firstContainerRef} className="flex h-fit flex-col gap-4">
                 {metadata.white && metadata.black && (
                     <div className="flex justify-between items-center text-slate-300">
@@ -45,7 +45,7 @@ export function GameArea() {
             </div>
 
             <div
-                className="flex flex-col w-96 gap-4"
+                className="flex flex-col flex-1 min-w-72 gap-4"
                 style={{ height: firstContainerHeight || 'auto' }}
             >
                 <AnalysisPanel />

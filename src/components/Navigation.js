@@ -3,7 +3,7 @@ export function Navigation({ onMenuClick }) {
         <nav className="flex items-center p-2 gap-2 text-sm text-slate-50">
             <button
                 onClick={onMenuClick}
-                className="xl:hidden p-2 hover:bg-slate-600 rounded-full"
+                className="lg:hidden p-2 hover:bg-slate-600 rounded-full"
                 aria-label="Open menu"
             >
                 <svg
@@ -21,7 +21,7 @@ export function Navigation({ onMenuClick }) {
                 </svg>
             </button>
 
-            <span className="flex flex-1 text-lg xl:text-base">eval.bar</span>
+            <span className="flex flex-1 text-lg lg:text-base">eval.bar</span>
             <ul className="flex flex-1 justify-end gap-4">
                 <li className="hover:text-slate-300 cursor-pointer">About</li>
                 <li className="hover:text-slate-300 cursor-pointer">Donate</li>

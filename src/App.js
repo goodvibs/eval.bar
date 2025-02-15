@@ -19,7 +19,7 @@ export default function App() {
             <Navigation onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
             <EvaluationBar />
 
-            <div className="flex items-center justify-center lg:items-start p-2 overflow-hidden">
+            <div className="flex items-center justify-center lg:items-start overflow-hidden">
                 <Sidebar
                     isOpen={isSidebarOpen}
                     onClose={() => setIsSidebarOpen(false)}
