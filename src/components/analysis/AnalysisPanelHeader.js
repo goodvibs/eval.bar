@@ -32,15 +32,15 @@ export function AnalysisPanelHeader({ isAnalyzing, depth, currentLines }) {
                 <div className="flex flex-col min-w-fit">
                     <span className="text-xs font-medium text-slate-300 flex text-nowrap">Stockfish 16</span>
                     <span className="text-xs text-slate-400">
-                        {isAnalyzing ? `Analyzing depth ${depth}` : 'Ready'}
+                        {isAnalyzing ? `Depth ${depth}` : 'Ready'}
                     </span>
                 </div>
             </div>
 
             {/* Controls */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 px-2">
                 <select
-                    className="bg-slate-600 text-slate-200 text-sm rounded px-2 py-1 border border-slate-500 disabled:opacity-50"
+                    className="hidden bg-slate-600 text-slate-200 text-sm rounded px-2 py-1 border border-slate-500 disabled:opacity-50"
                     value={multipv}
                     onChange={(e) => setMultiPV(Number(e.target.value))}
                     disabled={isAnalyzing}

@@ -12,22 +12,22 @@ export function Sidebar({ isOpen, onClose }) {
             {/* Mobile overlay */}
             {isOpen && (
                 <div
-                    className="fixed inset-0 bg-black bg-opacity-50 z-30 xl:hidden"
+                    className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
                     onClick={onClose}
                 />
             )}
 
             {/* Sidebar wrapper */}
             <aside className={`
-                fixed xl:relative xl:block
-                inset-y-0 left-0 w-full xl:w-72
-                z-40 xl:z-0
+                fixed lg:relative lg:block
+                inset-y-0 left-0 w-full lg:w-72
+                z-40 lg:z-0
                 transform transition-transform duration-500
-                ${isOpen ? 'translate-x-0' : '-translate-x-full xl:translate-x-0'}
+                ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
             `}>
                 <div className="h-full bg-slate-700 flex flex-col overflow-hidden">
                     {/* Mobile header */}
-                    <div className="xl:hidden flex items-center justify-between p-4 border-b border-slate-600">
+                    <div className="lg:hidden flex items-center justify-between p-4 border-b border-slate-600">
                         <span className="text-lg font-semibold text-slate-200">Import Menu</span>
                         <button
                             onClick={onClose}
@@ -51,7 +51,7 @@ export function Sidebar({ isOpen, onClose }) {
                     </div>
 
                     {/* Sidebar content */}
-                    <div className="flex w-full flex-col gap-4 text-slate-50 p-4 overflow-y-auto">
+                    <div className="flex w-full flex-col gap-4 text-slate-50 p-4 lg:pr-0 overflow-y-auto">
                         <div className="flex gap-1 border-b border-slate-500">
                             <TabButton
                                 active={currTab === 0}
