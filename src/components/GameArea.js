@@ -28,7 +28,7 @@ export function GameArea() {
     }, [metadata]); // Re-run when metadata changes as it affects container height
 
     return (
-        <main className="flex flex-1 justify-center flex-wrap gap-4 p-4 overflow-hidden">
+        <main className="flex flex-1 justify-center flex-wrap lg:flex-nowrap gap-4 p-4 overflow-hidden">
             <div ref={firstContainerRef} className="flex h-fit flex-col gap-4">
                 {metadata.white && metadata.black && (
                     <div className="flex justify-between items-center text-slate-300">
