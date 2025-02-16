@@ -24,7 +24,7 @@ export function Sidebar({ isOpen, onOpen, onClose }) {  // Separate open and clo
             {/* Sidebar wrapper with tab */}
             <aside className={`
                 fixed lg:relative lg:block
-                inset-y-0 left-0 w-full lg:w-72
+                inset-y-0 left-0 w-full lg:w-auto
                 ${isOpen ? 'outline outline-1 outline-slate-500' : ''}
                 z-40 lg:z-0
                 transform transition-transform duration-1000

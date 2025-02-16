@@ -7,7 +7,10 @@ module.exports = {
     extend: {
       transitionProperty: {
         'height': 'height'
-      }
+      },
+      screens: {
+        'xs': '480px',
+      },
     },
   },
   plugins: [
