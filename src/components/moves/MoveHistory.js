@@ -2,15 +2,15 @@ import {useGameStore} from "../../stores/gameStore";
 import {MoveHistoryHeader} from "./MoveHistoryHeader";
 
 export function MoveHistory() {
-    const { moveHistory, currentMoveIndex, goToMove } = useGameStore();
+    const { gameMoveHistory, currentMoveIndex, goToMove } = useGameStore();
 
     // Group moves into pairs (white and black moves)
     const moveGroups = [];
-    for (let i = 0; i < moveHistory.length; i += 2) {
+    for (let i = 0; i < gameMoveHistory.length; i += 2) {
         moveGroups.push({
             number: Math.floor(i / 2) + 1,
-            white: moveHistory[i],
-            black: moveHistory[i + 1],
+            white: gameMoveHistory[i],
+            black: gameMoveHistory[i + 1],
         });
     }
 

@@ -4,7 +4,7 @@ import React from "react";
 
 export function usePositionSync() {
     const updatePosition = useEngineStore(state => state.updatePosition);
-    const currentFen = useGameStore(state => state.currentFen);
+    const currentFen = useGameStore(state => state.currentPositionFen);
 
     // Subscribe to FEN changes and update engine
     React.useEffect(() => {

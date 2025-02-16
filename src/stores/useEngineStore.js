@@ -19,7 +19,7 @@ export const useEngineStore = create((set, get) => ({
         set({ isAnalyzing: true, currentLines: [] });
 
         window.stockfish?.postMessage('setoption name MultiPV value ' + multipv);
-        window.stockfish?.postMessage('position fen ' + useGameStore.getState().currentFen);
+        window.stockfish?.postMessage('position fen ' + useGameStore.getState().currentPositionFen);
         window.stockfish?.postMessage('go depth 30');
     },
 
@@ -47,7 +47,7 @@ export const useEngineStore = create((set, get) => ({
         try {
             const state = get();
             let lines = [...state.currentLines];
-            const currentFen = useGameStore.getState().currentFen;
+            const currentFen = useGameStore.getState().currentPositionFen;
             const chess = new Chess(currentFen);
             const isBlackToMove = chess.turn() === 'b';
 

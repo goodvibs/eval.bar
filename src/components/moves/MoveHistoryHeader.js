@@ -2,59 +2,22 @@ import React from 'react';
 import {useGameStore} from "../../stores/gameStore";
 import {analyzeOnLichess} from "../../utils/lichess";
 
-function Tooltip({ children, className = "" }) {
-    return (
-        <div className={`fixed -translate-y-full -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-slate-900 rounded whitespace-nowrap pointer-events-none ${className}`}
-             style={{ left: '50%', top: 'var(--tooltip-top, 0px)' }}>
-            {children}
-            {/* Arrow */}
-            <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
-                <div className="border-4 border-transparent border-t-slate-900"/>
-            </div>
-        </div>
-    );
-}
-
-function TooltipContainer({ children, tooltip }) {
-    const [tooltipPosition, setTooltipPosition] = React.useState(0);
-    const buttonRef = React.useRef(null);
-
-    React.useEffect(() => {
-        if (buttonRef.current) {
-            const rect = buttonRef.current.getBoundingClientRect();
-            setTooltipPosition(rect.top);
-        }
-    }, []);
-
-    return (
-        <div className="relative group" ref={buttonRef} style={{ '--tooltip-top': `${tooltipPosition}px` }}>
-            {children}
-            <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                <Tooltip>{tooltip}</Tooltip>
-            </div>
-        </div>
-    );
-}
-
 export function MoveHistoryHeader() {
-    const { currentMoveIndex, moveHistory, currentPgn } = useGameStore();
-    const [showCopyTooltip, setShowCopyTooltip] = React.useState(false);
+    const { currentMoveIndex, gameMoveHistory, gamePgn } = useGameStore();
 
-    const totalMoves = Math.ceil(moveHistory.length / 2);
+    const totalMoves = Math.ceil(gameMoveHistory.length / 2);
     const currentMove = Math.floor(currentMoveIndex / 2) + 1;
 
     const handleCopyPgn = async () => {
         try {
-            await navigator.clipboard.writeText(currentPgn);
-            setShowCopyTooltip(true);
-            setTimeout(() => setShowCopyTooltip(false), 2000);
+            await navigator.clipboard.writeText(gamePgn);
         } catch (err) {
             console.error('Failed to copy PGN:', err);
         }
     };
 
     const handleDownloadPgn = () => {
-        const blob = new Blob([currentPgn], { type: 'text/plain' });
+        const blob = new Blob([gamePgn], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -66,7 +29,7 @@ export function MoveHistoryHeader() {
     };
 
     const handleLichessAnalysis = () => {
-        analyzeOnLichess(currentPgn, false);
+        analyzeOnLichess(gamePgn, false);
     };
 
     return (

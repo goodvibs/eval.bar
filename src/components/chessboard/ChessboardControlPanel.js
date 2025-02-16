@@ -5,11 +5,13 @@ import { useGameStore } from "../../stores/gameStore";
 
 export function ChessboardControlPanel() {
     const {
-        currentFen,
+        currentPositionFen,
         makeMove,
         goToMove,
+        undo,
+        redo,
         currentMoveIndex,
-        moveHistory,
+        gameMoveHistory,
     } = useGameStore();
 
     const [orientedWhite, setOrientedWhite] = React.useState(true);
@@ -48,9 +50,9 @@ export function ChessboardControlPanel() {
     };
 
     const firstMove = () => goToMove(-1);
-    const previousMove = () => currentMoveIndex > -1 && goToMove(currentMoveIndex - 1);
-    const nextMove = () => currentMoveIndex < moveHistory.length - 1 && goToMove(currentMoveIndex + 1);
-    const lastMove = () => goToMove(moveHistory.length > 0 ? moveHistory.length - 1 : 0);
+    const previousMove = () => currentMoveIndex > -1 && undo();
+    const nextMove = () => currentMoveIndex < gameMoveHistory.length - 1 && redo();
+    const lastMove = () => goToMove(gameMoveHistory.length > 0 ? gameMoveHistory.length - 1 : 0);
 
     return (
         <div
@@ -58,7 +60,7 @@ export function ChessboardControlPanel() {
             className="flex flex-col duration-300 transition-all w-fit max-w-full border-slate-500 border rounded-lg p-2 pb-0"
         >
             <Chessboard
-                position={currentFen}
+                position={currentPositionFen}
                 boardWidth={boardWidth}
                 customLightSquareStyle={{ backgroundColor: "#cbd5e1" }}
                 customDarkSquareStyle={{ backgroundColor: "#64748b" }}

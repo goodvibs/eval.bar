@@ -37,18 +37,18 @@ function MovePair({ moveNumber, whiteMove, blackMove, currentMoveIndex, onMoveCl
 
 export function MoveHistoryPanel() {
     const {
-        moveHistory,
+        gameMoveHistory,
         currentMoveIndex,
         goToMove
     } = useGameStore();
 
     // Group moves into pairs
     const movePairs = [];
-    for (let i = 0; i < moveHistory.length; i += 2) {
+    for (let i = 0; i < gameMoveHistory.length; i += 2) {
         movePairs.push({
             moveNumber: Math.floor(i / 2) + 1,
-            whiteMove: moveHistory[i],
-            blackMove: moveHistory[i + 1]
+            whiteMove: gameMoveHistory[i],
+            blackMove: gameMoveHistory[i + 1]
         });
     }
 

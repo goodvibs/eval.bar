@@ -1,19 +1,65 @@
 import { create } from 'zustand';
-import { Chess } from 'chess.js';
+import {Chess, FEN} from 'cm-chess';
+
+function extractPgnHeaders(pgn) {
+    const headers = {};
+    const headerRegex = /^\[(\w+)\s+"([^"]+)"\]/gm;
+    let match;
+
+    while ((match = headerRegex.exec(pgn)) !== null) {
+        headers[match[1]] = match[2];
+    }
+
+    return headers;
+}
+
+function processPgn(pgn) {
+    pgn = pgn.trimEnd();
+    const resultRegex = /^(1-0|0-1|1\/2-1\/2)$/g;
+    const resultMatch = pgn.match(resultRegex);
+    if (resultMatch) {
+        pgn = pgn.replace(resultRegex, '');
+    }
+    return pgn.trimEnd();
+}
+
+function isSupportedVariant(headers) {
+    // List of supported variants
+    const supportedVariants = [
+        undefined,  // Standard chess (no Variant tag)
+        'Standard' // Some sites explicitly mark standard games
+    ];
+
+    // Variant is unsupported
+    if (!supportedVariants.includes(headers.Variant)) {
+        throw new Error(`Unsupported chess variant: ${headers.Variant}`);
+    }
+
+    // Check for custom positions through FEN
+    if (headers.SetUp === '1' && headers.FEN) {
+        if (headers.FEN !== FEN.start) {
+            throw new Error('Custom position games are not supported');
+        }
+    }
+
+    return true;
+}
 
 export const useGameStore = create((set, get) => ({
     game: new Chess(),
-    currentFen: new Chess().fen(),
-    currentPgn: '',
-    moveHistory: [],
+    gamePgn: '',
+    gameMoveHistory: [],
+
     currentMoveIndex: -1,
-    analysis: {
+    currentPositionFen: new Chess().fen(),
+    currentPositionAnalysis: {
         depth: 0,
         evaluation: 0,
         isAnalyzing: false,
         lines: []
     },
-    metadata: {
+
+    gameMetadata: {
         white: '',
         black: '',
         date: '',
@@ -21,24 +67,22 @@ export const useGameStore = create((set, get) => ({
         result: ''
     },
 
-    // Game actions
     makeMove: (move) => {
         const { game } = get();
         const result = game.move(move);
-        let moveHistory = get().moveHistory;
+
+        let moveHistory = get().gameMoveHistory;
         let currentMoveIndex = get().currentMoveIndex;
-        if (currentMoveIndex !== moveHistory.length - 1) {
-            moveHistory = moveHistory.slice(0, currentMoveIndex + 1);
-            set({
-                moveHistory: [...moveHistory],
-            })
-        }
 
         if (result) {
+            if (currentMoveIndex !== moveHistory.length - 1) {
+                // Remove all moves after the current index
+                moveHistory = moveHistory.slice(0, currentMoveIndex + 1);
+            }
             set({
-                currentFen: game.fen(),
-                currentPgn: game.pgn(),
-                moveHistory: [...moveHistory, result],
+                currentPositionFen: game.fen(),
+                gamePgn: game.pgn,
+                gameMoveHistory: [...moveHistory, result],
                 currentMoveIndex: currentMoveIndex + 1
             });
             return true;
@@ -46,44 +90,99 @@ export const useGameStore = create((set, get) => ({
         return false;
     },
 
-    goToMove: (index) => {
-        const {game, moveHistory} = get();
-        const moves = moveHistory.slice(0, index + 1);
+    undo: () => {
+        const { game, currentMoveIndex } = get();
+        if (currentMoveIndex > -1) {
+            game.undo();
+            set({
+                currentPositionFen: game.fen(),
+                currentMoveIndex: currentMoveIndex - 1
+            });
+        }
+    },
 
-        game.reset();
-        moves.forEach(move => game.move(move));
+    redo: () => {
+        const { game, gameMoveHistory, currentMoveIndex } = get();
+        if (currentMoveIndex < gameMoveHistory.length - 1) {
+            const move = gameMoveHistory[currentMoveIndex + 1];
+            game.move(move);
+            set({
+                currentPositionFen: game.fen(),
+                currentMoveIndex: currentMoveIndex + 1
+            });
+        }
+    },
+
+    goToMove: (index) => {
+        let {game, currentMoveIndex, gameMoveHistory} = get();
+
+        while (currentMoveIndex < index) {
+            game.move(gameMoveHistory[currentMoveIndex + 1]);
+            currentMoveIndex++;
+        }
+
+        while (currentMoveIndex > index) {
+            game.undo();
+            currentMoveIndex--;
+        }
+
         set({
-            currentFen: game.fen(),
-            currentPgn: game.pgn(),
-            currentMoveIndex: index
+            currentPositionFen: game.fen(),
+            currentMoveIndex
         });
+
+        return true;
     },
 
     // Load a game from PGN
     loadGame: (pgn) => {
-        const newGame = new Chess();
         try {
+            if (!pgn) {
+                throw new Error('No PGN provided');
+            }
+
+            // Extract headers first
+            const headers = extractPgnHeaders(pgn);
+
+            // Validate variant before proceeding
+            if (!isSupportedVariant(headers)) {
+                return false;
+            }
+
+            // Process and load the game
+            pgn = processPgn(pgn);
+            const newGame = new Chess();
+
             newGame.loadPgn(pgn);
-            const moves = newGame.history({ verbose: true });
+            const moves = newGame.history();
 
             set({
                 game: newGame,
-                currentFen: newGame.fen(),
-                currentPgn: newGame.pgn(),
-                moveHistory: moves,
+                currentPositionFen: newGame.fen(),
+                gamePgn: newGame.pgn,
+                gameMoveHistory: moves,
                 currentMoveIndex: moves.length - 1,
-                metadata: {
-                    white: newGame.header()['White'] || '',
-                    black: newGame.header()['Black'] || '',
-                    date: newGame.header()['Date'] || '',
-                    event: newGame.header()['Event'] || '',
-                    result: newGame.header()['Result'] || ''
+                gameMetadata: {
+                    white: headers.White || '',
+                    black: headers.Black || '',
+                    date: headers.Date || '',
+                    event: headers.Event || '',
+                    result: headers.Result || '',
+                    // You can add more metadata fields here if needed:
+                    timeControl: headers.TimeControl || '',
+                    whiteElo: headers.WhiteElo || '',
+                    blackElo: headers.BlackElo || '',
+                    eco: headers.ECO || ''
                 }
             });
             return true;
         } catch (error) {
-            console.error('Failed to load game:', error);
-            return false;
+            // More specific error messages
+            console.error('Failed to load game:', error.message);
+            return {
+                success: false,
+                error: error.message
+            };
         }
     },
 
@@ -92,11 +191,11 @@ export const useGameStore = create((set, get) => ({
         const newGame = new Chess();
         set({
             game: newGame,
-            currentFen: newGame.fen(),
-            currentPgn: '',
-            moveHistory: [],
+            currentPositionFen: newGame.fen(),
+            gamePgn: '',
+            gameMoveHistory: [],
             currentMoveIndex: -1,
-            metadata: {
+            gameMetadata: {
                 white: '',
                 black: '',
                 date: '',
