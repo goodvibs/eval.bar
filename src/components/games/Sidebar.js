@@ -25,17 +25,17 @@ export function Sidebar({ isOpen, onClose }) {
                 transform transition-transform duration-500
                 ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
             `}>
-                <div className="h-full bg-slate-700 flex flex-col overflow-hidden">
+                <div className="h-full bg-slate-700 flex flex-col overflow-hidden p-4 gap-4">
                     {/* Mobile header */}
-                    <div className="lg:hidden flex items-center justify-between p-4 border-b border-slate-600">
-                        <span className="text-lg font-semibold text-slate-200">Import Menu</span>
+                    <div className="flex items-center justify-between">
+                        <span className="flex flex-1 font-semibold justify-center text-slate-200">Load a game from</span>
                         <button
                             onClick={onClose}
                             className="p-2 hover:bg-slate-600 rounded-full"
                             aria-label="Close menu"
                         >
                             <svg
-                                className="w-6 h-6 text-slate-200"
+                                className="lg:hidden w-6 h-6 text-slate-200"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -51,7 +51,7 @@ export function Sidebar({ isOpen, onClose }) {
                     </div>
 
                     {/* Sidebar content */}
-                    <div className="flex w-full flex-col gap-4 text-slate-50 p-4 lg:pr-0 overflow-y-auto">
+                    <div className="flex w-full flex-col gap-4 text-slate-50 overflow-y-auto">
                         <div className="flex gap-1 border-b border-slate-500">
                             <TabButton
                                 active={currTab === 0}
