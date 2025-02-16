@@ -7,7 +7,7 @@ export function AnalysisLine({ line, isMainLine, onMoveClick }) {
     if (!line || !line.moves) return null;
 
     const chess = new Chess(currentPositionFen);
-    const currentMoveNumber = chess.moveNumber();
+    const currentMoveNumber = Math.floor(chess.history().length / 2) + 1;
     const isBlackToMove = chess.turn() === 'b';
 
     const formatScore = (score) => {
