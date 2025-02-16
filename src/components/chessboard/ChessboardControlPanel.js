@@ -23,9 +23,12 @@ export function ChessboardControlPanel() {
 
             // Calculate available height (viewport height minus header space)
             const availableHeight = Math.max(window.innerHeight - 200, 300);
-            const availableWidth = window.innerWidth - 30;
-            const newSize = Math.min(availableHeight, availableWidth);
 
+            // Account for sidebar on larger screens
+            const sidebarWidth = window.innerWidth >= 1024 ? 570 : 0;
+            const availableWidth = window.innerWidth - sidebarWidth - 30;
+
+            const newSize = Math.min(availableHeight, availableWidth);
             setBoardWidth(newSize);
         };
 

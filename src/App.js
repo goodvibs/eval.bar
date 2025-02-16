@@ -22,6 +22,7 @@ export default function App() {
             <div className="flex items-center justify-center lg:items-start overflow-hidden">
                 <Sidebar
                     isOpen={isSidebarOpen}
+                    onOpen={() => setIsSidebarOpen(true)}
                     onClose={() => setIsSidebarOpen(false)}
                 />
 
