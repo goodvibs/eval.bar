@@ -73,7 +73,7 @@ export function Navigation() {
                         ${showAbout ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}
                     `}
                 >
-                    <div className="flex items-center justify-between items-start mb-4">
+                    <div className="flex justify-between items-start mb-4">
                         <h2 className="text-lg font-semibold text-slate-50">About eval.bar</h2>
                         <div className="flex items-center justify-end">
                             <button
