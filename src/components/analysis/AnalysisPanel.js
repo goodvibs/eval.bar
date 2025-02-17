@@ -26,14 +26,14 @@ export function AnalysisPanel() {
     };
 
     return (
-        <div className="flex flex-col bg-slate-800 rounded-l-lg overflow-hidden">
+        <div className="flex min-h-fit flex-col bg-slate-800 rounded-l-lg overflow-hidden">
             <AnalysisPanelHeader
                 isAnalyzing={isAnalyzing}
                 depth={depth}
                 currentLines={currentLines}
             />
 
-            <div className="flex flex-col divide-y divide-slate-700">
+            <div className="flex flex-1 flex-col divide-y divide-slate-700">
                 {currentLines.map((line, idx) => (
                     <AnalysisLine
                         key={idx}
