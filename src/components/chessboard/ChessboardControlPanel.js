@@ -27,7 +27,7 @@ export function ChessboardControlPanel() {
             const availableHeight = Math.max(window.innerHeight - 200, 300);
 
             // Account for sidebar on larger screens
-            const sidebarWidth = window.innerWidth >= 1024 ? 570 : 0;
+            const sidebarWidth = window.innerWidth >= 1024 ? 610 : 0;
             const availableWidth = window.innerWidth - sidebarWidth - 30;
 
             const newSize = Math.min(availableHeight, availableWidth);
@@ -57,7 +57,7 @@ export function ChessboardControlPanel() {
     return (
         <div
             ref={containerRef}
-            className="flex flex-col duration-300 transition-all w-fit max-w-full border-slate-500 border rounded-lg p-2 pb-0"
+            className="flex flex-col duration-300 transition-all w-fit max-w-full border-slate-600 border rounded-lg p-2 pb-0"
         >
             <Chessboard
                 position={currentPositionFen}

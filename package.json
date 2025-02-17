@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@firebasegen/default-connector": "file:dataconnect-generated/js/default-connector",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "chess-tools": "^0.3.0",
     "chess.js": "^0.13.0",
     "cm-chess": "^3.5.1",
     "react": "^18.2.0",

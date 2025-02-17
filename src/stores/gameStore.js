@@ -1,17 +1,6 @@
 import { create } from 'zustand';
-import {Chess, FEN} from 'cm-chess';
-
-function extractPgnHeaders(pgn) {
-    const headers = {};
-    const headerRegex = /^\[(\w+)\s+"([^"]+)"\]/gm;
-    let match;
-
-    while ((match = headerRegex.exec(pgn)) !== null) {
-        headers[match[1]] = match[2];
-    }
-
-    return headers;
-}
+import {Chess} from 'cm-chess';
+import {extractPgnHeaders, isSupportedVariant} from "../utils/chesscom";
 
 function processPgn(pgn) {
     pgn = pgn.trimEnd();
@@ -21,28 +10,6 @@ function processPgn(pgn) {
         pgn = pgn.replace(resultRegex, '');
     }
     return pgn.trimEnd();
-}
-
-function isSupportedVariant(headers) {
-    // List of supported variants
-    const supportedVariants = [
-        undefined,  // Standard chess (no Variant tag)
-        'Standard' // Some sites explicitly mark standard games
-    ];
-
-    // Variant is unsupported
-    if (!supportedVariants.includes(headers.Variant)) {
-        throw new Error(`Unsupported chess variant: ${headers.Variant}`);
-    }
-
-    // Check for custom positions through FEN
-    if (headers.SetUp === '1' && headers.FEN) {
-        if (headers.FEN !== FEN.start) {
-            throw new Error('Custom position games are not supported');
-        }
-    }
-
-    return true;
 }
 
 export const useGameStore = create((set, get) => ({
