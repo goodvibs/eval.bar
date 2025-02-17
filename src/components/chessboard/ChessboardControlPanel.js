@@ -10,6 +10,7 @@ export function ChessboardControlPanel() {
         goToMove,
         undo,
         redo,
+        gameMetadata,
         currentMoveIndex,
         gameMoveHistory,
     } = useGameStore();
@@ -23,8 +24,10 @@ export function ChessboardControlPanel() {
         const updateSize = () => {
             if (!containerRef.current) return;
 
-            // Calculate available height (viewport height minus header space)
-            const availableHeight = Math.max(window.innerHeight - 200, 300);
+            const headerHeight = 160;
+            const metadataHeight = gameMetadata.white ? 60 : 0;
+            const minimumHeight = 300;
+            const availableHeight = Math.max(window.innerHeight - headerHeight - metadataHeight, minimumHeight);
 
             // Account for sidebar on larger screens
             const sidebarWidth = window.innerWidth >= 1024 ? 610 : 0;
@@ -40,7 +43,7 @@ export function ChessboardControlPanel() {
         // Update on window resize
         window.addEventListener('resize', updateSize);
         return () => window.removeEventListener('resize', updateSize);
-    }, []);
+    }, [gameMetadata.white]);
 
     const onPieceDrop = (sourceSquare, targetSquare) => {
         return makeMove({
