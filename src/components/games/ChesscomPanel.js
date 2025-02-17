@@ -38,7 +38,7 @@ export function ChesscomPanel() {
     };
 
     const handleGameSelect = (game) => {
-        loadGame(game.pgn);
+        loadGame(game);
     };
 
     return (
@@ -85,7 +85,7 @@ export function ChesscomPanel() {
 
             {games.length > 0 && (
                 <div className="relative flex gap-4">
-                    <div className="flex bg-slate-800 p-2 border rounded-lg border-slate-600 flex-1 flex-col gap-2 max-h-72 overflow-y-auto
+                    <div className="flex bg-slate-800 p-2 border rounded-lg border-slate-600 flex-1 flex-col gap-2 max-h-[calc(100vh-25rem)] overflow-y-auto
             scrollbar-thin scrollbar-thumb-transparent hover:scrollbar-thumb-slate-600
             active:scrollbar-thumb-slate-600 scrollbar-track-transparent">
                         {games.map((game) => (

@@ -16,7 +16,7 @@ export function Sidebar({ isOpen, onOpen, onClose, height }) {  // Separate open
                 transition-all duration-1000
                 lg:hidden
                 z-30
-                ${isOpen ? 'bg-opacity-50 pointer-events-auto' : 'bg-opacity-0'}
+                ${isOpen ? 'backdrop-blur bg-opacity-50 pointer-events-auto' : 'bg-opacity-0'}
                 `}
                 onClick={onClose}
             />
@@ -28,9 +28,8 @@ export function Sidebar({ isOpen, onOpen, onClose, height }) {  // Separate open
                 fixed lg:relative lg:block
                 inset-y-0 lg:inset-y-auto left-0 
                 w-full lg:w-72
-                h-full bg-slate-700 lg:h-[101]
-                max-h-screen
-                ${isOpen && window.innerWidth < 1024 ? 'outline outline-1 outline-slate-500' : ''}
+                bg-slate-700
+                ${isOpen ? 'outline outline-1 outline-slate-500 lg:outline-none' : ''}
                 z-40 lg:z-0
                 transform transition-transform duration-1000
                 ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
@@ -81,7 +80,7 @@ export function Sidebar({ isOpen, onOpen, onClose, height }) {  // Separate open
                     </div>
 
                     {/* Sidebar content */}
-                    <div className="flex flex-1 lg:flex-none flex-col gap-4 text-slate-50 overflow-y-auto">
+                    <div className="flex flex-1 lg:flex-none flex-col gap-4 text-slate-50">
                         <div className="flex gap-1 border-b border-slate-600">
                             <TabButton
                                 active={currTab === 0}

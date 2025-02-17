@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import {Chess} from 'cm-chess';
-import {extractPgnHeaders, isSupportedVariant} from "../utils/chesscom";
 
 function processPgn(pgn) {
     pgn = pgn.trimEnd();
@@ -27,11 +26,19 @@ export const useGameStore = create((set, get) => ({
     },
 
     gameMetadata: {
-        white: '',
-        black: '',
-        date: '',
-        event: '',
-        result: ''
+        white: null,
+        black: null,
+        date: null,
+        result: null,
+        timeControl: null,
+        whiteElo: null,
+        blackElo: null,
+        eco: null,
+        opening: null,
+        variant: null,
+        finalPosition: null,
+        url: null,
+        event: null
     },
 
     makeMove: (move) => {
@@ -102,22 +109,22 @@ export const useGameStore = create((set, get) => ({
     },
 
     // Load a game from PGN
-    loadGame: (pgn) => {
+    loadGame: (game) => {
         try {
-            if (!pgn) {
-                throw new Error('No PGN provided');
-            }
+            // // Extract headers first
+            // const headers = extractPgnHeaders(game.pgn);
+            //
+            // // Validate variant before proceeding
+            // if (!isSupportedVariant(headers)) {
+            //     return false;
+            // }
 
-            // Extract headers first
-            const headers = extractPgnHeaders(pgn);
-
-            // Validate variant before proceeding
-            if (!isSupportedVariant(headers)) {
+            if (!game.isSupported) {
                 return false;
             }
 
             // Process and load the game
-            pgn = processPgn(pgn);
+            let pgn = processPgn(game.pgn);
             const newGame = new Chess();
 
             newGame.loadPgn(pgn);
@@ -130,16 +137,19 @@ export const useGameStore = create((set, get) => ({
                 gameMoveHistory: moves,
                 currentMoveIndex: moves.length - 1,
                 gameMetadata: {
-                    white: headers.White || '',
-                    black: headers.Black || '',
-                    date: headers.Date || '',
-                    event: headers.Event || '',
-                    result: headers.Result || '',
-                    // You can add more metadata fields here if needed:
-                    timeControl: headers.TimeControl || '',
-                    whiteElo: headers.WhiteElo || '',
-                    blackElo: headers.BlackElo || '',
-                    eco: headers.ECO || ''
+                    white: game.white,
+                    black: game.black,
+                    date: game.date,
+                    result: game.result,
+                    timeControl: game.timeControl,
+                    whiteElo: game.whiteElo,
+                    blackElo: game.blackElo,
+                    eco: game.ECO,
+                    opening: game.opening,
+                    variant: game.variant,
+                    finalPosition: game.fen,
+                    url: game.url,
+                    event: game.event
                 }
             });
             return true;

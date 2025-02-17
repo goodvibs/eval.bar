@@ -3,6 +3,7 @@ import {AnalysisPanel} from "./analysis/AnalysisPanel";
 import {MoveHistory} from "./moves/MoveHistory";
 import {useGameStore} from "../stores/gameStore";
 import {ChessboardControlPanel} from "./chessboard/ChessboardControlPanel";
+import {GameMetadata} from "./gameMetadata";
 
 export function GameArea() {
     const { gameMetadata } = useGameStore();
@@ -30,17 +31,7 @@ export function GameArea() {
     return (
         <main className="flex flex-1 justify-center flex-wrap lg:flex-nowrap gap-4 p-4 overflow-hidden">
             <div ref={firstContainerRef} className="flex h-fit flex-col gap-4">
-                {gameMetadata.white && gameMetadata.black && (
-                    <div className="flex justify-between items-center text-slate-300">
-                        <div className="text-lg">
-                            {gameMetadata.white} vs {gameMetadata.black}
-                        </div>
-                        <div className="text-sm text-slate-400">
-                            {gameMetadata.date} • {gameMetadata.event}
-                        </div>
-                    </div>
-                )}
-
+                <GameMetadata metadata={gameMetadata} />
                 <ChessboardControlPanel />
             </div>
 

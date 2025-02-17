@@ -100,6 +100,7 @@ export async function fetchChesscomGames(username, year, month) {
                 opening: headers.Opening,
                 variant: headers.Variant,
                 isSupported,
+                event: headers.Event,
                 finalPosition: game.fen // For the preview
             };
         });
