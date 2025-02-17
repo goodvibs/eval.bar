@@ -120,7 +120,7 @@ export function Navigation() {
                                 </svg>
                                 View source code
                             </a>
-                            <span>Version 1.0.0</span>
+                            <span>Version 0.1.0</span>
                         </div>
                     </div>
                 </div>
