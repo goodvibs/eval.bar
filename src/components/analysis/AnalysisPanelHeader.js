@@ -54,7 +54,7 @@ export function AnalysisPanelHeader({ isAnalyzing, depth, currentLines }) {
 
                 <button
                     onClick={handleAnalysisClick}
-                    className={`flex flex-nowrap items-center px-2 py-1 text-sm rounded transition-colors gap-0.5 font-medium ${
+                    className={`flex flex-nowrap items-center px-2 py-1 text-sm rounded transition-colors gap-1 font-medium ${
                         isAnalyzing
                             ? 'bg-red-600 hover:bg-red-700 text-white'
                             : 'bg-green-600 hover:bg-green-500 text-white'
