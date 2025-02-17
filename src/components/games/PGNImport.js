@@ -26,7 +26,7 @@ export function PGNImport() {
     return (
         <div className="flex flex-col gap-4">
             <label className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-slate-300">
+                <span className="text-sm lg:text-xs font-medium text-slate-300">
                     Paste PGN
                 </span>
                 <textarea
@@ -36,7 +36,7 @@ export function PGNImport() {
                         setError(''); // Clear error when input changes
                     }}
                     placeholder="1. e4 e5 2. Nf3 Nc6 ..."
-                    className="h-48 p-2 bg-slate-700 rounded text-slate-200 border border-slate-600 resize-none font-mono text-sm"
+                    className="h-48 p-2 bg-slate-800 rounded text-slate-200 border border-slate-600 resize-none font-mono text-sm"
                 />
             </label>
 

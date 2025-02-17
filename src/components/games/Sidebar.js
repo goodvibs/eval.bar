@@ -3,7 +3,7 @@ import React from "react";
 import {ChesscomPanel} from "./ChesscomPanel";
 import {PGNImport} from "./PGNImport";
 
-export function Sidebar({ isOpen, onOpen, onClose }) {  // Separate open and close actions
+export function Sidebar({ isOpen, onOpen, onClose, height }) {  // Separate open and close actions
     const [currTab, setCurrTab] = React.useState(0);
 
     return (
@@ -22,10 +22,15 @@ export function Sidebar({ isOpen, onOpen, onClose }) {  // Separate open and clo
             />
 
             {/* Sidebar wrapper with tab */}
-            <aside className={`
+            <aside
+                style={window.innerWidth >= 1024 ? { height: height } : {}}
+                className={`
                 fixed lg:relative lg:block
-                inset-y-0 left-0 w-full lg:w-auto
-                ${isOpen ? 'outline outline-1 outline-slate-500' : ''}
+                inset-y-0 lg:inset-y-auto left-0 
+                w-full lg:w-72
+                h-full bg-slate-700 lg:h-[101]
+                max-h-screen
+                ${isOpen && window.innerWidth < 1024 ? 'outline outline-1 outline-slate-500' : ''}
                 z-40 lg:z-0
                 transform transition-transform duration-1000
                 ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
@@ -51,7 +56,7 @@ export function Sidebar({ isOpen, onOpen, onClose }) {  // Separate open and clo
                     </svg>
                 </button>
 
-                <div className="h-full bg-slate-700 flex flex-col overflow-hidden p-4 gap-4">
+                <div className="flex flex-col p-4 lg:pr-0 overflow-hidden gap-4">
                     {/* X button - only for closing */}
                     <div className="flex items-center justify-end">
                         <button
@@ -76,8 +81,8 @@ export function Sidebar({ isOpen, onOpen, onClose }) {  // Separate open and clo
                     </div>
 
                     {/* Sidebar content */}
-                    <div className="flex w-full flex-col gap-4 text-slate-50 overflow-y-auto">
-                        <div className="flex gap-1 border-b border-slate-500">
+                    <div className="flex flex-1 lg:flex-none flex-col gap-4 text-slate-50 overflow-y-auto">
+                        <div className="flex gap-1 border-b border-slate-600">
                             <TabButton
                                 active={currTab === 0}
                                 label="Chess.com"

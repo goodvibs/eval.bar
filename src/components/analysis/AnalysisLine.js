@@ -2,12 +2,12 @@ import {useGameStore} from "../../stores/gameStore";
 import {Chess} from "chess.js";
 
 export function AnalysisLine({ line, isMainLine, onMoveClick }) {
-    const { currentFen } = useGameStore();
+    const { currentPositionFen } = useGameStore();
 
     if (!line || !line.moves) return null;
 
-    const chess = new Chess(currentFen);
-    const currentMoveNumber = chess.moveNumber();
+    const chess = new Chess(currentPositionFen);
+    const currentMoveNumber = Math.floor(chess.history().length / 2) + 1;
     const isBlackToMove = chess.turn() === 'b';
 
     const formatScore = (score) => {
