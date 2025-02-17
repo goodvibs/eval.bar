@@ -1,0 +1,44 @@
+[debug] [2025-02-17T03:21:13.188Z] ----------------------------------------------------------------------
+[debug] [2025-02-17T03:21:13.193Z] Command:       /usr/local/bin/node /usr/local/bin/firebase serve
+[debug] [2025-02-17T03:21:13.193Z] CLI Version:   13.30.0
+[debug] [2025-02-17T03:21:13.193Z] Platform:      darwin
+[debug] [2025-02-17T03:21:13.193Z] Node Version:  v20.12.2
+[debug] [2025-02-17T03:21:13.193Z] Time:          Sun Feb 16 2025 19:21:13 GMT-0800 (Pacific Standard Time)
+[debug] [2025-02-17T03:21:13.193Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-02-17T03:21:13.311Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-02-17T03:21:13.311Z] > authorizing via signed-in user (vibsingamshetty@gmail.com)
+[debug] [2025-02-17T03:21:13.311Z] [iam] checking project chess-analysis-web-app for permissions ["firebase.projects.get"]
+[debug] [2025-02-17T03:21:13.312Z] Checked if tokens are valid: true, expires at: 1739765664063
+[debug] [2025-02-17T03:21:13.312Z] Checked if tokens are valid: true, expires at: 1739765664063
+[debug] [2025-02-17T03:21:13.312Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/chess-analysis-web-app:testIamPermissions [none]
+[debug] [2025-02-17T03:21:13.312Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/chess-analysis-web-app:testIamPermissions x-goog-quota-user=projects/chess-analysis-web-app
+[debug] [2025-02-17T03:21:13.312Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/chess-analysis-web-app:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2025-02-17T03:21:14.013Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/chess-analysis-web-app:testIamPermissions 200
+[debug] [2025-02-17T03:21:14.013Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/chess-analysis-web-app:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2025-02-17T03:21:14.013Z] Checked if tokens are valid: true, expires at: 1739765664063
+[debug] [2025-02-17T03:21:14.013Z] Checked if tokens are valid: true, expires at: 1739765664063
+[debug] [2025-02-17T03:21:14.014Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/chess-analysis-web-app [none]
+[debug] [2025-02-17T03:21:14.145Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/chess-analysis-web-app 200
+[debug] [2025-02-17T03:21:14.145Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/chess-analysis-web-app {"projectNumber":"1061328721698","projectId":"chess-analysis-web-app","lifecycleState":"ACTIVE","name":"eval-bar","labels":{"firebase":"enabled"},"createTime":"2023-01-04T23:43:54.302Z"}
+[info] 
+[info] === Serving from '/Users/vibhavsingamshetty/Documents/Documents - Vibhav’s MacBook Pro/Programming/WebStormProjects/chessanalysiswebapp'...
+[info] 
+[debug] [2025-02-17T03:21:14.149Z] Checked if tokens are valid: true, expires at: 1739765664063
+[debug] [2025-02-17T03:21:14.149Z] Checked if tokens are valid: true, expires at: 1739765664063
+[debug] [2025-02-17T03:21:14.149Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/chess-analysis-web-app/sites 
+[debug] [2025-02-17T03:21:15.069Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/chess-analysis-web-app/sites 200
+[debug] [2025-02-17T03:21:15.069Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/chess-analysis-web-app/sites {"sites":[{"name":"projects/chess-analysis-web-app/sites/chess-analysis-web-app","defaultUrl":"https://chess-analysis-web-app.web.app","type":"DEFAULT_SITE"}]}
+[debug] [2025-02-17T03:21:15.069Z] Checked if tokens are valid: true, expires at: 1739765664063
+[debug] [2025-02-17T03:21:15.069Z] Checked if tokens are valid: true, expires at: 1739765664063
+[debug] [2025-02-17T03:21:15.070Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/chess-analysis-web-app/webApps/-/config [none]
+[debug] [2025-02-17T03:21:15.575Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/chess-analysis-web-app/webApps/-/config 200
+[debug] [2025-02-17T03:21:15.576Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/chess-analysis-web-app/webApps/-/config {"projectId":"chess-analysis-web-app","appId":"1:1061328721698:web:242f1e66aef186c639f77b","storageBucket":"chess-analysis-web-app.firebasestorage.app","apiKey":"AIzaSyC3r-SZlqsUxnGfh5ZpW0S9OTUopCBCpc4","authDomain":"chess-analysis-web-app.firebaseapp.com","messagingSenderId":"1061328721698","measurementId":"G-9V011LJQ64"}
+[debug] [2025-02-17T03:21:15.584Z] Checked if tokens are valid: true, expires at: 1739765664063
+[debug] [2025-02-17T03:21:15.584Z] Checked if tokens are valid: true, expires at: 1739765664063
+[debug] [2025-02-17T03:21:15.585Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/chess-analysis-web-app [none]
+[debug] [2025-02-17T03:21:15.739Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/chess-analysis-web-app 200
+[debug] [2025-02-17T03:21:15.739Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/chess-analysis-web-app {"projectId":"chess-analysis-web-app","projectNumber":"1061328721698","displayName":"eval-bar","name":"projects/chess-analysis-web-app","resources":{"hostingSite":"chess-analysis-web-app"},"state":"ACTIVE","etag":"1_7d4507af-3dbb-405d-9a1d-901b1553cdf8"}
+[info] i  hosting[chess-analysis-web-app]: Serving hosting files from: build {"metadata":{"emulator":{"name":"hosting"},"message":"Serving hosting files from: \u001b[1mbuild\u001b[22m"}}
+[info] ✔  hosting[chess-analysis-web-app]: Local server: http://localhost:5002 {"metadata":{"emulator":{"name":"hosting"},"message":"Local server: \u001b[4m\u001b[1mhttp://localhost:5002\u001b[22m\u001b[24m"}}
+[info] i  hosting: ::1 - - [17/Feb/2025:03:21:19 +0000] "GET /%PUBLIC_URL%/manifest.json HTTP/1.1" 500 - "http://localhost:5002/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2.1 Safari/605.1.15" {"metadata":{"emulator":{"name":"hosting"},"message":"::1 - - [17/Feb/2025:03:21:19 +0000] \"GET /%PUBLIC_URL%/manifest.json HTTP/1.1\" 500 - \"http://localhost:5002/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2.1 Safari/605.1.15\""}}
