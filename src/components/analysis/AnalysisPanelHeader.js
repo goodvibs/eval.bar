@@ -66,69 +66,74 @@ export function AnalysisPanelHeader({ isAnalyzing, depth, currentLines }) {
                     <button
                         ref={buttonRef}
                         onClick={() => setShowSettings(!showSettings)}
-                        className="rounded-full fill-slate-400 hover:fill-slate-300 p-1"
+                        aria-label="Engine Settings"
+                        className="rounded-full fill-slate-400 hover:fill-slate-300 transition duration-100 p-1 touch-manipulation outline-none"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" height="22" width="22" viewBox="0 -960 960 960">
                             <path d="M433-80q-27 0-46.5-18T363-142l-9-66q-13-5-24.5-12T307-235l-62 26q-25 11-50 2t-39-32l-47-82q-14-23-8-49t27-43l53-40q-1-7-1-13.5v-27q0-6.5 1-13.5l-53-40q-21-17-27-43t8-49l47-82q14-23 39-32t50 2l62 26q11-8 23-15t24-12l9-66q4-26 23.5-44t46.5-18h94q27 0 46.5 18t23.5 44l9 66q13 5 24.5 12t22.5 15l62-26q25-11 50-2t39 32l47 82q14 23 8 49t-27 43l-53 40q1 7 1 13.5v27q0 6.5-2 13.5l53 40q21 17 27 43t-8 49l-48 82q-14 23-39 32t-50-2l-60-26q-11 8-23 15t-24 12l-9 66q-4 26-23.5 44T527-80h-94Zm49-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z"/>
                         </svg>
                     </button>
 
-                    {/* Settings popup */}
-                    {showSettings && (
-                        <div
-                            ref={settingsRef}
-                            className="absolute right-0 top-9 bg-slate-800 rounded-lg border border-slate-600 shadow-lg p-3 z-10 min-w-64"
-                        >
-                            <h3 className="text-slate-200 text-sm font-semibold mb-3">Engine Settings</h3>
+                    {/* Settings popup with transition */}
+                    <div
+                        ref={settingsRef}
+                        className={`absolute right-0 transform origin-top-right transition-all duration-200 ease-out ${
+                            showSettings
+                                ? "opacity-100 scale-100 translate-y-0 visible"
+                                : "opacity-0 scale-95 -translate-y-2 invisible"
+                        } top-9 bg-slate-800 rounded-lg border border-slate-600 shadow-lg p-3 z-10 w-64 sm:min-w-64 max-w-[calc(100vw-24px)]`}
+                    >
+                        <h3 className="text-slate-200 text-sm font-semibold mb-3">Engine Settings</h3>
 
-                            <div className="space-y-4">
-                                {/* MultiPV Setting */}
-                                <div className="space-y-1">
-                                    <label className="text-slate-300 text-xs block">
-                                        Analysis Lines
-                                    </label>
-                                    <select
-                                        className="w-full bg-slate-700 text-slate-200 text-sm rounded px-2 py-1.5 border border-slate-600 disabled:opacity-50 focus:outline-none focus:ring-1 focus:ring-slate-500"
-                                        value={multipv}
-                                        onChange={(e) => setMultiPV(Number(e.target.value))}
-                                        disabled={isAnalyzing}
-                                    >
-                                        <option value={1}>1 line</option>
-                                        <option value={2}>2 lines</option>
-                                        <option value={3}>3 lines</option>
-                                        <option value={4}>4 lines</option>
-                                        <option value={5}>5 lines</option>
-                                    </select>
-                                </div>
+                        <div className="space-y-4">
+                            {/* MultiPV Setting */}
+                            <div className="space-y-1">
+                                <label htmlFor="multipv-select" className="text-slate-300 text-xs block">
+                                    Analysis Lines
+                                </label>
+                                <select
+                                    id="multipv-select"
+                                    className="w-full bg-slate-700 text-slate-200 text-sm rounded px-2 py-2 border border-slate-600 disabled:opacity-50 outline-none"
+                                    value={multipv}
+                                    onChange={(e) => setMultiPV(Number(e.target.value))}
+                                    disabled={isAnalyzing}
+                                >
+                                    <option value={1}>1 line</option>
+                                    <option value={2}>2 lines</option>
+                                    <option value={3}>3 lines</option>
+                                    <option value={4}>4 lines</option>
+                                    <option value={5}>5 lines</option>
+                                </select>
+                            </div>
 
-                                {/* Search Depth Setting */}
-                                <div className="space-y-1">
-                                    <label className="text-slate-300 text-xs block">
-                                        Search Depth
-                                    </label>
-                                    <select
-                                        className="w-full bg-slate-700 text-slate-200 text-sm rounded px-2 py-1.5 border border-slate-600 disabled:opacity-50 focus:outline-none focus:ring-1 focus:ring-slate-500"
-                                        value={searchDepth}
-                                        onChange={(e) => setSearchDepth(Number(e.target.value))}
-                                        disabled={isAnalyzing}
-                                    >
-                                        <option value={15}>15 (fastest)</option>
-                                        <option value={18}>18</option>
-                                        <option value={20}>20 (balanced)</option>
-                                        <option value={22}>22</option>
-                                        <option value={25}>25</option>
-                                        <option value={30}>30 (strongest)</option>
-                                    </select>
-                                </div>
+                            {/* Search Depth Setting */}
+                            <div className="space-y-1">
+                                <label htmlFor="depth-select" className="text-slate-300 text-xs block">
+                                    Search Depth
+                                </label>
+                                <select
+                                    id="depth-select"
+                                    className="w-full bg-slate-700 text-slate-200 text-sm rounded px-2 py-2 border border-slate-600 disabled:opacity-50 outline-none"
+                                    value={searchDepth}
+                                    onChange={(e) => setSearchDepth(Number(e.target.value))}
+                                    disabled={isAnalyzing}
+                                >
+                                    <option value={15}>15 (fastest)</option>
+                                    <option value={18}>18</option>
+                                    <option value={20}>20 (balanced)</option>
+                                    <option value={22}>22</option>
+                                    <option value={25}>25</option>
+                                    <option value={30}>30 (strongest)</option>
+                                </select>
                             </div>
                         </div>
-                    )}
+                    </div>
                 </div>
 
                 {/* Analyze/Stop button */}
                 <button
                     onClick={handleAnalysisClick}
-                    className={`flex flex-nowrap items-center px-2 py-1 text-sm rounded transition-all gap-1 font-semibold ${
+                    className={`flex flex-nowrap items-center px-2 py-1 text-sm rounded transition-all gap-1 font-semibold touch-manipulation ${
                         isAnalyzing
                             ? 'bg-red-600 hover:bg-red-700 text-slate-100'
                             : 'bg-green-600 hover:bg-green-500 text-slate-100'
