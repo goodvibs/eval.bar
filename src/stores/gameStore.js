@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import {Chess} from 'cm-chess';
+import {Chess, FEN} from 'cm-chess';
 import {Pgn} from "cm-pgn/src/Pgn";
 
 function processPgn(pgn) {
@@ -18,7 +18,7 @@ export const useGameStore = create((set, get) => ({
     gameMoveHistory: [],
 
     currentMoveIndex: -1,
-    currentPositionFen: new Chess().fen(),
+    currentPositionFen: FEN.start,
     currentPositionAnalysis: {
         depth: 0,
         evaluation: 0,
