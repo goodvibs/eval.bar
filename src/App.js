@@ -1,33 +1,21 @@
 import React from "react";
-import {Navigation} from "./components/Navigation";
-import {EvaluationBar} from "./components/EvaluationBar";
-import {GameArea} from "./components/GameArea";
-import {Sidebar} from "./components/games/Sidebar";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { MainContent } from "./components/MainContent";
 
 export default function App() {
-    const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
-
-    // Handle keyboard events for accessibility
-    const handleKeyDown = (e) => {
-        if (e.key === 'Escape' && isSidebarOpen) {
-            setIsSidebarOpen(false);
-        }
-    };
-
     return (
-        <div className="flex flex-col min-h-screen bg-slate-700" onKeyDown={handleKeyDown}>
-            <Navigation onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
-            <EvaluationBar />
+        <BrowserRouter>
+            <Routes>
+                {/* Main analysis board route */}
+                <Route path="/" element={<MainContent />} />
 
-            <div className="flex items-center justify-center lg:items-start overflow-hidden">
-                <Sidebar
-                    isOpen={isSidebarOpen}
-                    onOpen={() => setIsSidebarOpen(true)}
-                    onClose={() => setIsSidebarOpen(false)}
-                />
+                {/* Chess.com game import routes */}
+                <Route path="/game/live/:gameId" element={<MainContent />} />
+                <Route path="/game/daily/:gameId" element={<MainContent />} />
 
-                <GameArea />
-            </div>
-        </div>
+                {/* All other routes redirect to home */}
+                <Route path="*" element={<MainContent />} />
+            </Routes>
+        </BrowserRouter>
     );
 }

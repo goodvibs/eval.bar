@@ -8,11 +8,37 @@
     ],
     "rewrites": [
       {
+        "source": "/game/live/**",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/game/daily/**",
+        "destination": "/index.html"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
     ],
     "headers": [
+      {
+        "source": "**/*.@(js|css)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=31536000"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(jpg|jpeg|png|gif|webp|svg|ico)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=31536000"
+          }
+        ]
+      },
       {
         "source": "**/*.wasm",
         "headers": [
