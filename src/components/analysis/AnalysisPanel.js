@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { AnalysisLine } from "./AnalysisLine";
+import { EngineLine } from "./EngineLine";
 import { useGameStore } from "../../stores/gameStore";
 import { Chess } from "chess.js";
 import { useEngineStore } from "../../stores/useEngineStore";
@@ -79,7 +79,7 @@ export function AnalysisPanel() {
 
             <div className="flex flex-1 flex-col divide-y divide-slate-700">
                 {currentLines.map((line, idx) => (
-                    <AnalysisLine
+                    <EngineLine
                         key={idx}
                         line={line}
                         isMainLine={idx === 0}

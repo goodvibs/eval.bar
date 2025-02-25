@@ -2,7 +2,7 @@ import {useGameStore} from "../../stores/gameStore";
 import React from "react";
 import {Chess} from "chess.js";
 
-export function PGNImport({ closeSidebar }) {
+export function PgnImportPanel({ closeSidebar }) {
     const [pgnText, setPgnText] = React.useState('');
     const [error, setError] = React.useState('');
     const { loadPgnGame } = useGameStore();

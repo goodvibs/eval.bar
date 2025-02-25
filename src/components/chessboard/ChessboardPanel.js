@@ -3,7 +3,7 @@ import { ChessboardControls } from "./ChessboardControls";
 import React from "react";
 import { useGameStore } from "../../stores/gameStore";
 
-export function ChessboardControlPanel() {
+export function ChessboardPanel() {
     const {
         currentPositionFen,
         makeMove,

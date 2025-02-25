@@ -1,4 +1,4 @@
-export function TabButton({ active, label, onClick }) {
+export function SidebarTabButton({ active, label, onClick }) {
     return (
         <button
             onClick={onClick}

@@ -1,7 +1,7 @@
-import {TabButton} from "./TabButton";
+import {SidebarTabButton} from "./SidebarTabButton";
 import React from "react";
-import {ChesscomPanel} from "./ChesscomPanel";
-import {PGNImport} from "./PGNImport";
+import {ChesscomImportPanel} from "./ChesscomImportPanel";
+import {PgnImportPanel} from "./PgnImportPanel";
 
 export function Sidebar({ isOpen, onOpen, onClose, height }) {  // Separate open and close actions
     const [currTab, setCurrTab] = React.useState(0);
@@ -82,19 +82,19 @@ export function Sidebar({ isOpen, onOpen, onClose, height }) {  // Separate open
                     {/* Sidebar content */}
                     <div className="flex flex-1 lg:flex-none flex-col gap-4 text-slate-100">
                         <div className="flex gap-1 border-b border-slate-600">
-                            <TabButton
+                            <SidebarTabButton
                                 active={currTab === 0}
                                 label="Chess.com"
                                 onClick={() => setCurrTab(0)}
                             />
-                            <TabButton
+                            <SidebarTabButton
                                 active={currTab === 1}
                                 label="PGN"
                                 onClick={() => setCurrTab(1)}
                             />
                         </div>
-                        {currTab === 0 && <ChesscomPanel closeSidebar={onClose} />}
-                        {currTab === 1 && <PGNImport closeSidebar={onClose} />}
+                        {currTab === 0 && <ChesscomImportPanel closeSidebar={onClose} />}
+                        {currTab === 1 && <PgnImportPanel closeSidebar={onClose} />}
                     </div>
                 </div>
             </aside>

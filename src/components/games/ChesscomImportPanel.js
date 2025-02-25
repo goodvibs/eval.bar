@@ -2,7 +2,7 @@ import React from 'react';
 import {useGameStore} from "../../stores/gameStore";
 import {fetchChesscomGames} from "../../utils/chesscom";
 
-export function ChesscomPanel({ closeSidebar }) {
+export function ChesscomImportPanel({ closeSidebar }) {
     // Get current date and format it as YYYY-MM
     const getCurrentYearMonth = () => {
         const now = new Date();

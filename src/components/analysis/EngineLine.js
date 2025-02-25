@@ -3,7 +3,7 @@ import { useGameStore } from "../../stores/gameStore";
 import { Chess } from "chess.js";
 import { processEvaluation } from "../../utils/evaluation";
 
-export function AnalysisLine({ line, isMainLine, onMoveClick }) {
+export function EngineLine({ line, isMainLine, onMoveClick }) {
     const { currentPositionFen } = useGameStore();
 
     // Use useMemo to avoid recalculating these on every render
