@@ -45,10 +45,11 @@ export function ChessboardPanel() {
         return () => window.removeEventListener('resize', updateSize);
     }, [gameMetadata.white]);
 
-    const onPieceDrop = (sourceSquare, targetSquare) => {
+    const onPieceDrop = (sourceSquare, targetSquare, promotion) => {
         return makeMove({
             from: sourceSquare,
-            to: targetSquare
+            to: targetSquare,
+            promotion: promotion[1].toLowerCase(),
         });
     };
 
@@ -69,6 +70,7 @@ export function ChessboardPanel() {
                 customDarkSquareStyle={{ backgroundColor: "#64748b" }}
                 boardOrientation={orientedWhite ? "white" : "black"}
                 onPieceDrop={onPieceDrop}
+                // showPromotionDialog={true}
             />
 
             <ChessboardControls
