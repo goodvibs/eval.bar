@@ -56,7 +56,7 @@ export function MoveHistoryHeader() {
                 {/* Lichess Analysis Button */}
                 <button
                     onClick={handleLichessAnalysis}
-                    className="text-xs bg-blue-500 hover:bg-blue-400 text-slate-100 transition-colors px-1 rounded flex items-center gap-1 tracking-wider font-light"
+                    className="text-xs bg-blue-500 hover:bg-blue-400 text-slate-100 transition-colors px-1 py-0.5 rounded flex items-center gap-1 tracking-wider font-light"
                 >
                     <svg className="w-6 h-6 fill-slate-100" viewBox="-12 -12 74 74" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinejoin="round"
