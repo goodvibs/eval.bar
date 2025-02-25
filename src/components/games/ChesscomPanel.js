@@ -72,7 +72,7 @@ export function ChesscomPanel() {
             <button
                 onClick={handleFetchGames}
                 disabled={!selectedDate || isLoading}
-                className="bg-emerald-600 text-slate-100 p-2 rounded hover:bg-emerald-500 transition-colors disabled:opacity-50 disabled:hover:bg-emerald-600"
+                className="bg-emerald-600 text-slate-100 p-2 rounded hover:bg-emerald-500 disabled:opacity-50 disabled:hover:bg-emerald-600"
             >
                 {isLoading ? 'Loading...' : 'Fetch Games'}
             </button>
@@ -100,7 +100,7 @@ export function ChesscomPanel() {
                                     ${game.isSupported
                                     ? 'hover:bg-slate-600'
                                     : ''}
-                                    transition-colors relative group
+                                    relative group
                                 `}
                             >
                                 <div className="flex justify-between items-start mb-2">

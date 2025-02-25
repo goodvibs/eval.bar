@@ -8,7 +8,7 @@ export function Navigation() {
             <nav className="flex items-center p-2 justify-between text-sm text-slate-100">
                 <a
                     href="/"
-                    className="flex text-xl lg:text-base hover:text-slate-300 transition-colors"
+                    className="flex text-xl lg:text-base hover:text-slate-300"
                 >
                     eval.bar
                 </a>
