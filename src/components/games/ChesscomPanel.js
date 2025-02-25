@@ -1,7 +1,6 @@
 import React from 'react';
 import {useGameStore} from "../../stores/gameStore";
 import {fetchChesscomGames} from "../../utils/chesscom";
-import {Chessboard} from "react-chessboard";
 
 export function ChesscomPanel() {
     // Get current date and format it as YYYY-MM

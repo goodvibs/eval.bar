@@ -134,7 +134,7 @@ export const useGameStore = create((set, get) => ({
                 game: newGame,
                 currentPositionFen: newGame.fen(),
                 gamePgn: newGame.pgn,
-                gameMoveHistory: moves,
+                gameMoveHistory: [...moves],
                 currentMoveIndex: moves.length - 1,
                 gameMetadata: {
                     white: game.white,
