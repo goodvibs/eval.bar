@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Navigation } from "./Navigation";
+import { NavigationBar } from "./navigation/NavigationBar";
 import { EvaluationBar } from "./EvaluationBar";
 import { GameArea } from "./GameArea";
 import { Sidebar } from "./games/Sidebar";
@@ -131,7 +131,7 @@ export function MainContent() {
 
     return (
         <div className="flex flex-col min-h-screen bg-slate-700" onKeyDown={handleKeyDown}>
-            <Navigation onMenuClick={() => setSidebarOpen(!isSidebarOpen)} />
+            <NavigationBar onMenuClick={() => setSidebarOpen(!isSidebarOpen)} />
             <EvaluationBar />
 
             <div className="flex items-center justify-center lg:items-start overflow-hidden">
