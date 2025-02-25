@@ -17,7 +17,7 @@ export function NavigationBar() {
                     eval.bar
                 </a>
 
-                <ul className="flex justify-end items-center gap-6">
+                <ul className="flex justify-end items-center gap-4">
                     <li>
                         <AboutButton setShowAbout={setShowAbout} />
                     </li>
