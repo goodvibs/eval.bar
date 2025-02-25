@@ -3,21 +3,21 @@ import {useGameStore} from "../../stores/gameStore";
 import {analyzeOnLichess} from "../../utils/lichess";
 
 export function MoveHistoryHeader() {
-    const { currentMoveIndex, gameMoveHistory, gamePgn } = useGameStore();
+    const { currentMoveIndex, getCurrentFullmove, getGameMoveHistoryFullmoveCount, getGamePgnString } = useGameStore();
 
-    const totalMoves = Math.ceil(gameMoveHistory.length / 2);
-    const currentMove = Math.floor(currentMoveIndex / 2) + 1;
+    const totalMoves = getGameMoveHistoryFullmoveCount();
+    const currentMove = getCurrentFullmove();
 
     const handleCopyPgn = async () => {
         try {
-            await navigator.clipboard.writeText(gamePgn);
+            await navigator.clipboard.writeText(getGamePgnString());
         } catch (err) {
             console.error('Failed to copy PGN:', err);
         }
     };
 
     const handleDownloadPgn = () => {
-        const blob = new Blob([gamePgn], { type: 'text/plain' });
+        const blob = new Blob([getGamePgnString()], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -29,7 +29,7 @@ export function MoveHistoryHeader() {
     };
 
     const handleLichessAnalysis = () => {
-        analyzeOnLichess(gamePgn, false);
+        analyzeOnLichess(getGamePgnString(), false);
     };
 
     return (

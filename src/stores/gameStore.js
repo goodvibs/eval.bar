@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import {Chess} from 'cm-chess';
+import {Pgn} from "cm-pgn/src/Pgn";
 
 function processPgn(pgn) {
     pgn = pgn.trimEnd();
@@ -13,7 +14,7 @@ function processPgn(pgn) {
 
 export const useGameStore = create((set, get) => ({
     game: new Chess(),
-    gamePgn: '',
+    gamePgn: new Pgn(),
     gameMoveHistory: [],
 
     currentMoveIndex: -1,
@@ -47,6 +48,8 @@ export const useGameStore = create((set, get) => ({
 
         let moveHistory = get().gameMoveHistory;
         let currentMoveIndex = get().currentMoveIndex;
+
+        console.log(game.pgn.history)
 
         if (result) {
             if (currentMoveIndex !== moveHistory.length - 1) {
@@ -130,6 +133,8 @@ export const useGameStore = create((set, get) => ({
             newGame.loadPgn(pgn);
             const moves = newGame.history();
 
+            console.log(newGame.pgn)
+
             set({
                 game: newGame,
                 currentPositionFen: newGame.fen(),
@@ -163,22 +168,19 @@ export const useGameStore = create((set, get) => ({
         }
     },
 
-    // Reset to starting position
-    resetGame: () => {
-        const newGame = new Chess();
-        set({
-            game: newGame,
-            currentPositionFen: newGame.fen(),
-            gamePgn: '',
-            gameMoveHistory: [],
-            currentMoveIndex: -1,
-            gameMetadata: {
-                white: '',
-                black: '',
-                date: '',
-                event: '',
-                result: ''
-            }
-        });
+    getGamePgnString: () => {
+        return get().gamePgn.render(false, false, false);
+    },
+
+    getGameMoveHistoryHalfmoveCount: () => {
+        return get().gameMoveHistory.length;
+    },
+
+    getGameMoveHistoryFullmoveCount: () => {
+        return Math.ceil(get().gameMoveHistory.length / 2);
+    },
+
+    getCurrentFullmove: () => {
+        return Math.floor(get().currentMoveIndex / 2) + 1;
     }
 }));
