@@ -2,34 +2,44 @@ import {useGameStore} from "../../stores/gameStore";
 import React from "react";
 import {Chess} from "chess.js";
 
-export function PGNImport() {
+export function PGNImport({ closeSidebar }) {
     const [pgnText, setPgnText] = React.useState('');
     const [error, setError] = React.useState('');
-    const { loadGame } = useGameStore();
+    const { loadPgnGame } = useGameStore();
 
-    const handleImport = () => {
+    const handleImport = (e) => {
+        // Prevent default form submission behavior
+        e.preventDefault();
+
+        if (!pgnText.trim()) {
+            setError('Please enter PGN text.');
+            return;
+        }
+
         try {
-            // Try to create a new chess instance with the PGN to validate it
-            const chess = new Chess();
-            chess.loadPgn(pgnText);
-
-            // If we get here, PGN was valid
-            loadGame(pgnText);
-            setPgnText('');
+            loadPgnGame(pgnText);
             setError('');
+
+            closeSidebar();
         } catch (err) {
             setError('Invalid PGN format. Please check your input.');
             console.error('PGN parsing error:', err);
         }
     };
 
+    const handleClear = () => {
+        setPgnText('');
+        setError('');
+    };
+
     return (
-        <div className="flex flex-col gap-4">
-            <label className="flex flex-col gap-2">
+        <form onSubmit={handleImport} className="flex flex-col gap-4">
+            <label htmlFor="pgn-input" className="flex flex-col gap-2">
                 <span className="text-sm lg:text-xs font-medium text-slate-300">
                     Paste PGN
                 </span>
                 <textarea
+                    id="pgn-input"
                     value={pgnText}
                     onChange={(e) => {
                         setPgnText(e.target.value);
@@ -41,28 +51,26 @@ export function PGNImport() {
             </label>
 
             {error && (
-                <div className="text-red-400 text-sm">
+                <div role="alert" className="text-red-400 text-sm">
                     {error}
                 </div>
             )}
 
             <div className="flex gap-2">
                 <button
-                    onClick={handleImport}
-                    className="flex-1 bg-emerald-600 text-slate-100 p-2 rounded hover:bg-emerald-500"
+                    type="submit"
+                    className="flex-1 bg-emerald-600 text-slate-100 p-2 rounded hover:bg-emerald-500 active:bg-emerald-700 transition-colors"
                 >
                     Import Game
                 </button>
                 <button
-                    onClick={() => {
-                        setPgnText('');
-                        setError('');
-                    }}
-                    className="px-3 py-2 text-slate-300 hover:text-slate-100 hover:bg-slate-700 rounded"
+                    type="button" // Explicitly set type to button to prevent form submission
+                    onClick={handleClear}
+                    className="px-3 py-2 text-slate-300 hover:text-slate-100 hover:bg-slate-700 rounded transition-colors"
                 >
                     Clear
                 </button>
             </div>
-        </div>
+        </form>
     );
 }

@@ -93,8 +93,8 @@ export function Sidebar({ isOpen, onOpen, onClose, height }) {  // Separate open
                                 onClick={() => setCurrTab(1)}
                             />
                         </div>
-                        {currTab === 0 && <ChesscomPanel />}
-                        {currTab === 1 && <PGNImport />}
+                        {currTab === 0 && <ChesscomPanel closeSidebar={onClose} />}
+                        {currTab === 1 && <PGNImport closeSidebar={onClose} />}
                     </div>
                 </div>
             </aside>

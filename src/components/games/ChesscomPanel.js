@@ -2,7 +2,7 @@ import React from 'react';
 import {useGameStore} from "../../stores/gameStore";
 import {fetchChesscomGames} from "../../utils/chesscom";
 
-export function ChesscomPanel() {
+export function ChesscomPanel({ closeSidebar }) {
     // Get current date and format it as YYYY-MM
     const getCurrentYearMonth = () => {
         const now = new Date();
@@ -16,7 +16,7 @@ export function ChesscomPanel() {
     const [error, setError] = React.useState(null);
     const [hoveredGame, setHoveredGame] = React.useState(null);
 
-    const { loadGame } = useGameStore();
+    const { loadChesscomGame } = useGameStore();
 
     const handleFetchGames = async (e) => {
         // If called from a form submission, prevent default behavior
@@ -40,7 +40,8 @@ export function ChesscomPanel() {
     };
 
     const handleGameSelect = (game) => {
-        loadGame(game);
+        loadChesscomGame(game);
+        closeSidebar();
     };
 
     return (

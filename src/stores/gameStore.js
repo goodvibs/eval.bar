@@ -112,7 +112,7 @@ export const useGameStore = create((set, get) => ({
     },
 
     // Load a game from PGN
-    loadGame: (game) => {
+    loadChesscomGame: (game) => {
         try {
             // // Extract headers first
             // const headers = extractPgnHeaders(game.pgn);
@@ -157,14 +157,41 @@ export const useGameStore = create((set, get) => ({
                     event: game.event
                 }
             });
-            return true;
         } catch (error) {
-            // More specific error messages
-            console.error('Failed to load game:', error.message);
-            return {
-                success: false,
-                error: error.message
-            };
+            throw Error('Failed to load game: ' + error.message);
+        }
+    },
+
+    loadPgnGame: (pgn) => {
+        try {
+            let newGame = new Chess();
+            newGame.loadPgn(pgn);
+            const moves = newGame.history();
+
+            set({
+                game: newGame,
+                currentPositionFen: newGame.fen(),
+                gamePgn: newGame.pgn,
+                gameMoveHistory: [...moves],
+                currentMoveIndex: moves.length - 1,
+                gameMetadata: {
+                    white: null,
+                    black: null,
+                    date: null,
+                    result: null,
+                    timeControl: null,
+                    whiteElo: null,
+                    blackElo: null,
+                    eco: null,
+                    opening: null,
+                    variant: null,
+                    finalPosition: null,
+                    url: null,
+                    event: null
+                }
+            });
+        } catch (error) {
+            throw Error('Failed to load game: ' + error.message);
         }
     },
 
