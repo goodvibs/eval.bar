@@ -100,8 +100,8 @@ export function ChessboardPanel() {
         return () => window.removeEventListener('resize', updateSize);
     }, [gameMetadata.white]);
 
-    // Handle piece click to show possible moves
-    const handlePieceClick = (piece, square) => {
+    // Common function to find legal moves and highlight them
+    const findLegalMoves = (piece, square) => {
         // Only allow piece selection if it's the current player's turn
         const isWhitePiece = piece[0] === 'w';
         const isWhiteTurn = chessRef.current.turn() === 'w';
@@ -111,6 +111,16 @@ export function ChessboardPanel() {
             return;
         }
 
+        // Select the piece
+        setSelectedPiece(square);
+
+        // Get all legal moves for this piece
+        const moves = chessRef.current.moves({ square, verbose: true });
+        setPossibleMoves(moves.map(move => move.to));
+    };
+
+    // Handle piece click to show possible moves
+    const handlePieceClick = (piece, square) => {
         // If the same piece is clicked again, deselect it
         if (selectedPiece === square) {
             setSelectedPiece(null);
@@ -118,12 +128,12 @@ export function ChessboardPanel() {
             return;
         }
 
-        // Select the piece and find its legal moves
-        setSelectedPiece(square);
+        findLegalMoves(piece, square);
+    };
 
-        // Get all legal moves for this piece
-        const moves = chessRef.current.moves({ square, verbose: true });
-        setPossibleMoves(moves.map(move => move.to));
+    // Handle piece drag start to show possible moves
+    const handlePieceDragBegin = (piece, square) => {
+        findLegalMoves(piece, square);
     };
 
     // Handle piece drop to make a move
@@ -159,18 +169,24 @@ export function ChessboardPanel() {
                 boardOrientation={orientedWhite ? "white" : "black"}
                 onPieceDrop={onPieceDrop}
                 onPieceClick={handlePieceClick}
+                onPieceDragBegin={handlePieceDragBegin}
                 customArrows={customArrows}
                 customSquareStyles={{
-                    // Highlight selected piece
-                    ...(selectedPiece && { [selectedPiece]: { backgroundColor: "rgba(255, 217, 102, 0.4)" } }),
-                    // Highlight possible move squares with dots
+                    // Highlight selected piece with a consistent color
+                    ...(selectedPiece && {
+                        [selectedPiece]: {
+                            backgroundColor: "rgb(255, 217, 102, 0.1)"
+                        }
+                    }),
+                    // Highlight possible moves with consistent dots
                     ...Object.fromEntries(
                         possibleMoves.map(square => [
                             square,
                             {
-                                backgroundImage: "radial-gradient(circle, rgba(0,0,0,.3) 25%, transparent 25%)",
+                                // Use the same background color for all move indicators
+                                backgroundImage: "radial-gradient(circle, rgba(0, 0, 0, 0.2) 25%, transparent 25%)",
                                 backgroundPosition: "center",
-                                backgroundSize: "40%", // Relative size that scales with the square
+                                backgroundSize: "50%",
                                 backgroundRepeat: "no-repeat"
                             }
                         ])
