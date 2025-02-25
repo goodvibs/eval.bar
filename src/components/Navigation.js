@@ -59,7 +59,7 @@ export function Navigation() {
                 className={`
                     fixed inset-0 z-50
                     transition-all duration-300
-                    ${showAbout ? 'bg-slate-900 bg-opacity-50 pointer-events-auto backdrop-blur' : 'bg-opacity-0 pointer-events-none'}
+                    ${showAbout ? 'bg-slate-100 bg-opacity-50 pointer-events-auto backdrop-blur' : 'bg-opacity-0 pointer-events-none'}
                     flex items-center justify-center
                 `}
                 onClick={(e) => {
