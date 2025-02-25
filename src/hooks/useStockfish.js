@@ -1,8 +1,8 @@
 import { useEffect, useRef, useCallback } from 'react';
-import { useEngineStore } from "../stores/useEngineStore";
+import { engineStore } from "../stores/engineStore";
 
 export function useStockfish(options = { multiPV: 3 }) {
-    const { handleEngineMessage } = useEngineStore();
+    const { handleEngineMessage } = engineStore();
     const engineRef = useRef(null);
 
     // Initialize engine with configurable options

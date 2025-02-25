@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useEngineStore } from "../../stores/useEngineStore";
+import { engineStore } from "../../stores/engineStore";
 import { processEvaluation } from "../../utils/evaluation";
 
 export function AnalysisPanelHeader({ isAnalyzing, depth, currentLines }) {
-    const { startAnalysis, stopAnalysis, multipv, setMultiPV, searchDepth, setSearchDepth } = useEngineStore();
+    const { startAnalysis, stopAnalysis, multipv, setMultiPV, searchDepth, setSearchDepth } = engineStore();
     const [showSettings, setShowSettings] = useState(false);
     const settingsRef = useRef(null);
     const buttonRef = useRef(null);

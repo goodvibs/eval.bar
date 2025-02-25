@@ -61,7 +61,7 @@ const parseScore = (message, isBlackToMove) => {
 };
 
 // Main store definition with persistence for settings
-export const useEngineStore = create(
+export const engineStore = create(
     persist(
         (set, get) => ({
             // Analysis state
