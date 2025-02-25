@@ -49,7 +49,7 @@ export function AnalysisLine({ line, isMainLine, onMoveClick }) {
 
     return (
         <div className="flex items-center hover:bg-slate-700 transition-colors text-sm gap-2">
-            <div className={`flex font-mono px-0.5 ${isMainLine ? "font-bold" : ""} ${isWhiteWinning ? "bg-slate-50 text-slate-900" : "bg-slate-900 text-slate-50"}`}>
+            <div className={`flex font-mono px-0.5 ${isMainLine ? "font-bold" : ""} ${isWhiteWinning ? "bg-slate-100 text-slate-900" : "bg-slate-900 text-slate-100"}`}>
               {formatScore(line.score)}
             </div>
             <div className="flex gap-1 text-slate-300 whitespace-nowrap overflow-x-auto scrollbar-none">
@@ -61,7 +61,7 @@ export function AnalysisLine({ line, isMainLine, onMoveClick }) {
                         <button
                             key={idx}
                             onClick={() => onMoveClick(line.moves.slice(0, idx + 1))}
-                            className="hover:text-white hover:underline transition-colors flex-none"
+                            className="hover:text-slate-100 hover:underline transition-colors flex-none"
                         >
                             {showMoveNumber && (
                                 <span className="text-slate-500 mr-1">

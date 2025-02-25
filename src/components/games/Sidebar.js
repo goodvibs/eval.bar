@@ -80,7 +80,7 @@ export function Sidebar({ isOpen, onOpen, onClose, height }) {  // Separate open
                     </div>
 
                     {/* Sidebar content */}
-                    <div className="flex flex-1 lg:flex-none flex-col gap-4 text-slate-50">
+                    <div className="flex flex-1 lg:flex-none flex-col gap-4 text-slate-100">
                         <div className="flex gap-1 border-b border-slate-600">
                             <TabButton
                                 active={currTab === 0}

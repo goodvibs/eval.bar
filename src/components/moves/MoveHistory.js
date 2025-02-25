@@ -29,7 +29,7 @@ export function MoveHistory() {
                                 onClick={() => goToMove(groupIndex * 2)}
                                 className={`px-1 rounded text-sm hover:bg-slate-700 transition-colors ${
                                     currentMoveIndex === groupIndex * 2
-                                        ? 'bg-blue-500 hover:bg-blue-600 text-white'
+                                        ? 'bg-blue-500 hover:bg-blue-600 text-slate-100'
                                         : 'text-slate-300'
                                 }`}
                             >
@@ -42,7 +42,7 @@ export function MoveHistory() {
                                     onClick={() => goToMove(groupIndex * 2 + 1)}
                                     className={`px-1 rounded text-sm hover:bg-slate-700 transition-colors ${
                                         currentMoveIndex === groupIndex * 2 + 1
-                                            ? 'bg-blue-500 hover:bg-blue-600 text-white'
+                                            ? 'bg-blue-500 hover:bg-blue-600 text-slate-100'
                                             : 'text-slate-300'
                                     }`}
                                 >

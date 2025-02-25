@@ -6,7 +6,7 @@ export function GameMetadata({ metadata }) {
     return (
         <div className="flex flex-col gap-2">
             {/* Players */}
-            <div className="flex gap-2 text-white justify-between items-center">
+            <div className="flex gap-2 text-slate-100 justify-between items-center">
                 <div className="flex flex-wrap items-center text-sm font-medium">
                     {metadata.white}
                     <span className="text-xs ml-0.5">({metadata.whiteElo})</span>

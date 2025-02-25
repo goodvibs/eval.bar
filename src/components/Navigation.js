@@ -5,7 +5,7 @@ export function Navigation() {
 
     return (
         <>
-            <nav className="flex items-center p-2 justify-between text-sm text-slate-50">
+            <nav className="flex items-center p-2 justify-between text-sm text-slate-100">
                 <a
                     href="/"
                     className="flex text-xl lg:text-base hover:text-slate-300 transition-colors"
@@ -74,7 +74,7 @@ export function Navigation() {
                     `}
                 >
                     <div className="flex justify-between items-start mb-4">
-                        <h2 className="text-lg font-semibold text-slate-50">About eval.bar</h2>
+                        <h2 className="text-lg font-semibold text-slate-100">About eval.bar</h2>
                         <div className="flex items-center justify-end">
                             <button
                                 onClick={() => setShowAbout(false)}

@@ -16,7 +16,7 @@ function MovePair({ moveNumber, whiteMove, blackMove, currentMoveIndex, onMoveCl
             <button
                 onClick={() => onMoveClick(whiteMoveIndex)}
                 className={`flex-1 text-left px-2 py-1 hover:bg-slate-700 transition-colors
-          ${currentMoveIndex === whiteMoveIndex ? 'bg-blue-500 text-white hover:bg-blue-600' : 'text-slate-300'}`}
+          ${currentMoveIndex === whiteMoveIndex ? 'bg-blue-500 text-slate-100 hover:bg-blue-600' : 'text-slate-300'}`}
             >
                 {whiteMove?.san}
             </button>
@@ -26,7 +26,7 @@ function MovePair({ moveNumber, whiteMove, blackMove, currentMoveIndex, onMoveCl
                 <button
                     onClick={() => onMoveClick(blackMoveIndex)}
                     className={`flex-1 text-left px-2 py-1 hover:bg-slate-700 transition-colors
-            ${currentMoveIndex === blackMoveIndex ? 'bg-blue-500 text-white hover:bg-blue-600' : 'text-slate-300'}`}
+            ${currentMoveIndex === blackMoveIndex ? 'bg-blue-500 text-slate-100 hover:bg-blue-600' : 'text-slate-300'}`}
                 >
                     {blackMove.san}
                 </button>

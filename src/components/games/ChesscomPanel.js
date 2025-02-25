@@ -72,7 +72,7 @@ export function ChesscomPanel() {
             <button
                 onClick={handleFetchGames}
                 disabled={!selectedDate || isLoading}
-                className="bg-emerald-600 text-white p-2 rounded hover:bg-emerald-500 transition-colors disabled:opacity-50 disabled:hover:bg-emerald-600"
+                className="bg-emerald-600 text-slate-100 p-2 rounded hover:bg-emerald-500 transition-colors disabled:opacity-50 disabled:hover:bg-emerald-600"
             >
                 {isLoading ? 'Loading...' : 'Fetch Games'}
             </button>

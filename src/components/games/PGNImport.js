@@ -49,7 +49,7 @@ export function PGNImport() {
             <div className="flex gap-2">
                 <button
                     onClick={handleImport}
-                    className="flex-1 bg-emerald-600 text-white p-2 rounded hover:bg-emerald-500 transition-colors"
+                    className="flex-1 bg-emerald-600 text-slate-100 p-2 rounded hover:bg-emerald-500 transition-colors"
                 >
                     Import Game
                 </button>
@@ -58,7 +58,7 @@ export function PGNImport() {
                         setPgnText('');
                         setError('');
                     }}
-                    className="px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-700 rounded transition-colors"
+                    className="px-3 py-2 text-slate-300 hover:text-slate-100 hover:bg-slate-700 rounded transition-colors"
                 >
                     Clear
                 </button>
