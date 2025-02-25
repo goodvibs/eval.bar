@@ -79,6 +79,10 @@ export function Sidebar({ isOpen, onOpen, onClose, height }) {  // Separate open
                         </button>
                     </div>
 
+                    <h1 className="text-xl text-slate-200 font-bold">
+                        Game Import Menu
+                    </h1>
+
                     {/* Sidebar content */}
                     <div className="flex flex-1 lg:flex-none flex-col gap-4 text-slate-100">
                         <div className="flex gap-1 border-b border-slate-600">
