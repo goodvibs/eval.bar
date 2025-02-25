@@ -1,8 +1,8 @@
-import {useEngineStore} from "../../stores/useEngineStore";
 import React from "react";
+import { useEngineStore } from "../../stores/useEngineStore";
 
 export function AnalysisPanelHeader({ isAnalyzing, depth, currentLines }) {
-    const { startAnalysis, stopAnalysis, multipv, setMultiPV } = useEngineStore();
+    const { startAnalysis, stopAnalysis, multipv, setMultiPV, searchDepth, setSearchDepth } = useEngineStore();
     const mainLine = currentLines[0];
     const eval_ = mainLine?.score ?? 0;
 
@@ -19,7 +19,9 @@ export function AnalysisPanelHeader({ isAnalyzing, depth, currentLines }) {
         }
     };
 
-    let isWhiteWinning = eval_ >= 0;
+    let isWhiteWinning = typeof eval_ === 'string'
+        ? eval_.startsWith('M')
+        : eval_ >= 0;
 
     return (
         <div className="bg-slate-700 border-b gap-4 border-slate-600 flex items-center justify-between">
@@ -40,18 +42,40 @@ export function AnalysisPanelHeader({ isAnalyzing, depth, currentLines }) {
 
             {/* Controls */}
             <div className="flex items-center gap-2 px-2">
-                <select
-                    className="hidden bg-slate-600 text-slate-200 text-sm rounded px-2 py-1 border border-slate-500 disabled:opacity-50"
-                    value={multipv}
-                    onChange={(e) => setMultiPV(Number(e.target.value))}
-                    disabled={isAnalyzing}
-                >
-                    <option value={1}>1 line</option>
-                    <option value={2}>2 lines</option>
-                    <option value={3}>3 lines</option>
-                    <option value={4}>4 lines</option>
-                    <option value={5}>5 lines</option>
-                </select>
+                <div className="flex items-center">
+                    <label htmlFor="multipv-select" className="text-xs mr-2 text-slate-300">Lines:</label>
+                    <select
+                        id="multipv-select"
+                        className="bg-slate-600 text-slate-200 text-sm rounded px-2 py-1 border border-slate-500 disabled:opacity-50"
+                        value={multipv}
+                        onChange={(e) => setMultiPV(Number(e.target.value))}
+                        disabled={isAnalyzing}
+                    >
+                        <option value={1}>1</option>
+                        <option value={2}>2</option>
+                        <option value={3}>3</option>
+                        <option value={4}>4</option>
+                        <option value={5}>5</option>
+                    </select>
+                </div>
+
+                <div className="flex items-center">
+                    <label htmlFor="depth-select" className="text-xs mr-2 text-slate-300">Depth:</label>
+                    <select
+                        id="depth-select"
+                        className="bg-slate-600 text-slate-200 text-sm rounded px-2 py-1 border border-slate-500 disabled:opacity-50"
+                        value={searchDepth}
+                        onChange={(e) => setSearchDepth(Number(e.target.value))}
+                        disabled={isAnalyzing}
+                    >
+                        <option value={15}>15</option>
+                        <option value={18}>18</option>
+                        <option value={20}>20</option>
+                        <option value={22}>22</option>
+                        <option value={25}>25</option>
+                        <option value={30}>30</option>
+                    </select>
+                </div>
 
                 <button
                     onClick={handleAnalysisClick}

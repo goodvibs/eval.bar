@@ -1,14 +1,20 @@
-import {useGameStore} from "../../stores/gameStore";
-import {Chess} from "chess.js";
+import React, { useMemo } from "react";
+import { useGameStore } from "../../stores/gameStore";
+import { Chess } from "chess.js";
 
 export function AnalysisLine({ line, isMainLine, onMoveClick }) {
     const { currentPositionFen } = useGameStore();
 
-    if (!line || !line.moves) return null;
+    // Use useMemo to avoid recalculating these on every render
+    const { moveNumber, isBlackToMove } = useMemo(() => {
+        const chess = new Chess(currentPositionFen);
+        return {
+            moveNumber: Math.floor(chess.history().length / 2) + 1,
+            isBlackToMove: chess.turn() === 'b'
+        };
+    }, [currentPositionFen]);
 
-    const chess = new Chess(currentPositionFen);
-    const currentMoveNumber = Math.floor(chess.history().length / 2) + 1;
-    const isBlackToMove = chess.turn() === 'b';
+    if (!line || !line.moves) return null;
 
     const formatScore = (score) => {
         if (typeof score === 'string') return score;
@@ -23,29 +29,32 @@ export function AnalysisLine({ line, isMainLine, onMoveClick }) {
             // If Black to move, first move is Black's move
             if (isFirstMove) {
                 return {
-                    number: currentMoveNumber,
+                    number: moveNumber,
                     notation: '..'
                 };
             }
             // Subsequent moves start with White's move of next number
-            const moveNumber = currentMoveNumber + Math.floor((idx + 1) / 2);
+            const moveNumber_ = moveNumber + Math.floor((idx + 1) / 2);
             const isBlackMove = idx % 2 === 0; // Shifted by 1 because first move was Black's
             return {
-                number: moveNumber,
+                number: moveNumber_,
                 notation: isBlackMove ? '..' : ''
             };
         } else {
             // If White to move, normal numbering
-            const moveNumber = currentMoveNumber + Math.floor(idx / 2);
+            const moveNumber_ = moveNumber + Math.floor(idx / 2);
             const isBlackMove = idx % 2 === 1;
             return {
-                number: moveNumber,
+                number: moveNumber_,
                 notation: isBlackMove ? '..' : ''
             };
         }
     };
 
-    let isWhiteWinning = line.score >= 0;
+    // Determine if white is winning based on the score
+    const isWhiteWinning = typeof line.score === 'string'
+        ? line.score.startsWith('M')
+        : line.score >= 0;
 
     return (
         <div className="flex items-center hover:bg-slate-700 transition-colors text-sm gap-2">
@@ -65,8 +74,8 @@ export function AnalysisLine({ line, isMainLine, onMoveClick }) {
                         >
                             {showMoveNumber && (
                                 <span className="text-slate-500 mr-1">
-                                        {number}.{notation}
-                                    </span>
+                                    {number}.{notation}
+                                </span>
                             )}
                             {move}
                         </button>
