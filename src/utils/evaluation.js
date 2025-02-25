@@ -62,10 +62,10 @@ export const processEvaluation = (evaluation) => {
     // Format the score string
     const absScore = Math.abs(numericEval);
     const formattedScore = numericEval > 0
-        ? `+${absScore.toFixed(1)}`
+        ? `+${absScore.toFixed(2)}`
         : numericEval < 0
-            ? `-${absScore.toFixed(1)}`
-            : "0.0";
+            ? `-${absScore.toFixed(2)}`
+            : "0.00";
 
     // Determine advantage levels
     const advantage = numericEval > 0.2

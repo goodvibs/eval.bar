@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useEngineStore } from "../../stores/useEngineStore";
 import { processEvaluation } from "../../utils/evaluation";
 
 export function AnalysisPanelHeader({ isAnalyzing, depth, currentLines }) {
     const { startAnalysis, stopAnalysis, multipv, setMultiPV, searchDepth, setSearchDepth } = useEngineStore();
+    const [showSettings, setShowSettings] = useState(false);
+    const settingsRef = useRef(null);
+    const buttonRef = useRef(null);
+
     const mainLine = currentLines[0];
     const rawEval = mainLine?.score ?? 0;
 
@@ -18,6 +22,21 @@ export function AnalysisPanelHeader({ isAnalyzing, depth, currentLines }) {
         }
     };
 
+    // Close settings menu when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (settingsRef.current && !settingsRef.current.contains(event.target) &&
+                buttonRef.current && !buttonRef.current.contains(event.target)) {
+                setShowSettings(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     // Determine background color based on winning color
     const evalBgColor = evalDetails.winningColor === "white" || evalDetails.advantage === "equal"
         ? "bg-slate-100 text-slate-900"
@@ -27,7 +46,7 @@ export function AnalysisPanelHeader({ isAnalyzing, depth, currentLines }) {
         <div className="bg-slate-700 border-b gap-4 border-slate-600 flex items-center justify-between">
             <div className="flex items-center gap-4">
                 {/* Evaluation display */}
-                <div className={`flex font-mono p-2 text-lg font-bold ${evalBgColor}`}>
+                <div className={`flex font-mono p-2 text-lg font-bold rounded-tl-lg ${evalBgColor}`}>
                     {evalDetails.formattedScore}
                 </div>
 
@@ -42,41 +61,71 @@ export function AnalysisPanelHeader({ isAnalyzing, depth, currentLines }) {
 
             {/* Controls */}
             <div className="flex items-center gap-2 px-2">
-                <div className="flex items-center">
-                    <label htmlFor="multipv-select" className="text-xs mr-2 text-slate-300">Lines:</label>
-                    <select
-                        id="multipv-select"
-                        className="bg-slate-600 text-slate-200 text-sm rounded px-2 py-1 border border-slate-500 disabled:opacity-50"
-                        value={multipv}
-                        onChange={(e) => setMultiPV(Number(e.target.value))}
-                        disabled={isAnalyzing}
+                {/* Settings button */}
+                <div className="relative">
+                    <button
+                        ref={buttonRef}
+                        onClick={() => setShowSettings(!showSettings)}
+                        className="rounded-full fill-slate-400 hover:fill-slate-300 p-1"
                     >
-                        <option value={1}>1</option>
-                        <option value={2}>2</option>
-                        <option value={3}>3</option>
-                        <option value={4}>4</option>
-                        <option value={5}>5</option>
-                    </select>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="22" width="22" viewBox="0 -960 960 960">
+                            <path d="M433-80q-27 0-46.5-18T363-142l-9-66q-13-5-24.5-12T307-235l-62 26q-25 11-50 2t-39-32l-47-82q-14-23-8-49t27-43l53-40q-1-7-1-13.5v-27q0-6.5 1-13.5l-53-40q-21-17-27-43t8-49l47-82q14-23 39-32t50 2l62 26q11-8 23-15t24-12l9-66q4-26 23.5-44t46.5-18h94q27 0 46.5 18t23.5 44l9 66q13 5 24.5 12t22.5 15l62-26q25-11 50-2t39 32l47 82q14 23 8 49t-27 43l-53 40q1 7 1 13.5v27q0 6.5-2 13.5l53 40q21 17 27 43t-8 49l-48 82q-14 23-39 32t-50-2l-60-26q-11 8-23 15t-24 12l-9 66q-4 26-23.5 44T527-80h-94Zm49-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z"/>
+                        </svg>
+                    </button>
+
+                    {/* Settings popup */}
+                    {showSettings && (
+                        <div
+                            ref={settingsRef}
+                            className="absolute right-0 top-9 bg-slate-800 rounded-lg border border-slate-600 shadow-lg p-3 z-10 min-w-64"
+                        >
+                            <h3 className="text-slate-200 text-sm font-semibold mb-3">Engine Settings</h3>
+
+                            <div className="space-y-4">
+                                {/* MultiPV Setting */}
+                                <div className="space-y-1">
+                                    <label className="text-slate-300 text-xs block">
+                                        Analysis Lines
+                                    </label>
+                                    <select
+                                        className="w-full bg-slate-700 text-slate-200 text-sm rounded px-2 py-1.5 border border-slate-600 disabled:opacity-50 focus:outline-none focus:ring-1 focus:ring-slate-500"
+                                        value={multipv}
+                                        onChange={(e) => setMultiPV(Number(e.target.value))}
+                                        disabled={isAnalyzing}
+                                    >
+                                        <option value={1}>1 line</option>
+                                        <option value={2}>2 lines</option>
+                                        <option value={3}>3 lines</option>
+                                        <option value={4}>4 lines</option>
+                                        <option value={5}>5 lines</option>
+                                    </select>
+                                </div>
+
+                                {/* Search Depth Setting */}
+                                <div className="space-y-1">
+                                    <label className="text-slate-300 text-xs block">
+                                        Search Depth
+                                    </label>
+                                    <select
+                                        className="w-full bg-slate-700 text-slate-200 text-sm rounded px-2 py-1.5 border border-slate-600 disabled:opacity-50 focus:outline-none focus:ring-1 focus:ring-slate-500"
+                                        value={searchDepth}
+                                        onChange={(e) => setSearchDepth(Number(e.target.value))}
+                                        disabled={isAnalyzing}
+                                    >
+                                        <option value={15}>15 (fastest)</option>
+                                        <option value={18}>18</option>
+                                        <option value={20}>20 (balanced)</option>
+                                        <option value={22}>22</option>
+                                        <option value={25}>25</option>
+                                        <option value={30}>30 (strongest)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
-                <div className="flex items-center">
-                    <label htmlFor="depth-select" className="text-xs mr-2 text-slate-300">Depth:</label>
-                    <select
-                        id="depth-select"
-                        className="bg-slate-600 text-slate-200 text-sm rounded px-2 py-1 border border-slate-500 disabled:opacity-50"
-                        value={searchDepth}
-                        onChange={(e) => setSearchDepth(Number(e.target.value))}
-                        disabled={isAnalyzing}
-                    >
-                        <option value={15}>15</option>
-                        <option value={18}>18</option>
-                        <option value={20}>20</option>
-                        <option value={22}>22</option>
-                        <option value={25}>25</option>
-                        <option value={30}>30</option>
-                    </select>
-                </div>
-
+                {/* Analyze/Stop button */}
                 <button
                     onClick={handleAnalysisClick}
                     className={`flex flex-nowrap items-center px-2 py-1 text-sm rounded transition-all gap-1 font-semibold ${

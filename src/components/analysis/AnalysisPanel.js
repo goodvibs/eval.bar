@@ -70,7 +70,7 @@ export function AnalysisPanel() {
     };
 
     return (
-        <div className="flex min-h-fit flex-col bg-slate-800 rounded-l-lg overflow-hidden">
+        <div className="flex min-h-fit flex-col bg-slate-800 rounded-lg">
             <AnalysisPanelHeader
                 isAnalyzing={isAnalyzing}
                 depth={depth}
