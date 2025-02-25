@@ -45,8 +45,8 @@ export function ExtensionPrompt({ hidden, close }) {
             className={`
                 fixed inset-0 z-50 flex items-center justify-center 
                 transition-all duration-300 ease-in-out
-                ${hidden ? "bg-opacity-0 pointer-events-none" : "bg-opacity-50 pointer-events-auto"}
-                bg-slate-100 backdrop-blur-sm
+                ${hidden ? "bg-opacity-0 pointer-events-none" : "bg-opacity-50 backdrop-blur pointer-events-auto"}
+                bg-slate-100
             `}
         >
             <div
