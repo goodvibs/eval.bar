@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { useGameStore } from "../../stores/gameStore";
 import { Chess } from "chess.js";
+import { processEvaluation } from "../../utils/evaluation";
 
 export function AnalysisLine({ line, isMainLine, onMoveClick }) {
     const { currentPositionFen } = useGameStore();
@@ -16,10 +17,8 @@ export function AnalysisLine({ line, isMainLine, onMoveClick }) {
 
     if (!line || !line.moves) return null;
 
-    const formatScore = (score) => {
-        if (typeof score === 'string') return score;
-        return score > 0 ? `+${score.toPrecision(3)}` : score.toPrecision(3);
-    };
+    // Use the centralized evaluation utilities
+    const evalDetails = processEvaluation(line.score);
 
     // Function to determine move number and notation
     const getMoveNumbering = (idx) => {
@@ -51,15 +50,15 @@ export function AnalysisLine({ line, isMainLine, onMoveClick }) {
         }
     };
 
-    // Determine if white is winning based on the score
-    const isWhiteWinning = typeof line.score === 'string'
-        ? line.score.startsWith('M')
-        : line.score >= 0;
+    // Determine background color based on winning color using our utility
+    const evalBgColor = evalDetails.winningColor === "white" || evalDetails.advantage === "equal"
+        ? "bg-slate-100 text-slate-900"
+        : "bg-slate-900 text-slate-100";
 
     return (
         <div className="flex items-center hover:bg-slate-700 transition-colors text-sm gap-2">
-            <div className={`flex font-mono px-0.5 ${isMainLine ? "font-bold" : ""} ${isWhiteWinning ? "bg-slate-100 text-slate-900" : "bg-slate-900 text-slate-100"}`}>
-              {formatScore(line.score)}
+            <div className={`flex font-mono px-0.5 ${isMainLine ? "font-bold" : ""} ${evalBgColor}`}>
+                {evalDetails.formattedScore}
             </div>
             <div className="flex gap-1 text-slate-300 whitespace-nowrap overflow-x-auto scrollbar-none">
                 {line.moves.map((move, idx) => {
@@ -74,8 +73,8 @@ export function AnalysisLine({ line, isMainLine, onMoveClick }) {
                         >
                             {showMoveNumber && (
                                 <span className="text-slate-500 mr-1">
-                                    {number}.{notation}
-                                </span>
+                                        {number}.{notation}
+                                    </span>
                             )}
                             {move}
                         </button>

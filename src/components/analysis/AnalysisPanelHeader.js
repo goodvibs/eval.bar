@@ -1,15 +1,14 @@
 import React from "react";
 import { useEngineStore } from "../../stores/useEngineStore";
+import { processEvaluation } from "../../utils/evaluation";
 
 export function AnalysisPanelHeader({ isAnalyzing, depth, currentLines }) {
     const { startAnalysis, stopAnalysis, multipv, setMultiPV, searchDepth, setSearchDepth } = useEngineStore();
     const mainLine = currentLines[0];
-    const eval_ = mainLine?.score ?? 0;
+    const rawEval = mainLine?.score ?? 0;
 
-    const formatEval = (eval_) => {
-        if (typeof eval_ === 'string') return eval_; // For mate scores
-        return eval_ > 0 ? `+${eval_.toPrecision(3)}` : eval_.toPrecision(3);
-    };
+    // Use our utility function to get consistent formatting
+    const evalDetails = processEvaluation(rawEval);
 
     const handleAnalysisClick = () => {
         if (isAnalyzing) {
@@ -19,16 +18,17 @@ export function AnalysisPanelHeader({ isAnalyzing, depth, currentLines }) {
         }
     };
 
-    let isWhiteWinning = typeof eval_ === 'string'
-        ? eval_.startsWith('M')
-        : eval_ >= 0;
+    // Determine background color based on winning color
+    const evalBgColor = evalDetails.winningColor === "white" || evalDetails.advantage === "equal"
+        ? "bg-slate-100 text-slate-900"
+        : "bg-slate-900 text-slate-100";
 
     return (
         <div className="bg-slate-700 border-b gap-4 border-slate-600 flex items-center justify-between">
             <div className="flex items-center gap-4">
                 {/* Evaluation display */}
-                <div className={`flex font-mono p-2 text-lg font-bold ${isWhiteWinning ? "bg-slate-100 text-slate-900" : "bg-slate-900 text-slate-50"}`}>
-                    {formatEval(eval_)}
+                <div className={`flex font-mono p-2 text-lg font-bold ${evalBgColor}`}>
+                    {evalDetails.formattedScore}
                 </div>
 
                 {/* Engine info */}

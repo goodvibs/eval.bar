@@ -1,37 +1,17 @@
 import React, { useMemo } from "react";
 import { useEngineStore } from "../stores/useEngineStore";
+import { processEvaluation } from "../utils/evaluation";
 
 export function EvaluationBar({ height = "h-1.5", showLabels = false }) {
     const { currentLines } = useEngineStore();
 
     const mainLine = currentLines[0];
-    const eval_ = mainLine?.score ?? 0;
+    const rawEval = mainLine?.score ?? 0;
 
-    // Enhanced evaluation processing with better mate handling
+    // Process the evaluation using our centralized utility
     const evalDetails = useMemo(() => {
-        // Handle mate scores
-        if (typeof eval_ === 'string') {
-            const isMateForWhite = eval_.startsWith('M');
-            return {
-                percentage: isMateForWhite ? 98 : 2,
-                formattedEval: eval_
-            };
-        }
-
-        // Handle numerical scores (centipawns)
-        const coefficient = 0.2; // Controls the slope of the sigmoid
-        const percentage = (1 / (1 + Math.exp(-eval_ * coefficient))) * 100;
-        const clampedPercentage = Math.min(Math.max(percentage, 2), 98);
-
-        const formattedEval = eval_ > 0
-            ? `+${eval_.toFixed(1)}`
-            : eval_.toFixed(1);
-
-        return {
-            percentage: clampedPercentage,
-            formattedEval
-        };
-    }, [eval_]);
+        return processEvaluation(rawEval);
+    }, [rawEval]);
 
     // Create marker positions (as percentages)
     const markers = useMemo(() => {
@@ -47,7 +27,7 @@ export function EvaluationBar({ height = "h-1.5", showLabels = false }) {
             {showLabels && (
                 <div className="text-xs text-slate-300 mb-1 flex justify-between px-1">
                     <span>White</span>
-                    <span>{evalDetails.formattedEval}</span>
+                    <span>{evalDetails.formattedScore}</span>
                     <span>Black</span>
                 </div>
             )}
@@ -56,7 +36,7 @@ export function EvaluationBar({ height = "h-1.5", showLabels = false }) {
                 {/* White's side of the evaluation bar */}
                 <div
                     className="bg-slate-100 transition-all duration-300 ease-out"
-                    style={{ width: `${evalDetails.percentage}%` }}
+                    style={{ width: `${evalDetails.barPercentage}%` }}
                 />
 
                 {/* Black's side of the evaluation bar */}
@@ -64,7 +44,7 @@ export function EvaluationBar({ height = "h-1.5", showLabels = false }) {
                     className="bg-slate-900 flex-1 transition-all duration-300 ease-out"
                 />
 
-                {/* Marker bars - keeping your original implementation */}
+                {/* Marker bars */}
                 {markers.map(({ position, opacity }) => (
                     <div
                         key={position}
