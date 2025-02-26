@@ -121,8 +121,8 @@ export function ChesscomImportPanel({ closeSidebar }) {
                                     relative group
                                 `}
                             >
-                                <div className="flex justify-between items-start mb-2 gap-2">
-                                    <div className="flex flex-col">
+                                <div className="flex flex-col">
+                                    <div className="flex justify-between items-start mb-2 gap-4">
                                         <div className="flex flex-wrap items-center text-sm font-medium gap-x-1">
                                             {game.white}
                                             <span className="text-xs">({game.whiteElo})</span>
@@ -130,41 +130,32 @@ export function ChesscomImportPanel({ closeSidebar }) {
                                             {game.black}
                                             <span className="text-xs">({game.blackElo})</span>
                                         </div>
-                                        <span className="text-xs text-slate-400">
-                                            {game.date.toLocaleDateString()}
+                                        <span className={`
+                                            px-2 py-1 rounded text-xs text-nowrap min-w-fit font-mono
+                                            ${getUsernameGameResult(game, username) === 'win' ? 'bg-emerald-600'
+                                            : getUsernameGameResult(game, username) === 'loss' ? 'bg-rose-600'
+                                                : 'bg-slate-600'}
+                                        `}>
+                                            {game.result}
                                         </span>
                                     </div>
-                                    <span className={`
-                                        px-2 py-1 rounded text-xs text-nowrap min-w-fit font-mono
-                                        ${getUsernameGameResult(game, username) === 'win' ? 'bg-emerald-600 text-emerald-100'
-                                            : getUsernameGameResult(game, username) === 'loss' ? 'bg-rose-600 text-rose-100'
-                                                : 'bg-slate-600 text-slate-100'}
-                                    `}>
-                                        {game.result}
-                                    </span>
-                                </div>
-
-                                <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-400">
-                                    <span className="flex items-center gap-1">
-                                        <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                        {game.timeControl}
-                                    </span>
-                                    {!game.isSupported && (
-                                        <span className="text-yellow-500">
-                                            {game.variant || 'Unsupported variant'}
-                                        </span>
-                                    )}
-                                    {game.eco && (
-                                        <span title={game.opening}>
-                                            {game.eco}
-                                            {game.opening && `: ${game.opening.length > 30
-                                                ? game.opening.slice(0, 30) + '...'
-                                                : game.opening}`}
-                                        </span>
-                                    )}
+                                    <div className="flex gap-2 text-xs text-slate-400 text-nowrap">
+                                            <span className="">
+                                                {game.date.toLocaleDateString()}
+                                            </span>
+                                        <span className="flex flex-nowrap items-center gap-1">
+                                                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                <span className="flex flex-nowrap">{game.timeControl}</span>
+                                            </span>
+                                        {!game.isSupported && (
+                                            <span className="text-yellow-500">
+                                                    {game.variant || 'Unsupported variant'}
+                                                </span>
+                                        )}
+                                    </div>
                                 </div>
                             </button>
                         ))}
