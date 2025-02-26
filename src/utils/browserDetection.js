@@ -4,7 +4,7 @@
 
 /**
  * Detects the current browser type
- * @returns {string} Browser type: "chrome", "firefox", "safari", "edge", or "other"
+ * @returns {string} Browser type: "chrome", "firefox", "safari", "edge", "opera", or "other"
  */
 export function detectBrowser() {
     const userAgent = navigator.userAgent;
@@ -20,6 +20,10 @@ export function detectBrowser() {
     // Edge detection
     else if (/Edg/i.test(userAgent)) {
         return "edge";
+    }
+    // Opera detection
+    else if (/OPR/i.test(userAgent)) {
+        return "opera";
     }
     // Chrome detection
     else if (/Chrome/i.test(userAgent)) {
@@ -40,9 +44,9 @@ export function getExtensionStoreUrl(browser) {
     // These URLs need to be updated with your actual extension IDs when published
     switch(browser) {
         case "chrome":
-            return "https://chrome.google.com/webstore/detail/your-extension-id";
+        case "opera":
         case "edge":
-            return "https://microsoftedge.microsoft.com/addons/detail/your-extension-id";
+            return "https://chrome.google.com/webstore/detail/your-extension-id";
         case "firefox":
             return "https://addons.mozilla.org/firefox/addon/your-extension-id";
         case "safari":
