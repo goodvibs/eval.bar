@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { useGameStore } from "./gameStore";
-import { Chess } from "chess.js";
+import { Chess } from "cm-chess";
 import { persist } from 'zustand/middleware';
 
 // Helper functions to keep store logic clean

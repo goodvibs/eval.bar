@@ -2,14 +2,24 @@ import React from 'react';
 import {useGameStore} from "../../stores/gameStore";
 import {fetchChesscomGames} from "../../utils/chesscom";
 
+function getUsernameGameResult(game, username) {
+    if (game.white.toLowerCase() === username.toLowerCase()) {
+        return game.result === '1-0' ? 'win' : game.result === '0-1' ? 'loss' : 'draw';
+    } else if (game.black.toLowerCase() === username.toLowerCase()) {
+        return game.result === '0-1' ? 'win' : game.result === '1-0' ? 'loss' : 'draw';
+    }
+    return null;
+}
+
 export function ChesscomImportPanel({ closeSidebar }) {
+    const { username, setUsername, setUsernameGameResult } = useGameStore();
+
     // Get current date and format it as YYYY-MM
     const getCurrentYearMonth = () => {
         const now = new Date();
         return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
     };
 
-    const [username, setUsername] = React.useState('');
     const [selectedDate, setSelectedDate] = React.useState(getCurrentYearMonth());
     const [games, setGames] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(false);
@@ -41,6 +51,7 @@ export function ChesscomImportPanel({ closeSidebar }) {
 
     const handleGameSelect = (game) => {
         loadChesscomGame(game);
+        setUsernameGameResult(getUsernameGameResult(game, username));
         closeSidebar();
     };
 
@@ -78,14 +89,14 @@ export function ChesscomImportPanel({ closeSidebar }) {
                 <button
                     type="submit"
                     disabled={!selectedDate || isLoading}
-                    className="bg-emerald-600 text-slate-100 p-2 rounded hover:bg-emerald-500 disabled:opacity-50 disabled:hover:bg-emerald-600"
+                    className="bg-emerald-600 transition-all text-slate-100 p-2 rounded hover:bg-emerald-500 disabled:opacity-50 disabled:hover:bg-emerald-600"
                 >
                     {isLoading ? 'Loading...' : 'Fetch Games'}
                 </button>
             </form>
 
             {error && (
-                <div className="text-red-400 text-sm">
+                <div className="text-rose-400 text-sm">
                     {error}
                 </div>
             )}
@@ -110,24 +121,24 @@ export function ChesscomImportPanel({ closeSidebar }) {
                                     relative group
                                 `}
                             >
-                                <div className="flex justify-between items-start mb-2">
+                                <div className="flex justify-between items-start mb-2 gap-2">
                                     <div className="flex flex-col">
-                                        <div className="flex flex-wrap items-center text-sm font-medium">
+                                        <div className="flex flex-wrap items-center text-sm font-medium gap-x-1">
                                             {game.white}
-                                            <span className="text-xs ml-0.5">({game.whiteElo})</span>
-                                            <span className="text-slate-400 mx-1 font-normal">vs</span>
+                                            <span className="text-xs">({game.whiteElo})</span>
+                                            <span className="text-slate-400 font-normal">vs</span>
                                             {game.black}
-                                            <span className="text-xs ml-0.5">({game.blackElo})</span>
+                                            <span className="text-xs">({game.blackElo})</span>
                                         </div>
                                         <span className="text-xs text-slate-400">
                                             {game.date.toLocaleDateString()}
                                         </span>
                                     </div>
                                     <span className={`
-                                        px-2 py-1 rounded text-xs text-nowrap
-                                        ${game.result === '1-0' ? 'bg-green-900 text-green-100' :
-                                        game.result === '0-1' ? 'bg-red-900 text-red-100' :
-                                            'bg-slate-600 text-slate-200'}
+                                        px-2 py-1 rounded text-xs text-nowrap min-w-fit font-mono
+                                        ${getUsernameGameResult(game, username) === 'win' ? 'bg-emerald-600 text-emerald-100'
+                                            : getUsernameGameResult(game, username) === 'loss' ? 'bg-rose-600 text-rose-100'
+                                                : 'bg-slate-600 text-slate-100'}
                                     `}>
                                         {game.result}
                                     </span>

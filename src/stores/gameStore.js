@@ -26,6 +26,9 @@ export const useGameStore = create((set, get) => ({
         lines: []
     },
 
+    username: null,
+    usernameGameResult: null,
+
     gameMetadata: {
         white: null,
         black: null,
@@ -40,6 +43,14 @@ export const useGameStore = create((set, get) => ({
         finalPosition: null,
         url: null,
         event: null
+    },
+
+    setUsername: (username) => {
+        set({ username });
+    },
+
+    setUsernameGameResult: (result) => {
+        set({ usernameGameResult: result });
     },
 
     makeMove: (move) => {
