@@ -55,7 +55,7 @@ export function ChesscomImportPanel({ closeSidebar }) {
                         id="username"
                         type="text"
                         value={username}
-                        onChange={(e) => setUsername(e.target.value)}
+                        onChange={(e) => setUsername(e.target.value.trim())}
                         placeholder="IMRosen"
                         className="p-2 bg-slate-800 outline-none rounded text-slate-200 border border-slate-600"
                     />
