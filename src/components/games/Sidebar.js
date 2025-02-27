@@ -79,7 +79,7 @@ export function Sidebar({ isOpen, onOpen, onClose, height }) {  // Separate open
                     </div>
 
                     <h1 className="text-xl text-slate-200 font-bold">
-                        Game Import Menu
+                        Import a Chess Game
                     </h1>
 
                     {/* Sidebar content */}
