@@ -164,8 +164,10 @@ export function ChessboardPanel() {
             <Chessboard
                 position={currentPositionFen}
                 boardWidth={boardWidth}
-                customLightSquareStyle={{ backgroundColor: "#cbd5e1" }}
-                customDarkSquareStyle={{ backgroundColor: "#64748b" }}
+                // customLightSquareStyle={{ backgroundColor: "#cbd5e1" }}
+                // customDarkSquareStyle={{ backgroundColor: "#64748b" }}
+                customLightSquareStyle={{ backgroundColor: "#e1dfcb" }}
+                customDarkSquareStyle={{ backgroundColor: "#648b67" }}
                 boardOrientation={orientedWhite ? "white" : "black"}
                 onPieceDrop={onPieceDrop}
                 onPieceClick={handlePieceClick}

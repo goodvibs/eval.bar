@@ -1,19 +1,9 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { useGameStore } from "../../hooks/stores/useGameStore";
-import { Chess } from "cm-chess";
 import { processEvaluation } from "../../utils/evaluation";
 
 export function EngineLine({ line, isMainLine, onMoveClick }) {
-    const { currentPositionFen } = useGameStore();
-
-    // Use useMemo to avoid recalculating these on every render
-    const { moveNumber, isBlackToMove } = useMemo(() => {
-        const chess = new Chess(currentPositionFen);
-        return {
-            moveNumber: Math.floor(chess.history().length / 2) + 1,
-            isBlackToMove: chess.turn() === 'b'
-        };
-    }, [currentPositionFen]);
+    const { currentMoveIndex } = useGameStore();
 
     if (!line || !line.moves) return null;
 
@@ -22,32 +12,24 @@ export function EngineLine({ line, isMainLine, onMoveClick }) {
 
     // Function to determine move number and notation
     const getMoveNumbering = (idx) => {
-        const isFirstMove = idx === 0;
+        // Get current position's turn (based on game move history and current index)
+        const isCurrentPositionBlackToMove =
+            (currentMoveIndex + 1) % 2 === 1; // +1 because moveIndex is 0-based
 
-        if (isBlackToMove) {
-            // If Black to move, first move is Black's move
-            if (isFirstMove) {
-                return {
-                    number: moveNumber,
-                    notation: '..'
-                };
-            }
-            // Subsequent moves start with White's move of next number
-            const moveNumber_ = moveNumber + Math.floor((idx + 1) / 2);
-            const isBlackMove = idx % 2 === 0; // Shifted by 1 because first move was Black's
-            return {
-                number: moveNumber_,
-                notation: isBlackMove ? '..' : ''
-            };
-        } else {
-            // If White to move, normal numbering
-            const moveNumber_ = moveNumber + Math.floor(idx / 2);
-            const isBlackMove = idx % 2 === 1;
-            return {
-                number: moveNumber_,
-                notation: isBlackMove ? '..' : ''
-            };
-        }
+        // Calculate the actual move number for this suggestion
+        // Current full move number + any additional full moves in the line
+        const baseMoveNumber = Math.floor((currentMoveIndex + 1) / 2) + 1;
+        const offsetInLine = Math.floor((idx + (isCurrentPositionBlackToMove ? 1 : 0)) / 2);
+        const moveNumber = baseMoveNumber + offsetInLine;
+
+        // Determine if this particular move is by black
+        const isBlackMove = (isCurrentPositionBlackToMove && idx % 2 === 0) ||
+            (!isCurrentPositionBlackToMove && idx % 2 === 1);
+
+        return {
+            number: moveNumber,
+            notation: isBlackMove ? '...' : ''
+        };
     };
 
     // Determine background color based on winning color using our utility
@@ -73,8 +55,8 @@ export function EngineLine({ line, isMainLine, onMoveClick }) {
                         >
                             {showMoveNumber && (
                                 <span className="text-slate-500 mr-1">
-                                        {number}.{notation}
-                                    </span>
+                                    {number}{notation && '...'}
+                                </span>
                             )}
                             {move}
                         </button>
