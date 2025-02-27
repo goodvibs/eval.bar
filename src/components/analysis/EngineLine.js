@@ -28,7 +28,7 @@ export function EngineLine({ line, isMainLine, onMoveClick }) {
 
         return {
             number: moveNumber,
-            notation: isBlackMove ? '...' : ''
+            isBlackMove: isBlackMove
         };
     };
 
@@ -44,8 +44,8 @@ export function EngineLine({ line, isMainLine, onMoveClick }) {
             </div>
             <div className="flex gap-1 text-slate-300 whitespace-nowrap overflow-x-auto scrollbar-none">
                 {line.moves.map((move, idx) => {
-                    const { number, notation } = getMoveNumbering(idx);
-                    const showMoveNumber = notation === '' || idx === 0;
+                    const { number, isBlackMove } = getMoveNumbering(idx);
+                    const showMoveNumber = !isBlackMove || idx === 0;
 
                     return (
                         <button
@@ -55,7 +55,7 @@ export function EngineLine({ line, isMainLine, onMoveClick }) {
                         >
                             {showMoveNumber && (
                                 <span className="text-slate-500 mr-1">
-                                    {number}{notation && '...'}
+                                    {number}{isBlackMove ? '...' : '.'}
                                 </span>
                             )}
                             {move}
