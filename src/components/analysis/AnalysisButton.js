@@ -1,10 +1,11 @@
 import {StopIcon} from "./StopIcon";
 import {AnalyzeIcon} from "./AnalyzeIcon";
 
-export function AnalysisButton({ isAnalyzing, handleAnalysisClick }) {
+export function AnalysisButton({ disabled, isAnalyzing, handleAnalysisClick }) {
     return (
         <button
             onClick={handleAnalysisClick}
+            disabled={disabled}
             className={`flex flex-nowrap items-center px-2 py-1 text-sm rounded transition-all gap-1 font-semibold touch-manipulation ${
                 isAnalyzing
                     ? 'bg-red-600 hover:bg-red-700 text-slate-100'

@@ -66,12 +66,15 @@ export const useEngineStore = create(
         (set, get) => ({
             // Analysis state
             isAnalyzing: false,
+            engineReady: false,
             depth: 0,
             multipv: 3,
             searchDepth: 20, // Configurable search depth
             currentLines: [],
             engineThinking: '',
             analysisHistory: {}, // Stores analysis keyed by FEN
+
+            setEngineReady: (ready) => set({ engineReady: ready }),
 
             // Settings
             setMultiPV: (value) => {
@@ -81,11 +84,11 @@ export const useEngineStore = create(
                 set({ multipv: newValue });
 
                 // Update engine setting if analyzing
-                if (get().isAnalyzing) {
-                    const stockfishInstance = window.stockfish;
-                    if (stockfishInstance) {
-                        stockfishInstance.postMessage('stop');
-                        stockfishInstance.postMessage('setoption name MultiPV value ' + newValue);
+                if (window.stockfish) {
+                    window.stockfish.postMessage('stop');
+                    window.stockfish.postMessage('setoption name MultiPV value ' + newValue);
+
+                    if (get().isAnalyzing) {
                         get().continueAnalysis();
                     }
                 }
@@ -105,44 +108,40 @@ export const useEngineStore = create(
 
             // Analysis control functions
             startAnalysis: () => {
-                const { multipv, searchDepth } = get();
-                console.log(`Starting analysis with MultiPV: ${multipv}, depth: ${searchDepth}`);
-                set({ isAnalyzing: true, currentLines: [] });
+                const { multipv, searchDepth, engineReady } = get();
 
-                const stockfishInstance = window.stockfish;
-                if (!stockfishInstance) {
-                    console.error("Engine not available");
+                if (!engineReady || !window.stockfish) {
+                    console.error("Engine not ready");
                     return;
                 }
 
+                console.log(`Starting analysis with MultiPV: ${multipv}, depth: ${searchDepth}`);
+                set({ isAnalyzing: true, currentLines: [] });
+
                 // Configure and start analysis
-                stockfishInstance.postMessage('setoption name MultiPV value ' + multipv);
-                stockfishInstance.postMessage('position fen ' + useGameStore.getState().currentPositionFen);
-                stockfishInstance.postMessage(`go depth ${searchDepth}`);
+                window.stockfish.postMessage('setoption name MultiPV value ' + multipv);
+                window.stockfish.postMessage('position fen ' + useGameStore.getState().currentPositionFen);
+                window.stockfish.postMessage(`go depth ${searchDepth}`);
             },
 
             stopAnalysis: () => {
                 console.log('Stopping analysis');
                 set({ isAnalyzing: false });
 
-                const stockfishInstance = window.stockfish;
-                if (stockfishInstance) {
-                    stockfishInstance.postMessage('stop');
+                if (window.stockfish) {
+                    window.stockfish.postMessage('stop');
                 }
             },
 
             continueAnalysis: () => {
-                const { isAnalyzing, searchDepth } = get();
-                if (!isAnalyzing) return;
-
-                const stockfishInstance = window.stockfish;
-                if (!stockfishInstance) return;
+                const { isAnalyzing, searchDepth, engineReady } = get();
+                if (!isAnalyzing || !engineReady || !window.stockfish) return;
 
                 const currentFen = useGameStore.getState().currentPositionFen;
 
-                stockfishInstance.postMessage('stop');
-                stockfishInstance.postMessage('position fen ' + currentFen);
-                stockfishInstance.postMessage(`go depth ${searchDepth}`);
+                window.stockfish.postMessage('stop');
+                window.stockfish.postMessage('position fen ' + currentFen);
+                window.stockfish.postMessage(`go depth ${searchDepth}`);
             },
 
             updatePosition: (fen) => {

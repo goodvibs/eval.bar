@@ -1,11 +1,16 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useEngineStore } from "./stores/useEngineStore";
 
-export function useStockfish(options = { multiPV: 3 }) {
-    const { handleEngineMessage } = useEngineStore();
+export function useStockfish() {
+    const {
+        handleEngineMessage,
+        multipv,
+        setEngineReady
+    } = useEngineStore();
+
     const engineRef = useRef(null);
 
-    // Initialize engine with configurable options
+    // Initialize engine
     const initEngine = useCallback(() => {
         if (!engineRef.current) {
             try {
@@ -13,45 +18,31 @@ export function useStockfish(options = { multiPV: 3 }) {
 
                 // Initial UCI setup
                 engineRef.current.postMessage('uci');
-                engineRef.current.postMessage(`setoption name MultiPV value ${options.multiPV}`);
+                engineRef.current.postMessage(`setoption name MultiPV value ${multipv}`);
                 engineRef.current.postMessage('isready');
                 engineRef.current.postMessage('ucinewgame');
 
                 engineRef.current.addEventListener('message', (e) => {
+                    // Handle "readyok" message to update engine ready state
+                    if (e.data === "readyok") {
+                        setEngineReady(true);
+                    }
+
                     handleEngineMessage(e.data);
                 });
 
-                // Expose engine to window for debugging only in development
-                if (process.env.NODE_ENV === 'development') {
-                    window.stockfish = engineRef.current;
-                }
+                // Expose engine to window for direct store access
+                window.stockfish = engineRef.current;
 
                 return true;
             } catch (error) {
                 console.error('Failed to initialize Stockfish engine:', error);
+                setEngineReady(false);
                 return false;
             }
         }
         return true;
-    }, [handleEngineMessage, options.multiPV]);
-
-    // Send command to engine
-    const sendCommand = useCallback((command) => {
-        if (engineRef.current) {
-            engineRef.current.postMessage(command);
-            return true;
-        }
-        return false;
-    }, []);
-
-    // Reset engine (for new sidebar)
-    const resetEngine = useCallback(() => {
-        if (engineRef.current) {
-            sendCommand('ucinewgame');
-            return true;
-        }
-        return false;
-    }, [sendCommand]);
+    }, [handleEngineMessage, multipv, setEngineReady]);
 
     useEffect(() => {
         // Initialize engine on component mount
@@ -63,18 +54,12 @@ export function useStockfish(options = { multiPV: 3 }) {
                 engineRef.current.terminate();
                 engineRef.current = null;
 
-                // Clean up window reference if it exists
-                if (window.stockfish) {
-                    window.stockfish = null;
-                }
+                // Clean up window reference
+                window.stockfish = null;
+                setEngineReady(false);
             }
         };
-    }, [initEngine]);
+    }, [initEngine, setEngineReady]);
 
-    // Return useful methods for interacting with the engine
-    return {
-        sendCommand,
-        resetEngine,
-        isReady: !!engineRef.current
-    };
+    // No need to return anything - the store will handle engine commands
 }

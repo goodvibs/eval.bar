@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { EngineLine } from "./EngineLine";
 import { useGameStore } from "../../hooks/stores/useGameStore";
 import { Chess } from "cm-chess";
@@ -13,54 +13,17 @@ export function AnalysisPanel() {
         isAnalyzing,
         depth,
         engineThinking,
+        engineReady,
+        startAnalysis,
+        stopAnalysis
     } = useEngineStore();
 
     const { loadPosition } = useGameStore();
 
-    // Use the improved Stockfish hook with access to its methods
-    const { sendCommand, isReady, resetEngine } = useStockfish({ multiPV: useEngineStore.getState().multipv });
+    // Simply initialize Stockfish - all control now happens through the store
+    useStockfish();
 
-    // Connect the Stockfish hook to the engine store
-    useEffect(() => {
-        if (isReady) {
-            // Override the engine store methods to use the hook's methods
-            const originalStartAnalysis = useEngineStore.getState().startAnalysis;
-            const originalStopAnalysis = useEngineStore.getState().stopAnalysis;
-            const originalUpdatePosition = useEngineStore.getState().updatePosition;
-
-            useEngineStore.setState({
-                startAnalysis: () => {
-                    const { multipv, searchDepth } = useEngineStore.getState();
-                    originalStartAnalysis();
-
-                    sendCommand('setoption name MultiPV value ' + multipv);
-                    sendCommand('position fen ' + useGameStore.getState().currentPositionFen);
-                    sendCommand(`go depth ${searchDepth}`);
-                },
-
-                stopAnalysis: () => {
-                    originalStopAnalysis();
-                    sendCommand('stop');
-                },
-
-                updatePosition: (fen) => {
-                    originalUpdatePosition(fen);
-
-                    if (useEngineStore.getState().isAnalyzing) {
-                        sendCommand('stop');
-                        sendCommand('position fen ' + fen);
-                        sendCommand(`go depth ${useEngineStore.getState().searchDepth}`);
-                    }
-                },
-
-                resetEngine: () => {
-                    resetEngine();
-                    sendCommand('ucinewgame');
-                }
-            });
-        }
-    }, [sendCommand, isReady, resetEngine]);
-
+    // Keep position syncing
     usePositionSync();
 
     const handleMoveClick = (moves) => {
@@ -69,12 +32,22 @@ export function AnalysisPanel() {
         loadPosition(game.fen());
     };
 
+    const handleAnalysisToggle = () => {
+        if (isAnalyzing) {
+            stopAnalysis();
+        } else {
+            startAnalysis();
+        }
+    };
+
     return (
         <div className="flex min-h-fit flex-col bg-slate-800 rounded-lg">
             <AnalysisPanelHeader
                 isAnalyzing={isAnalyzing}
                 depth={depth}
                 currentLines={currentLines}
+                onAnalysisToggle={handleAnalysisToggle}
+                engineReady={engineReady}
             />
 
             <div className="flex flex-1 flex-col divide-y divide-slate-700">
