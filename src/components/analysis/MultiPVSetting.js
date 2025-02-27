@@ -1,7 +1,7 @@
-import { engineStore } from "../../stores/engineStore";
+import { useEngineStore } from "../../hooks/stores/useEngineStore";
 
 export function MultiPVSetting({ isAnalyzing }) {
-    const { multipv, setMultiPV } = engineStore();
+    const { multipv, setMultiPV } = useEngineStore();
 
     return (
         <div className="space-y-1">

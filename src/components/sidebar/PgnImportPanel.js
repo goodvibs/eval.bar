@@ -1,4 +1,4 @@
-import {useGameStore} from "../../stores/gameStore";
+import {useGameStore} from "../../hooks/stores/useGameStore";
 import React from "react";
 
 export function PgnImportPanel({ closeSidebar }) {

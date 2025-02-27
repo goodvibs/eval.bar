@@ -1,4 +1,4 @@
-import {useGameStore} from "../../stores/gameStore";
+import {useGameStore} from "../../hooks/stores/useGameStore";
 import {MoveHistoryHeader} from "./MoveHistoryHeader";
 import {MoveHistoryList} from "./MoveHistoryList";
 

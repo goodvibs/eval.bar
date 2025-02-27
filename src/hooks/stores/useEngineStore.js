@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { useGameStore } from "./gameStore";
+import { useGameStore } from "./useGameStore";
 import { Chess } from "cm-chess";
 import { persist } from 'zustand/middleware';
 
@@ -61,7 +61,7 @@ const parseScore = (message, isBlackToMove) => {
 };
 
 // Main store definition with persistence for settings
-export const engineStore = create(
+export const useEngineStore = create(
     persist(
         (set, get) => ({
             // Analysis state

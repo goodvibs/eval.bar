@@ -1,7 +1,7 @@
-import {engineStore} from "../../stores/engineStore";
+import {useEngineStore} from "../../hooks/stores/useEngineStore";
 
 export function DepthSetting({ isAnalyzing }) {
-    const { searchDepth, setSearchDepth } = engineStore();
+    const { searchDepth, setSearchDepth } = useEngineStore();
 
     return (
         <div className="space-y-1">

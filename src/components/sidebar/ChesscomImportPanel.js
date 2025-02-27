@@ -1,5 +1,5 @@
 import React from 'react';
-import {useGameStore} from "../../stores/gameStore";
+import {useGameStore} from "../../hooks/stores/useGameStore";
 import {fetchChesscomGames} from "../../utils/chesscom";
 import {ChesscomImportForm} from "./ChesscomImportForm";
 import {GamesList} from "./GamesList";
@@ -43,7 +43,7 @@ export function ChesscomImportPanel({ closeSidebar }) {
             let chronologicallyOrderedGames = fetchedGames.reverse();
             setGames(chronologicallyOrderedGames);
         } catch (error) {
-            setError('Failed to fetch games. Please check the username and try again.');
+            setError('Failed to fetch sidebar. Please check the username and try again.');
         } finally {
             setIsLoading(false);
         }

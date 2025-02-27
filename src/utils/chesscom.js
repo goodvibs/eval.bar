@@ -16,7 +16,7 @@ export function isSupportedVariant(headers) {
     // List of supported variants
     const supportedVariants = [
         undefined,  // Standard chess (no Variant tag)
-        'Standard' // Some sites explicitly mark standard games
+        'Standard' // Some sites explicitly mark standard sidebar
     ];
 
     // Variant is unsupported
@@ -27,7 +27,7 @@ export function isSupportedVariant(headers) {
     // Check for custom positions through FEN
     if (headers.SetUp === '1' && headers.FEN) {
         if (headers.FEN !== FEN.start) {
-            throw new Error('Custom position games are not supported');
+            throw new Error('Custom position sidebar are not supported');
         }
     }
 
@@ -37,7 +37,7 @@ export function isSupportedVariant(headers) {
 export function formatTimeControl(timeControl) {
     if (!timeControl) return 'Unknown';
 
-    // Handle daily games
+    // Handle daily sidebar
     if (timeControl === '1/86400') return 'Daily';
 
     // Handle standard time format (e.g., '600', '180+1')
@@ -100,7 +100,7 @@ export function processChesscomGame(game) {
 }
 
 /**
- * Fetch a list of games for a Chess.com user for a specific month
+ * Fetch a list of sidebar for a Chess.com user for a specific month
  * @param {string} username - Chess.com username
  * @param {number|string} year - Year (YYYY)
  * @param {number|string} month - Month (1-12)
@@ -113,13 +113,13 @@ export async function fetchChesscomGames(username, year, month) {
         );
 
         if (!response.ok) {
-            throw new Error('Failed to fetch games');
+            throw new Error('Failed to fetch sidebar');
         }
 
         const data = await response.json();
         return data.games.map(processChesscomGame);
     } catch (error) {
-        console.error('Error fetching Chess.com games:', error);
+        console.error('Error fetching Chess.com sidebar:', error);
         throw error;
     }
 }
@@ -191,7 +191,7 @@ export async function fetchChesscomGame(gameType, gameId) {
         // Parse the date to get year and month
         const { year, month } = parseChesscomDate(gameMeta.game.pgnHeaders.Date);
 
-        // Step 2: Fetch all games for this month for the white player
+        // Step 2: Fetch all sidebar for this month for the white player
         const gamesArchive = await fetchChesscomGames(whiteUsername, year, month);
 
         // Step 3: Find the specific game by ID in the archive

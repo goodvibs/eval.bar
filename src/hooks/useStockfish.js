@@ -1,8 +1,8 @@
 import { useEffect, useRef, useCallback } from 'react';
-import { engineStore } from "../stores/engineStore";
+import { useEngineStore } from "./stores/useEngineStore";
 
 export function useStockfish(options = { multiPV: 3 }) {
-    const { handleEngineMessage } = engineStore();
+    const { handleEngineMessage } = useEngineStore();
     const engineRef = useRef(null);
 
     // Initialize engine with configurable options
@@ -44,7 +44,7 @@ export function useStockfish(options = { multiPV: 3 }) {
         return false;
     }, []);
 
-    // Reset engine (for new games)
+    // Reset engine (for new sidebar)
     const resetEngine = useCallback(() => {
         if (engineRef.current) {
             sendCommand('ucinewgame');

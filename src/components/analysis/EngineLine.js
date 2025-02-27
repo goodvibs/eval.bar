@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { useGameStore } from "../../stores/gameStore";
+import { useGameStore } from "../../hooks/stores/useGameStore";
 import { Chess } from "cm-chess";
 import { processEvaluation } from "../../utils/evaluation";
 

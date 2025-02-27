@@ -1,12 +1,12 @@
 import React from "react";
-import { engineStore } from "../../stores/engineStore";
+import { useEngineStore } from "../../hooks/stores/useEngineStore";
 import { processEvaluation } from "../../utils/evaluation";
 import {EvaluationDisplay} from "./EvaluationDisplay";
 import {EngineInfo} from "./EngineInfo";
 import {AnalysisControls} from "./AnalysisControls";
 
 export function AnalysisPanelHeader({ isAnalyzing, depth, currentLines }) {
-    const { startAnalysis, stopAnalysis } = engineStore();
+    const { startAnalysis, stopAnalysis } = useEngineStore();
 
     const mainLine = currentLines[0];
     const rawEval = mainLine?.score ?? 0;

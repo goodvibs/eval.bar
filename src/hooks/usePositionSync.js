@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
-import { engineStore } from "../stores/engineStore";
-import { useGameStore } from "../stores/gameStore";
+import { useEngineStore } from "./stores/useEngineStore";
+import { useGameStore } from "./stores/useGameStore";
 
 export function usePositionSync(options = { debounceMs: 100 }) {
-    const updatePosition = engineStore(state => state.updatePosition);
-    const isAnalyzing = engineStore(state => state.isAnalyzing);
+    const updatePosition = useEngineStore(state => state.updatePosition);
+    const isAnalyzing = useEngineStore(state => state.isAnalyzing);
     const currentFen = useGameStore(state => state.currentPositionFen);
 
     // Use a ref to store the timeout ID for debouncing

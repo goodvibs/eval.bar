@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
-import { engineStore } from "../stores/engineStore";
+import { useEngineStore } from "../hooks/stores/useEngineStore";
 import { processEvaluation } from "../utils/evaluation";
 
 export function EvaluationBar({ height = "h-1.5", showLabels = false }) {
-    const { currentLines } = engineStore();
+    const { currentLines } = useEngineStore();
 
     const mainLine = currentLines[0];
     const rawEval = mainLine?.score ?? 0;

@@ -1,5 +1,5 @@
 import React from "react";
-import {useGameStore} from "../stores/gameStore";
+import {useGameStore} from "../hooks/stores/useGameStore";
 
 export function GameMetadata() {
     const { gameMetadata, usernameGameResult } = useGameStore();

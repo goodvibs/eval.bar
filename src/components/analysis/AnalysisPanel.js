@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { EngineLine } from "./EngineLine";
-import { useGameStore } from "../../stores/gameStore";
+import { useGameStore } from "../../hooks/stores/useGameStore";
 import { Chess } from "cm-chess";
-import { engineStore } from "../../stores/engineStore";
+import { useEngineStore } from "../../hooks/stores/useEngineStore";
 import { useStockfish } from "../../hooks/useStockfish";
 import { usePositionSync } from "../../hooks/usePositionSync";
 import { AnalysisPanelHeader } from "./AnalysisPanelHeader";
@@ -13,24 +13,24 @@ export function AnalysisPanel() {
         isAnalyzing,
         depth,
         engineThinking,
-    } = engineStore();
+    } = useEngineStore();
 
     const { loadPosition } = useGameStore();
 
     // Use the improved Stockfish hook with access to its methods
-    const { sendCommand, isReady, resetEngine } = useStockfish({ multiPV: engineStore.getState().multipv });
+    const { sendCommand, isReady, resetEngine } = useStockfish({ multiPV: useEngineStore.getState().multipv });
 
     // Connect the Stockfish hook to the engine store
     useEffect(() => {
         if (isReady) {
             // Override the engine store methods to use the hook's methods
-            const originalStartAnalysis = engineStore.getState().startAnalysis;
-            const originalStopAnalysis = engineStore.getState().stopAnalysis;
-            const originalUpdatePosition = engineStore.getState().updatePosition;
+            const originalStartAnalysis = useEngineStore.getState().startAnalysis;
+            const originalStopAnalysis = useEngineStore.getState().stopAnalysis;
+            const originalUpdatePosition = useEngineStore.getState().updatePosition;
 
-            engineStore.setState({
+            useEngineStore.setState({
                 startAnalysis: () => {
-                    const { multipv, searchDepth } = engineStore.getState();
+                    const { multipv, searchDepth } = useEngineStore.getState();
                     originalStartAnalysis();
 
                     sendCommand('setoption name MultiPV value ' + multipv);
@@ -46,10 +46,10 @@ export function AnalysisPanel() {
                 updatePosition: (fen) => {
                     originalUpdatePosition(fen);
 
-                    if (engineStore.getState().isAnalyzing) {
+                    if (useEngineStore.getState().isAnalyzing) {
                         sendCommand('stop');
                         sendCommand('position fen ' + fen);
-                        sendCommand(`go depth ${engineStore.getState().searchDepth}`);
+                        sendCommand(`go depth ${useEngineStore.getState().searchDepth}`);
                     }
                 },
 

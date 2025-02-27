@@ -1,5 +1,5 @@
 import React from "react";
-import {useGameStore} from "../../stores/gameStore";
+import {useGameStore} from "../../hooks/stores/useGameStore";
 
 function MovePair({ moveNumber, whiteMove, blackMove, currentMoveIndex, onMoveClick }) {
     const whiteMoveIndex = (moveNumber - 1) * 2;

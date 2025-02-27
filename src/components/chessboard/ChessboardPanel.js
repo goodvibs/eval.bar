@@ -1,8 +1,8 @@
 import { Chessboard } from "react-chessboard";
 import { ChessboardControls } from "./ChessboardControls";
 import React from "react";
-import { useGameStore } from "../../stores/gameStore";
-import { engineStore } from "../../stores/engineStore";
+import { useGameStore } from "../../hooks/stores/useGameStore";
+import { useEngineStore } from "../../hooks/stores/useEngineStore";
 import { Chess } from "cm-chess";
 
 export function ChessboardPanel() {
@@ -17,7 +17,7 @@ export function ChessboardPanel() {
         gameMoveHistory,
     } = useGameStore();
 
-    const { isAnalyzing, currentLines } = engineStore();
+    const { isAnalyzing, currentLines } = useEngineStore();
 
     const [orientedWhite, setOrientedWhite] = React.useState(true);
     const [boardWidth, setBoardWidth] = React.useState(500);

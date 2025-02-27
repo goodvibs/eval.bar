@@ -1,5 +1,5 @@
 import React from 'react';
-import {useGameStore} from "../../stores/gameStore";
+import {useGameStore} from "../../hooks/stores/useGameStore";
 import {analyzeOnLichess} from "../../utils/lichess";
 
 export function MoveHistoryHeader() {
