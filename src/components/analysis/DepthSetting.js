@@ -1,0 +1,27 @@
+import {engineStore} from "../../stores/engineStore";
+
+export function DepthSetting({ isAnalyzing }) {
+    const { searchDepth, setSearchDepth } = engineStore();
+
+    return (
+        <div className="space-y-1">
+            <label htmlFor="depth-select" className="text-slate-300 text-xs block">
+                Search Depth
+            </label>
+            <select
+                id="depth-select"
+                className="w-full bg-slate-700 text-slate-200 text-sm rounded px-2 py-2 border border-slate-600 disabled:opacity-50 outline-none"
+                value={searchDepth}
+                onChange={(e) => setSearchDepth(Number(e.target.value))}
+                disabled={isAnalyzing}
+            >
+                <option value={15}>15 (fastest)</option>
+                <option value={18}>18</option>
+                <option value={20}>20 (balanced)</option>
+                <option value={22}>22</option>
+                <option value={25}>25</option>
+                <option value={30}>30 (strongest)</option>
+            </select>
+        </div>
+    );
+}
