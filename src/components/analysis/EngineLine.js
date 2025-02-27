@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useGameStore } from "../../stores/gameStore";
-import { Chess } from "chess.js";
+import { Chess } from "cm-chess";
 import { processEvaluation } from "../../utils/evaluation";
 
 export function EngineLine({ line, isMainLine, onMoveClick }) {

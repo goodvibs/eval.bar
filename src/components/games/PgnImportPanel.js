@@ -1,6 +1,5 @@
 import {useGameStore} from "../../stores/gameStore";
 import React from "react";
-import {Chess} from "chess.js";
 
 export function PgnImportPanel({ closeSidebar }) {
     const [pgnText, setPgnText] = React.useState('');

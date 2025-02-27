@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { EngineLine } from "./EngineLine";
 import { useGameStore } from "../../stores/gameStore";
-import { Chess } from "chess.js";
+import { Chess } from "cm-chess";
 import { engineStore } from "../../stores/engineStore";
 import { useStockfish } from "../../hooks/useStockfish";
 import { usePositionSync } from "../../hooks/usePositionSync";
