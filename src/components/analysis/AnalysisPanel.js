@@ -18,7 +18,7 @@ export function AnalysisPanel() {
         stopAnalysis
     } = useEngineStore();
 
-    const { loadPosition } = useGameStore();
+    const { makeMove } = useGameStore();
 
     // Simply initialize Stockfish - all control now happens through the store
     useStockfish();
@@ -26,10 +26,10 @@ export function AnalysisPanel() {
     // Keep position syncing
     usePositionSync();
 
-    const handleMoveClick = (moves) => {
-        const game = new Chess();
-        moves.forEach(move => game.move(move));
-        loadPosition(game.fen());
+    const handleMoveClick = (sanMoves) => {
+        for (let i = 0; i < sanMoves.length; i++) {
+            console.assert(makeMove(sanMoves[i]), `Failed to make move: ${sanMoves[i]}`);
+        }
     };
 
     const handleAnalysisToggle = () => {

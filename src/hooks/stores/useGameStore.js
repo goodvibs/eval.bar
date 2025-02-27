@@ -26,7 +26,7 @@ export const useGameStore = create((set, get) => ({
         lines: []
     },
 
-    username: null,
+    username: '',
     usernameGameResult: null,
 
     gameMetadata: {
@@ -60,10 +60,15 @@ export const useGameStore = create((set, get) => ({
         let moveHistory = get().gameMoveHistory;
         let currentMoveIndex = get().currentMoveIndex;
 
-        console.log(game.pgn.history)
-
         if (result) {
             if (currentMoveIndex !== moveHistory.length - 1) {
+                if (moveHistory[currentMoveIndex + 1].uci === result.uci) {
+                    set({
+                        currentPositionFen: game.fen(),
+                        currentMoveIndex: currentMoveIndex + 1
+                    });
+                    return true;
+                }
                 // Remove all moves after the current index
                 moveHistory = moveHistory.slice(0, currentMoveIndex + 1);
             }
