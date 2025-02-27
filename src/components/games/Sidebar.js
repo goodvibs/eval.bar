@@ -54,7 +54,7 @@ export function Sidebar({ isOpen, onOpen, onClose, height }) {  // Separate open
                     </svg>
                 </button>
 
-                <div className="flex flex-col p-4 lg:pr-0 gap-4 overflow-y-auto max-h-full lg:max-h-[calc(100vh-3rem)]">
+                <div className="flex flex-col p-4 lg:pr-3 gap-4 overflow-y-auto max-h-full lg:max-h-[calc(100vh-3rem)] scrollbar-track-transparent">
                     {/* X button - only for closing */}
                     <div className="flex items-center justify-end">
                         <button

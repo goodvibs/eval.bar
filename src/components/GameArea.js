@@ -7,7 +7,7 @@ import {GameMetadata} from "./GameMetadata";
 export function GameArea() {
 
     return (
-        <main className="flex flex-1 justify-center flex-wrap lg:flex-nowrap gap-4 p-4 overflow-hidden">
+        <main className="flex flex-1 justify-center flex-wrap lg:flex-nowrap gap-4 lg:pl-1 p-4 overflow-hidden">
             <div className="flex h-fit flex-col gap-4">
                 <GameMetadata />
                 <ChessboardPanel />
