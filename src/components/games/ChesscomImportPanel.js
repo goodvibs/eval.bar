@@ -1,6 +1,7 @@
 import React from 'react';
 import {useGameStore} from "../../stores/gameStore";
 import {fetchChesscomGames} from "../../utils/chesscom";
+import {Chessboard} from "react-chessboard";
 
 function getUsernameGameResult(game, username) {
     if (game.white.toLowerCase() === username.toLowerCase()) {
@@ -139,8 +140,12 @@ export function ChesscomImportPanel({ closeSidebar }) {
                                             {game.result}
                                         </span>
                                     </div>
-                                    <div className="flex gap-2 text-xs text-slate-400 text-nowrap">
-                                            <span className="">
+                                    <div className="flex gap-2 items-center text-xs text-slate-400">
+                                            <span className="flex flex-nowrap items-center gap-1">
+                                                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                </svg>
                                                 {game.date.toLocaleDateString()}
                                             </span>
                                         <span className="flex flex-nowrap items-center gap-1">
