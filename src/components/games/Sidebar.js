@@ -16,21 +16,20 @@ export function Sidebar({ isOpen, onOpen, onClose, height }) {  // Separate open
                 transition-all duration-1000
                 lg:hidden
                 z-30
-                ${isOpen ? 'backdrop-blur bg-opacity-50 pointer-events-auto' : 'bg-opacity-0'}
+                ${isOpen ? 'backdrop-blur bg-opacity-50' : 'bg-opacity-0'}
                 `}
                 onClick={onClose}
             />
 
             {/* Sidebar wrapper with tab */}
             <aside
-                style={window.innerWidth >= 1024 ? { height: height } : {}}
                 className={`
                 fixed lg:relative lg:block
                 inset-y-0 lg:inset-y-auto left-0 
                 w-full lg:w-72
                 bg-slate-700
                 ${isOpen ? 'outline outline-1 outline-slate-500 lg:outline-none' : ''}
-                z-40 lg:z-0
+                z-40
                 transform transition-transform duration-1000
                 ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
             `}>
@@ -55,7 +54,7 @@ export function Sidebar({ isOpen, onOpen, onClose, height }) {  // Separate open
                     </svg>
                 </button>
 
-                <div className="flex flex-col p-4 lg:pr-0 overflow-hidden gap-4">
+                <div className="flex flex-col p-4 lg:pr-0 gap-4 overflow-y-auto max-h-full lg:max-h-[calc(100vh-3rem)]">
                     {/* X button - only for closing */}
                     <div className="flex items-center justify-end">
                         <button

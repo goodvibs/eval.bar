@@ -7,7 +7,7 @@ export function GameMetadata() {
     if (!gameMetadata.white || !gameMetadata.black) return null;
 
     return (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 px-4">
             {/* Players */}
             <div className="flex gap-2 text-slate-100 justify-between items-center">
                 <div className="flex flex-wrap items-center text-sm font-medium">

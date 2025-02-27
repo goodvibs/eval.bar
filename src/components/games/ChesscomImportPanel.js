@@ -1,7 +1,8 @@
 import React from 'react';
 import {useGameStore} from "../../stores/gameStore";
 import {fetchChesscomGames} from "../../utils/chesscom";
-import {Chessboard} from "react-chessboard";
+import {ChesscomImportForm} from "./ChesscomImportForm";
+import {GamesList} from "./GamesList";
 
 function getUsernameGameResult(game, username) {
     if (game.white.toLowerCase() === username.toLowerCase()) {
@@ -13,7 +14,11 @@ function getUsernameGameResult(game, username) {
 }
 
 export function ChesscomImportPanel({ closeSidebar }) {
-    const { username, setUsername, setUsernameGameResult } = useGameStore();
+    const { username, setUsername, setUsernameGameResult, loadChesscomGame } = useGameStore();
+
+    const [games, setGames] = React.useState([]);
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [error, setError] = React.useState(null);
 
     // Get current date and format it as YYYY-MM
     const getCurrentYearMonth = () => {
@@ -22,12 +27,6 @@ export function ChesscomImportPanel({ closeSidebar }) {
     };
 
     const [selectedDate, setSelectedDate] = React.useState(getCurrentYearMonth());
-    const [games, setGames] = React.useState([]);
-    const [isLoading, setIsLoading] = React.useState(false);
-    const [error, setError] = React.useState(null);
-    const [hoveredGame, setHoveredGame] = React.useState(null);
-
-    const { loadChesscomGame } = useGameStore();
 
     const handleFetchGames = async (e) => {
         // If called from a form submission, prevent default behavior
@@ -58,43 +57,14 @@ export function ChesscomImportPanel({ closeSidebar }) {
 
     return (
         <div className="flex flex-col gap-4">
-            <form onSubmit={handleFetchGames} className="flex flex-col gap-4">
-                <div className="flex flex-col gap-2">
-                    <label htmlFor="username" className="text-sm lg:text-xs font-medium text-slate-300">
-                        Chess.com Username
-                    </label>
-                    <input
-                        id="username"
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value.trim())}
-                        placeholder="IMRosen"
-                        className="p-2 bg-slate-800 outline-none rounded text-slate-200 border border-slate-600"
-                    />
-                </div>
-
-                <div className="flex flex-col gap-2">
-                    <label htmlFor="month" className="text-sm lg:text-xs font-medium text-slate-300">
-                        Select Month
-                    </label>
-                    <input
-                        id="month"
-                        type="month"
-                        value={selectedDate}
-                        onChange={(e) => setSelectedDate(e.target.value)}
-                        className="p-2 bg-slate-800 rounded outline-none text-slate-200 border border-slate-600"
-                        placeholder='YYYY-MM'
-                    />
-                </div>
-
-                <button
-                    type="submit"
-                    disabled={!selectedDate || isLoading}
-                    className="bg-emerald-600 transition-all text-slate-100 p-2 rounded hover:bg-emerald-500 disabled:opacity-50 disabled:hover:bg-emerald-600"
-                >
-                    {isLoading ? 'Loading...' : 'Fetch Games'}
-                </button>
-            </form>
+            <ChesscomImportForm
+                username={username}
+                setUsername={setUsername}
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+                handleFetchGames={handleFetchGames}
+                isLoading={isLoading}
+            />
 
             {error && (
                 <div className="text-rose-400 text-sm">
@@ -103,106 +73,12 @@ export function ChesscomImportPanel({ closeSidebar }) {
             )}
 
             {games.length > 0 && (
-                <div className="relative flex gap-4">
-                    <div className="flex bg-slate-800 p-2 border rounded-lg border-slate-600 flex-1 flex-col gap-2 max-h-[calc(100vh-25rem)] overflow-y-auto
-            scrollbar-thin scrollbar-thumb-transparent hover:scrollbar-thumb-slate-600
-            active:scrollbar-thumb-slate-600 scrollbar-track-transparent">
-                        {games.map((game) => (
-                            <button
-                                key={game.id}
-                                onClick={() => handleGameSelect(game)}
-                                onMouseEnter={() => setHoveredGame(game)}
-                                onMouseLeave={() => setHoveredGame(null)}
-                                disabled={!game.isSupported}
-                                className={`
-                                    text-left p-3 rounded bg-slate-800
-                                    ${game.isSupported
-                                    ? 'hover:bg-slate-600'
-                                    : ''}
-                                    relative group
-                                `}
-                            >
-                                <div className="flex flex-col">
-                                    <div className="flex justify-between items-start mb-2 gap-4">
-                                        <div className="flex flex-wrap items-center text-sm font-medium gap-x-1">
-                                            {game.white}
-                                            <span className="text-xs">({game.whiteElo})</span>
-                                            <span className="text-slate-400 font-normal">vs</span>
-                                            {game.black}
-                                            <span className="text-xs">({game.blackElo})</span>
-                                        </div>
-                                        <span className={`
-                                            px-2 py-1 rounded text-xs text-nowrap min-w-fit font-mono
-                                            ${getUsernameGameResult(game, username) === 'win' ? 'bg-emerald-600'
-                                            : getUsernameGameResult(game, username) === 'loss' ? 'bg-rose-600'
-                                                : 'bg-slate-600'}
-                                        `}>
-                                            {game.result}
-                                        </span>
-                                    </div>
-                                    <div className="flex gap-2 items-center text-xs text-slate-400">
-                                            <span className="flex flex-nowrap items-center gap-1">
-                                                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                                </svg>
-                                                {game.date.toLocaleDateString()}
-                                            </span>
-                                        <span className="flex flex-nowrap items-center gap-1">
-                                                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                </svg>
-                                                <span className="flex flex-nowrap">{game.timeControl}</span>
-                                            </span>
-                                        {!game.isSupported && (
-                                            <span className="text-yellow-500">
-                                                    {game.variant || 'Unsupported variant'}
-                                                </span>
-                                        )}
-                                    </div>
-                                </div>
-                            </button>
-                        ))}
-                    </div>
-
-                    {/*{hoveredGame && (*/}
-                    {/*    <div*/}
-                    {/*        className="fixed w-64 bg-slate-800 z-50 rounded-lg shadow-lg p-4 border border-slate-600"*/}
-                    {/*        style={{*/}
-                    {/*            // Position it next to the games list*/}
-                    {/*            left: 'min(100vw - 280px, var(--popup-left))',*/}
-                    {/*            top: 'var(--popup-top)',*/}
-                    {/*            transform: 'translateY(-50%)'*/}
-                    {/*        }}*/}
-                    {/*        ref={el => {*/}
-                    {/*            if (el) {*/}
-                    {/*                // Get the bounding rect of the hovered button*/}
-                    {/*                const button = el.parentElement.querySelector(':hover');*/}
-                    {/*                if (button) {*/}
-                    {/*                    const rect = button.getBoundingClientRect();*/}
-                    {/*                    el.style.setProperty('--popup-left', `${rect.right + 16}px`);*/}
-                    {/*                    el.style.setProperty('--popup-top', `${rect.top + rect.height/2}px`);*/}
-                    {/*                }*/}
-                    {/*            }*/}
-                    {/*        }}*/}
-                    {/*    >*/}
-                    {/*        <Chessboard*/}
-                    {/*            position={hoveredGame.finalPosition}*/}
-                    {/*            boardWidth={256}*/}
-                    {/*            isDraggable={false}*/}
-                    {/*            customLightSquareStyle={{backgroundColor: "#cbd5e1"}}*/}
-                    {/*            customDarkSquareStyle={{backgroundColor: "#64748b"}}*/}
-                    {/*        />*/}
-                    {/*        {hoveredGame.opening && (*/}
-                    {/*            <div className="mt-2 text-sm text-slate-300">*/}
-                    {/*                <div className="font-medium">{hoveredGame.eco}</div>*/}
-                    {/*                <div className="text-slate-400">{hoveredGame.opening}</div>*/}
-                    {/*            </div>*/}
-                    {/*        )}*/}
-                    {/*    </div>*/}
-                    {/*)}*/}
-                </div>
+                <GamesList
+                    games={games}
+                    username={username}
+                    handleGameSelect={handleGameSelect}
+                    getUsernameGameResult={getUsernameGameResult}
+                />
             )}
         </div>
     );

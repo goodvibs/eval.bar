@@ -159,7 +159,7 @@ export function ChessboardPanel() {
     return (
         <div
             ref={containerRef}
-            className="flex flex-col duration-300 transition-all w-fit max-w-full border-slate-600 border rounded-lg p-2 pb-0"
+            className="flex z-0 flex-col duration-300 transition-all w-fit max-w-full border-slate-600 border rounded-lg p-2 pb-0"
         >
             <Chessboard
                 position={currentPositionFen}
@@ -187,7 +187,7 @@ export function ChessboardPanel() {
                                 backgroundImage: "radial-gradient(circle, rgba(0, 0, 0, 0.2) 25%, transparent 25%)",
                                 backgroundPosition: "center",
                                 backgroundSize: "50%",
-                                backgroundRepeat: "no-repeat"
+                                backgroundRepeat: "no-repeat",
                             }
                         ])
                     )
