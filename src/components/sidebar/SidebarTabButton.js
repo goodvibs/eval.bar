@@ -3,7 +3,7 @@ export function SidebarTabButton({ active, label, onClick }) {
         <button
             onClick={onClick}
             className={`
-                border-t border-x border-transparent
+                flex flex-1 items-center justify-center border-t border-x border-transparent
                 hover:border-slate-600 rounded-t p-2
                 ${active ? 'bg-slate-600 text-slate-100' : 'text-slate-300'}
                 text-sm font-medium

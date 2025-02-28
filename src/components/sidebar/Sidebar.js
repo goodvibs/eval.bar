@@ -55,36 +55,36 @@ export function Sidebar({ isOpen, onOpen, onClose, height }) {  // Separate open
                 </button>
 
                 <div className="flex flex-col p-4 lg:pr-3 gap-4 overflow-y-auto max-h-full lg:max-h-[calc(100vh-3rem)] scrollbar-track-transparent">
-                    {/* X button - only for closing */}
-                    <div className="flex items-center justify-end">
-                        <button
-                            onClick={onClose}
-                            className="p-2 hover:bg-slate-600 rounded-full"
-                            aria-label="Close menu"
-                        >
-                            <svg
-                                className="lg:hidden w-6 h-6 text-slate-200"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
+                    <div className="flex lg:hidden items-center justify-between py-4 ">
+                        <h1 className="flex justify-center font-medium text-2xl text-slate-200">
+                            Import a Chess Game
+                        </h1>
+                        <div className="flex items-center justify-end">
+                            <button
+                                onClick={onClose}
+                                className="p-2 hover:bg-slate-600 rounded-full"
+                                aria-label="Close menu"
                             >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M6 18L18 6M6 6l12 12"
-                                />
-                            </svg>
-                        </button>
+                                <svg
+                                    className="w-6 h-6 text-slate-200"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M6 18L18 6M6 6l12 12"
+                                    />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
-
-                    <h1 className="text-xl text-slate-300">
-                        Import a Chess Game
-                    </h1>
 
                     {/* Sidebar content */}
                     <div className="flex flex-1 lg:flex-none flex-col gap-4 text-slate-100">
-                        <div className="flex gap-1 border-b border-slate-600">
+                        <div className="flex flex-1 gap-1 border-b border-slate-600">
                             <SidebarTabButton
                                 active={currTab === 0}
                                 label="Chess.com"
