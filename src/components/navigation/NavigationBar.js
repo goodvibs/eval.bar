@@ -9,7 +9,7 @@ export function NavigationBar() {
 
     return (
         <>
-            <nav className="flex items-center p-2 justify-between text-sm text-slate-100">
+            <nav className="flex items-center py-2 px-4 justify-between text-sm text-slate-100">
                 <a
                     href="/"
                     className="flex text-xl lg:text-base hover:text-slate-300"
@@ -17,7 +17,7 @@ export function NavigationBar() {
                     eval.bar
                 </a>
 
-                <ul className="flex justify-end items-center gap-4">
+                <ul className="flex justify-end items-center gap-5">
                     <li>
                         <AboutButton setShowAbout={setShowAbout} />
                     </li>
