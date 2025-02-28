@@ -33,7 +33,7 @@ export function AnalysisToggle({ disabled, isAnalyzing, handleAnalysisClick }) {
                     </div>
                     {/* Text inside the toggle */}
                     <span className={`
-                        absolute flex text-xs font-medium transition-all duration-300
+                        absolute flex text-xs italic font-medium transition-all duration-300
                         ${isAnalyzing
                         ? 'left-2 text-slate-100'
                         : 'right-1.5 text-slate-500'
