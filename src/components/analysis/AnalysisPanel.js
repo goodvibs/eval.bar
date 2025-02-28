@@ -62,7 +62,7 @@ export function AnalysisPanel() {
 
                 {currentLines.length === 0 && !isAnalyzing && (
                     <div className="p-4 text-sm text-slate-400 text-center">
-                        Click "Analyze" to turn on engine analysis.
+                        Click the toggle to turn on computer analysis.
                     </div>
                 )}
 

@@ -9,7 +9,7 @@ export function GamesList({ games, username, handleGameSelect, getUsernameGameRe
                 active:scrollbar-thumb-slate-600 scrollbar-track-transparent">
                 {games.length === 0 ? (
                     <div className="text-slate-400 text-sm text-center p-4">
-                        No games found. Enter a Chess.com username and click "Get Games" to fetch the user's games for the selected month.
+                        No games found. Enter a Chess.com username and click "Retrieve Games" to fetch the user's games for the selected month.
                     </div>
                 ) : (
                     games.map((game) => (
