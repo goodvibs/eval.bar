@@ -35,7 +35,7 @@ export function PgnImportPanel({ closeSidebar }) {
         <form onSubmit={handleImport} className="flex flex-col gap-4">
             <label htmlFor="pgn-input" className="flex flex-col gap-2">
                 <span className="text-sm lg:text-xs font-medium text-slate-300">
-                    Paste PGN
+                    Paste PGN (Portable Game Notation)
                 </span>
                 <textarea
                     id="pgn-input"
