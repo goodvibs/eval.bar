@@ -43,7 +43,7 @@ export function ChesscomImportForm({
                 disabled={!selectedDate || isLoading}
                 className="bg-emerald-600 transition-all text-slate-100 p-2 rounded hover:bg-emerald-500 disabled:opacity-50 disabled:hover:bg-emerald-600"
             >
-                {isLoading ? 'Loading...' : 'Fetch Games'}
+                {isLoading ? 'Loading...' : 'Get Games'}
             </button>
         </form>
     );

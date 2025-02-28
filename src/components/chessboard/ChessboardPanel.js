@@ -67,7 +67,7 @@ export function ChessboardPanel() {
 
             // Create arrow from best move
             // Use green for best move arrow
-            setCustomArrows([[moveObj.from, moveObj.to, "#10b981"]]);
+            setCustomArrows([[moveObj.from, moveObj.to, "#285b8d"]]);
         } catch (e) {
             console.error("Error setting best move arrow:", e);
             setCustomArrows([]);
@@ -159,42 +159,45 @@ export function ChessboardPanel() {
     return (
         <div
             ref={containerRef}
-            className="flex z-0 flex-col duration-300 transition-all w-fit max-w-full border-slate-600 border rounded-lg p-2 pb-0"
+            className="flex z-0 flex-col duration-300 transition-all w-fit max-w-full border-slate-500 border rounded-lg p-2 pb-0"
         >
-            <Chessboard
-                position={currentPositionFen}
-                boardWidth={boardWidth}
-                // customLightSquareStyle={{ backgroundColor: "#cbd5e1" }}
-                // customDarkSquareStyle={{ backgroundColor: "#64748b" }}
-                customLightSquareStyle={{ backgroundColor: "#e1dfcb" }}
-                customDarkSquareStyle={{ backgroundColor: "#648b67" }}
-                boardOrientation={orientedWhite ? "white" : "black"}
-                onPieceDrop={onPieceDrop}
-                onPieceClick={handlePieceClick}
-                onPieceDragBegin={handlePieceDragBegin}
-                customArrows={customArrows}
-                customSquareStyles={{
-                    // Highlight selected piece with a consistent color
-                    ...(selectedPiece && {
-                        [selectedPiece]: {
-                            backgroundColor: "rgb(255, 217, 102, 0.1)"
-                        }
-                    }),
-                    // Highlight possible moves with consistent dots
-                    ...Object.fromEntries(
-                        possibleMoves.map(square => [
-                            square,
-                            {
-                                // Use the same background color for all move indicators
-                                backgroundImage: "radial-gradient(circle, rgba(0, 0, 0, 0.2) 25%, transparent 25%)",
-                                backgroundPosition: "center",
-                                backgroundSize: "50%",
-                                backgroundRepeat: "no-repeat",
+            <div className="rounded overflow-hidden">
+                <Chessboard
+                    position={currentPositionFen}
+                    boardWidth={boardWidth}
+                    // customLightSquareStyle={{ backgroundColor: "#cbd5e1" }}
+                    // customDarkSquareStyle={{ backgroundColor: "#64748b" }}
+                    customLightSquareStyle={{ backgroundColor: "#e1dfcb" }}
+                    customDarkSquareStyle={{ backgroundColor: "#648b67" }}
+                    boardOrientation={orientedWhite ? "white" : "black"}
+                    onPieceDrop={onPieceDrop}
+                    onPieceClick={handlePieceClick}
+                    onPieceDragBegin={handlePieceDragBegin}
+                    customArrows={customArrows}
+                    customSquareStyles={{
+                        // Highlight selected piece with a consistent color
+                        ...(selectedPiece && {
+                            [selectedPiece]: {
+                                backgroundColor: "rgb(255, 217, 102, 0.1)"
                             }
-                        ])
-                    )
-                }}
-            />
+                        }),
+                        // Highlight possible moves with consistent dots
+                        ...Object.fromEntries(
+                            possibleMoves.map(square => [
+                                square,
+                                {
+                                    // Use the same background color for all move indicators
+                                    backgroundImage: "radial-gradient(circle, rgba(0, 0, 0, 0.2) 25%, transparent 25%)",
+                                    backgroundPosition: "center",
+                                    backgroundSize: "50%",
+                                    backgroundRepeat: "no-repeat",
+                                }
+                            ])
+                        )
+                    }}
+                />
+            </div>
+
 
             <ChessboardControls
                 firstMove={firstMove}

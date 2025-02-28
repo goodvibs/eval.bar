@@ -78,7 +78,7 @@ export function Sidebar({ isOpen, onOpen, onClose, height }) {  // Separate open
                         </button>
                     </div>
 
-                    <h1 className="text-xl text-slate-200 font-bold">
+                    <h1 className="text-xl text-slate-300">
                         Import a Chess Game
                     </h1>
 

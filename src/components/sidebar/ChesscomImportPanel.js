@@ -43,7 +43,7 @@ export function ChesscomImportPanel({ closeSidebar }) {
             let chronologicallyOrderedGames = fetchedGames.reverse();
             setGames(chronologicallyOrderedGames);
         } catch (error) {
-            setError('Failed to fetch sidebar. Please check the username and try again.');
+            setError('Failed to fetch games. Please check the username and try again.');
         } finally {
             setIsLoading(false);
         }
@@ -67,19 +67,17 @@ export function ChesscomImportPanel({ closeSidebar }) {
             />
 
             {error && (
-                <div className="text-rose-400 text-sm">
+                <div className="flex justify-center text-rose-400 text-sm">
                     {error}
                 </div>
             )}
 
-            {games.length > 0 && (
-                <GamesList
-                    games={games}
-                    username={username}
-                    handleGameSelect={handleGameSelect}
-                    getUsernameGameResult={getUsernameGameResult}
-                />
-            )}
+            <GamesList
+                games={games}
+                username={username}
+                handleGameSelect={handleGameSelect}
+                getUsernameGameResult={getUsernameGameResult}
+            />
         </div>
     );
 }
