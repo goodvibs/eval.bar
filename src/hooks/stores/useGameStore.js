@@ -53,6 +53,37 @@ export const useGameStore = create((set, get) => ({
         set({ usernameGameResult: result });
     },
 
+    // NEW METHOD: Check if king is in check and return the square
+    isKingInCheck: () => {
+        const { game } = get();
+        if (!game.inCheck()) return null;
+
+        const turn = game.turn();
+
+        // Find the king's position
+        for (let row = 0; row < 8; row++) {
+            for (let col = 0; col < 8; col++) {
+                const square = String.fromCharCode(97 + col) + (8 - row);
+                const piece = game.piece(square);
+                if (piece && piece.type === 'k' && piece.color === turn) {
+                    return square;
+                }
+            }
+        }
+        return null;
+    },
+
+    // NEW METHOD: Get legal moves for a square
+    getLegalMovesForSquare: (square) => {
+        const { game } = get();
+        return game.moves({ square, verbose: true });
+    },
+
+    // NEW METHOD: Get current turn
+    getCurrentTurn: () => {
+        return get().game.turn();
+    },
+
     makeMove: (move) => {
         const { game } = get();
         const result = game.move(move);
@@ -130,14 +161,6 @@ export const useGameStore = create((set, get) => ({
     // Load a game from PGN
     loadChesscomGame: (game) => {
         try {
-            // // Extract headers first
-            // const headers = extractPgnHeaders(game.pgn);
-            //
-            // // Validate variant before proceeding
-            // if (!isSupportedVariant(headers)) {
-            //     return false;
-            // }
-
             if (!game.isSupported) {
                 return false;
             }
