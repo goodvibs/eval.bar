@@ -1,7 +1,7 @@
 export function StopIcon() {
     return (
         <svg
-            className="w-4 h-4 text-slate-200"
+            className="text-red-200 scale-90 w-4 h-4"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

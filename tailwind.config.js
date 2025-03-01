@@ -11,6 +11,13 @@ module.exports = {
       screens: {
         'xs': '480px',
       },
+      backgroundSize: {
+        '200': '200% 200%',
+      },
+      backgroundPosition: {
+        '0': '0% 0%',
+        '100': '100% 100%',
+      }
     },
   },
   plugins: [
