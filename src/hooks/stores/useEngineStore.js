@@ -1,11 +1,24 @@
 import { create } from 'zustand';
-import { useGameStore } from "./useGameStore";
-import { Chess } from "cm-chess";
 import { persist } from 'zustand/middleware';
+import { Chess } from 'cm-chess';
+import { useGameStore } from './useGameStore';
 
-// Helper functions to keep store logic clean
+// Constants for engine settings
+const ENGINE_CONSTANTS = {
+    MIN_MULTIPV: 1,
+    MAX_MULTIPV: 5,
+    DEFAULT_MULTIPV: 3,
+    MIN_SEARCH_DEPTH: 10,
+    MAX_SEARCH_DEPTH: 30,
+    DEFAULT_SEARCH_DEPTH: 20,
+    STORAGE_KEY: 'engine-settings'
+};
+
+// Helper functions for processing engine output
 const parsePV = (message, currentFen) => {
     const pvIndex = message.indexOf(' pv ') + 4;
+    if (pvIndex <= 4) return []; // No PV found
+
     const movesStr = message.slice(pvIndex).split(' ');
 
     // Create a new chess instance from current position and validate moves
@@ -28,6 +41,8 @@ const parsePV = (message, currentFen) => {
 
             if (move) {
                 validMoves.push(move.san);
+            } else {
+                break; // Stop at first invalid move
             }
         } catch (e) {
             break;
@@ -68,27 +83,46 @@ export const useEngineStore = create(
             isAnalyzing: false,
             engineReady: false,
             depth: 0,
-            multipv: 3,
-            searchDepth: 20, // Configurable search depth
+            multipv: ENGINE_CONSTANTS.DEFAULT_MULTIPV,
+            searchDepth: ENGINE_CONSTANTS.DEFAULT_SEARCH_DEPTH,
             currentLines: [],
             engineThinking: '',
             analysisHistory: {}, // Stores analysis keyed by FEN
 
+            // Reference to hold engine functions (set from outside)
+            engineInterface: null,
+
+            // Set the engine interface (called from EngineProvider)
+            setEngineInterface: (engine) => {
+                // Only update if engine is valid and different
+                if (engine && engine !== get().engineInterface) {
+                    set({ engineInterface: engine });
+
+                    // Configure engine with current settings
+                    engine.configure({
+                        MultiPV: get().multipv
+                    });
+                }
+            },
+
+            // Set engine ready status
             setEngineReady: (ready) => set({ engineReady: ready }),
 
-            // Settings
+            // Settings management
             setMultiPV: (value) => {
                 const newValue = parseInt(value);
-                if (isNaN(newValue) || newValue < 1 || newValue > 5) return;
+                if (isNaN(newValue) || newValue < ENGINE_CONSTANTS.MIN_MULTIPV || newValue > ENGINE_CONSTANTS.MAX_MULTIPV) return;
 
                 set({ multipv: newValue });
 
-                // Update engine setting if analyzing
-                if (window.stockfish) {
-                    window.stockfish.postMessage('stop');
-                    window.stockfish.postMessage('setoption name MultiPV value ' + newValue);
+                // Update engine setting if available
+                const { engineInterface, isAnalyzing } = get();
+                if (engineInterface) {
+                    engineInterface.sendCommand('stop');
+                    engineInterface.configure({ MultiPV: newValue });
 
-                    if (get().isAnalyzing) {
+                    // Restart analysis if active
+                    if (isAnalyzing) {
                         get().continueAnalysis();
                     }
                 }
@@ -96,7 +130,7 @@ export const useEngineStore = create(
 
             setSearchDepth: (value) => {
                 const newDepth = parseInt(value);
-                if (isNaN(newDepth) || newDepth < 10 || newDepth > 30) return;
+                if (isNaN(newDepth) || newDepth < ENGINE_CONSTANTS.MIN_SEARCH_DEPTH || newDepth > ENGINE_CONSTANTS.MAX_SEARCH_DEPTH) return;
 
                 set({ searchDepth: newDepth });
 
@@ -108,44 +142,50 @@ export const useEngineStore = create(
 
             // Analysis control functions
             startAnalysis: () => {
-                const { multipv, searchDepth, engineReady } = get();
+                const { multipv, searchDepth, engineReady, engineInterface } = get();
 
-                if (!engineReady || !window.stockfish) {
+                if (!engineReady || !engineInterface) {
                     console.error("Engine not ready");
-                    return;
+                    return false;
                 }
 
                 console.log(`Starting analysis with MultiPV: ${multipv}, depth: ${searchDepth}`);
                 set({ isAnalyzing: true, currentLines: [] });
 
                 // Configure and start analysis
-                window.stockfish.postMessage('setoption name MultiPV value ' + multipv);
-                window.stockfish.postMessage('position fen ' + useGameStore.getState().currentPositionFen);
-                window.stockfish.postMessage(`go depth ${searchDepth}`);
+                engineInterface.configure({ MultiPV: multipv });
+                engineInterface.sendCommand('position fen ' + useGameStore.getState().currentPositionFen);
+                engineInterface.sendCommand(`go depth ${searchDepth}`);
+                return true;
             },
 
             stopAnalysis: () => {
-                console.log('Stopping analysis');
+                const { engineInterface } = get();
                 set({ isAnalyzing: false });
 
-                if (window.stockfish) {
-                    window.stockfish.postMessage('stop');
+                if (engineInterface) {
+                    engineInterface.sendCommand('stop');
+                    return true;
                 }
+                return false;
             },
 
             continueAnalysis: () => {
-                const { isAnalyzing, searchDepth, engineReady } = get();
-                if (!isAnalyzing || !engineReady || !window.stockfish) return;
+                const { isAnalyzing, searchDepth, engineReady, engineInterface } = get();
+                if (!isAnalyzing || !engineReady || !engineInterface) return false;
 
                 const currentFen = useGameStore.getState().currentPositionFen;
 
-                window.stockfish.postMessage('stop');
-                window.stockfish.postMessage('position fen ' + currentFen);
-                window.stockfish.postMessage(`go depth ${searchDepth}`);
+                engineInterface.sendCommand('stop');
+                engineInterface.sendCommand('position fen ' + currentFen);
+                engineInterface.sendCommand(`go depth ${searchDepth}`);
+                return true;
             },
 
             updatePosition: (fen) => {
-                const { isAnalyzing, analysisHistory } = get();
+                if (!fen) return false;
+
+                const { isAnalyzing, analysisHistory, engineInterface } = get();
 
                 // Check if we have cached analysis for this position
                 if (analysisHistory[fen] && analysisHistory[fen].length > 0) {
@@ -154,19 +194,22 @@ export const useEngineStore = create(
                     set({ currentLines: [] });
                 }
 
-                if (!isAnalyzing) return;
+                if (!isAnalyzing) return true;
 
                 // Restart analysis with new position
-                const stockfishInstance = window.stockfish;
-                if (stockfishInstance) {
-                    stockfishInstance.postMessage('stop');
-                    stockfishInstance.postMessage('position fen ' + fen);
-                    stockfishInstance.postMessage(`go depth ${get().searchDepth}`);
+                if (engineInterface) {
+                    engineInterface.sendCommand('stop');
+                    engineInterface.sendCommand('position fen ' + fen);
+                    engineInterface.sendCommand(`go depth ${get().searchDepth}`);
+                    return true;
                 }
+                return false;
             },
 
             // Process engine output
             handleEngineMessage: (message) => {
+                if (typeof message !== 'string') return;
+
                 // Only process evaluation messages
                 if (!message.includes('info') || !message.includes('score') || !message.includes('pv')) {
                     return;
@@ -230,6 +273,7 @@ export const useEngineStore = create(
             // Utility functions
             clearAnalysisCache: () => {
                 set({ analysisHistory: {} });
+                return true;
             },
 
             getEvaluation: () => {
@@ -241,7 +285,7 @@ export const useEngineStore = create(
             }
         }),
         {
-            name: 'engine-settings', // localStorage key
+            name: ENGINE_CONSTANTS.STORAGE_KEY,
             partialize: (state) => ({
                 multipv: state.multipv,
                 searchDepth: state.searchDepth
