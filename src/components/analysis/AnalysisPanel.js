@@ -2,7 +2,6 @@ import React from "react";
 import { EngineLine } from "./EngineLine";
 import { useGameStore } from "../../hooks/stores/useGameStore";
 import { useEngineStore } from "../../hooks/stores/useEngineStore";
-import { useStockfish } from "../../hooks/useStockfish";
 import { usePositionSync } from "../../hooks/usePositionSync";
 import { AnalysisPanelHeader } from "./AnalysisPanelHeader";
 
@@ -17,9 +16,6 @@ export function AnalysisPanel() {
     } = useEngineStore();
 
     const { makeMove } = useGameStore();
-
-    // Simply initialize Stockfish - all control now happens through the store
-    useStockfish();
 
     // Keep position syncing
     usePositionSync();

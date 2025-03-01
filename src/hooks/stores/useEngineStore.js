@@ -261,7 +261,7 @@ export const useEngineStore = create(
 
                     set({
                         currentLines: newLines,
-                        depth: Math.max(currentDepth, state.depth),
+                        depth: currentDepth,
                         engineThinking: message,
                         analysisHistory: updatedHistory
                     });
