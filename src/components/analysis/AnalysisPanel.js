@@ -40,7 +40,7 @@ export function AnalysisPanel() {
     };
 
     return (
-        <div className="flex min-h-fit flex-col bg-slate-800 rounded-lg overflow-hidden">
+        <div className="flex min-h-fit flex-col bg-slate-800 rounded-lg">
             <AnalysisPanelHeader
                 isAnalyzing={isAnalyzing}
                 depth={depth}
@@ -55,6 +55,7 @@ export function AnalysisPanel() {
                         key={idx}
                         line={line}
                         isMainLine={idx === 0}
+                        isLastLine={idx === currentLines.length - 1}
                         onMoveClick={handleMoveClick}
                     />
                 ))}
