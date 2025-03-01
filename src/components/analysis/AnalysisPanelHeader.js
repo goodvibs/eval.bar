@@ -16,21 +16,22 @@ export function AnalysisPanelHeader({
     const evalDetails = processEvaluation(rawEval);
 
     return (
-        <div className="bg-slate-700 border-b gap-4 border-slate-600 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-                <EvaluationDisplay evalDetails={evalDetails} />
+        <div className="border-b bg-slate-700 border-slate-600 flex items-center justify-between">
+            <EvaluationDisplay evalDetails={evalDetails} />
+            <div className="flex pl-4 flex-1 h-full items-center gap-4">
                 <EngineInfo
                     isAnalyzing={isAnalyzing}
                     depth={depth}
                     engineReady={engineReady}
                 />
+
+                <AnalysisControls
+                    isAnalyzing={isAnalyzing}
+                    handleAnalysisClick={onAnalysisToggle}
+                    disabled={!engineReady}
+                />
             </div>
 
-            <AnalysisControls
-                isAnalyzing={isAnalyzing}
-                handleAnalysisClick={onAnalysisToggle}
-                disabled={!engineReady}
-            />
         </div>
     );
 }

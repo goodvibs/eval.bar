@@ -39,7 +39,7 @@ export function EngineLine({ line, isMainLine, onMoveClick }) {
 
     return (
         <div className="flex items-center hover:bg-slate-700 transition-colors text-sm gap-2">
-            <div className={`flex font-mono px-0.5 ${isMainLine ? "font-bold" : ""} ${evalBgColor}`}>
+            <div className={`flex font-mono px-0.5 rounded-r-full ${isMainLine ? "font-bold" : ""} ${evalBgColor}`}>
                 {evalDetails.formattedScore}
             </div>
             <div className="flex gap-1 text-slate-300 whitespace-nowrap overflow-x-auto scrollbar-none">

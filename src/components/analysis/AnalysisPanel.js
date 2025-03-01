@@ -12,7 +12,6 @@ export function AnalysisPanel() {
         currentLines,
         isAnalyzing,
         depth,
-        engineThinking,
         engineReady,
         startAnalysis,
         stopAnalysis
@@ -41,7 +40,7 @@ export function AnalysisPanel() {
     };
 
     return (
-        <div className="flex min-h-fit flex-col bg-slate-800 rounded-lg">
+        <div className="flex min-h-fit flex-col bg-slate-800 rounded-lg overflow-hidden">
             <AnalysisPanelHeader
                 isAnalyzing={isAnalyzing}
                 depth={depth}
@@ -72,12 +71,6 @@ export function AnalysisPanel() {
                     </div>
                 )}
             </div>
-
-            {isAnalyzing && engineThinking && (
-                <div className="p-2 text-xs font-mono text-slate-400 overflow-x-auto scrollbar-none border-t border-slate-700 whitespace-nowrap">
-                    {engineThinking}
-                </div>
-            )}
         </div>
     );
 }

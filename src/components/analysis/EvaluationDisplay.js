@@ -4,7 +4,7 @@ export function EvaluationDisplay({ evalDetails }) {
         : "bg-slate-900 text-slate-100";
 
     return (
-        <div className={`flex font-mono p-2 text-lg font-bold rounded-tl-lg ${evalBgColor}`}>
+        <div className={`flex font-mono p-2 text-lg font-bold rounded-tl-lg rounded-r-3xl ${evalBgColor}`}>
             {evalDetails.formattedScore}
         </div>
     );
