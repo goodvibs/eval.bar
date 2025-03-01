@@ -24,16 +24,36 @@ export function ChessboardPanel() {
     const [selectedPiece, setSelectedPiece] = React.useState(null);
     const [possibleMoves, setPossibleMoves] = React.useState([]);
     const [customArrows, setCustomArrows] = React.useState([]);
+    const [kingInCheck, setKingInCheck] = React.useState(null);
 
     const containerRef = React.useRef(null);
     const chessRef = React.useRef(new Chess());
 
-    // Update chess.js instance when FEN changes
     React.useEffect(() => {
         try {
             chessRef.current.load(currentPositionFen);
+
+            // Check if king is in check and find its position
+            if (chessRef.current.inCheck()) {
+                const turn = chessRef.current.turn();
+
+                // Find the king's position
+                for (let row = 0; row < 8; row++) {
+                    for (let col = 0; col < 8; col++) {
+                        const square = String.fromCharCode(97 + col) + (8 - row);
+                        const piece = chessRef.current.piece(square);
+                        if (piece && piece.type === 'k' && piece.color === turn) {
+                            setKingInCheck(square);
+                            return;
+                        }
+                    }
+                }
+            } else {
+                setKingInCheck(null);
+            }
         } catch (e) {
             console.error("Failed to load position:", e);
+            setKingInCheck(null);
         }
     }, [currentPositionFen]);
 
@@ -66,7 +86,7 @@ export function ChessboardPanel() {
             }
 
             // Create arrow from best move
-            // Use green for best move arrow
+            // Use blue for best move arrow
             setCustomArrows([[moveObj.from, moveObj.to, "#285b8d"]]);
         } catch (e) {
             console.error("Error setting best move arrow:", e);
@@ -164,8 +184,6 @@ export function ChessboardPanel() {
             <Chessboard
                 position={currentPositionFen}
                 boardWidth={boardWidth}
-                // customLightSquareStyle={{ backgroundColor: "#cbd5e1" }}
-                // customDarkSquareStyle={{ backgroundColor: "#64748b" }}
                 customLightSquareStyle={{ backgroundColor: "#e1dfcb" }}
                 customDarkSquareStyle={{ backgroundColor: "#648b67" }}
                 boardOrientation={orientedWhite ? "white" : "black"}
@@ -178,6 +196,14 @@ export function ChessboardPanel() {
                     ...(selectedPiece && {
                         [selectedPiece]: {
                             backgroundColor: "rgb(255, 217, 102, 0.1)"
+                        }
+                    }),
+                    // Highlight king in check with a red background
+                    ...(kingInCheck && {
+                        [kingInCheck]: {
+                            backgroundColor: "rgba(255, 0, 0, 0.3)",
+                            boxShadow: "0 0 10px 0 rgba(255, 0, 0, 0.6)",
+                            borderRadius: "20%",
                         }
                     }),
                     // Highlight possible moves with consistent dots
@@ -195,7 +221,6 @@ export function ChessboardPanel() {
                     )
                 }}
             />
-
 
             <ChessboardControls
                 firstMove={firstMove}
