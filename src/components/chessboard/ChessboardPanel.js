@@ -1,13 +1,17 @@
 import { Chessboard } from "react-chessboard";
 import { ChessboardControls } from "./ChessboardControls";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import { useGameStore } from "../../hooks/stores/useGameStore";
 import { useEngineStore } from "../../hooks/stores/useEngineStore";
 import { useChessboardStore } from "../../hooks/stores/useChessboardStore";
 import { useBoardResize } from "../../hooks/useBoardResize";
 import { Chess } from "cm-chess";
 
+// Configure the throttling value - only update arrows this often at maximum
+const ARROW_UPDATE_THROTTLE = 300; // milliseconds
+
 export function ChessboardPanel() {
+    // Get game state
     const {
         currentPositionFen,
         makeMove,
@@ -41,58 +45,108 @@ export function ChessboardPanel() {
     // Get the square of the king in check (if any)
     const kingInCheck = isKingInCheck();
 
-    // Use refs to track previous values and avoid unnecessary updates
+    // Use refs to track state and timing for throttling
     const updateTimeoutRef = useRef(null);
+    const lastArrowUpdateRef = useRef(0);
+    const chessInstanceRef = useRef(new Chess()); // Reuse chess instance for performance
 
-    // Update analysis arrows when relevant states change
-    useEffect(() => {
-        // Clear any pending timeout to avoid duplicate updates
-        if (updateTimeoutRef.current) {
-            clearTimeout(updateTimeoutRef.current);
-        }
+    // Additional refs to track previous values
+    const previousFenRef = useRef(currentPositionFen);
+    const previousLinesRef = useRef(currentLines);
+    const previousAnalyzingRef = useRef(isAnalyzing);
 
-        // Only update arrows if analyzing and there are lines
+    // Function to update arrows - this needs useCallback as it's a dependency in useEffect
+    const updateArrows = useCallback(() => {
+        // Only proceed if analyzing and lines exist
         if (!isAnalyzing || !currentLines || currentLines.length === 0) {
-            setCustomArrows([]);
+            if (customArrows.length > 0) {
+                setCustomArrows([]);
+            }
             return;
         }
 
-        // Delay the arrow update slightly to batch potential state changes
-        updateTimeoutRef.current = setTimeout(() => {
-            try {
-                // Get the best line (first line)
-                const bestLine = currentLines[0];
-                if (!bestLine || !bestLine.moves || bestLine.moves.length === 0) {
+        try {
+            // Get the best line (first line)
+            const bestLine = currentLines[0];
+            if (!bestLine || !bestLine.moves || bestLine.moves.length === 0) {
+                if (customArrows.length > 0) {
                     setCustomArrows([]);
-                    return;
                 }
+                return;
+            }
 
-                // Process the next move as an arrow
-                const tempChess = new Chess(currentPositionFen);
-                const sanMove = bestLine.moves[0];
+            // Load current position
+            chessInstanceRef.current.load(currentPositionFen);
 
-                // Convert SAN to move object with from/to
-                const moveObj = tempChess.move(sanMove);
-                if (!moveObj) {
+            // Get the first move in the best line
+            const sanMove = bestLine.moves[0];
+
+            // Convert SAN to move object with from/to
+            const moveObj = chessInstanceRef.current.move(sanMove);
+            if (!moveObj) {
+                if (customArrows.length > 0) {
                     setCustomArrows([]);
-                    return;
                 }
+                return;
+            }
 
-                // Create arrow from best move with blue color
-                setCustomArrows([[moveObj.from, moveObj.to, "#285b8d"]]);
-            } catch (e) {
-                console.error("Error setting best move arrow:", e);
+            // Create new arrow array
+            const newArrows = [[moveObj.from, moveObj.to, "#285b8d"]];
+
+            setCustomArrows(newArrows);
+        } catch (e) {
+            console.error("Error setting best move arrow:", e);
+            if (customArrows.length > 0) {
                 setCustomArrows([]);
             }
-        }, 50); // Short delay to batch updates
+        }
+    }, [isAnalyzing, currentLines, currentPositionFen, customArrows, setCustomArrows]);
 
-        // Cleanup timeout on unmount
+    // Update analysis arrows with throttling
+    useEffect(() => {
+        // Skip update if nothing important changed
+        if (
+            previousFenRef.current === currentPositionFen &&
+            previousLinesRef.current === currentLines &&
+            previousAnalyzingRef.current === isAnalyzing
+        ) {
+            return;
+        }
+
+        // Update refs
+        previousFenRef.current = currentPositionFen;
+        previousLinesRef.current = currentLines;
+        previousAnalyzingRef.current = isAnalyzing;
+
+        // Clear any pending timeout
+        if (updateTimeoutRef.current) {
+            clearTimeout(updateTimeoutRef.current);
+            updateTimeoutRef.current = null;
+        }
+
+        // Check if we need to throttle
+        const now = Date.now();
+        const timeSinceLastUpdate = now - lastArrowUpdateRef.current;
+
+        if (timeSinceLastUpdate < ARROW_UPDATE_THROTTLE) {
+            // We updated too recently, schedule a deferred update
+            updateTimeoutRef.current = setTimeout(() => {
+                lastArrowUpdateRef.current = Date.now();
+                updateArrows();
+            }, ARROW_UPDATE_THROTTLE - timeSinceLastUpdate);
+        } else {
+            // Enough time has passed, update immediately
+            lastArrowUpdateRef.current = now;
+            updateArrows();
+        }
+
+        // Cleanup on unmount
         return () => {
             if (updateTimeoutRef.current) {
                 clearTimeout(updateTimeoutRef.current);
             }
         };
-    }, [isAnalyzing, currentLines, currentPositionFen, setCustomArrows]);
+    }, [isAnalyzing, currentLines, currentPositionFen, updateArrows]);
 
     // Handle piece click to show possible moves
     const handlePieceClick = (piece, square) => {
@@ -112,11 +166,44 @@ export function ChessboardPanel() {
         });
     };
 
-    // Navigation functions
+    // Navigation functions - simple implementations
     const firstMove = () => goToMove(-1);
     const previousMove = () => currentMoveIndex > -1 && undo();
     const nextMove = () => currentMoveIndex < gameMoveHistory.length - 1 && redo();
     const lastMove = () => goToMove(gameMoveHistory.length > 0 ? gameMoveHistory.length - 1 : 0);
+
+    // Memoize square styles to prevent recalculation on every render
+    const customSquareStyles = React.useMemo(() => {
+        const styles = {};
+
+        // Highlight selected piece
+        if (selectedPiece) {
+            styles[selectedPiece] = {
+                backgroundColor: "rgb(255, 217, 102, 0.1)"
+            };
+        }
+
+        // Highlight king in check
+        if (kingInCheck) {
+            styles[kingInCheck] = {
+                backgroundColor: "rgba(255, 0, 0, 0.3)",
+                boxShadow: "0 0 10px 0 rgba(255, 0, 0, 0.6)",
+                borderRadius: "20%",
+            };
+        }
+
+        // Add possible move indicators
+        possibleMoves.forEach(square => {
+            styles[square] = {
+                backgroundImage: "radial-gradient(circle, rgba(0, 0, 0, 0.2) 25%, transparent 25%)",
+                backgroundPosition: "center",
+                backgroundSize: "50%",
+                backgroundRepeat: "no-repeat",
+            };
+        });
+
+        return styles;
+    }, [selectedPiece, kingInCheck, possibleMoves]);
 
     return (
         <div
@@ -131,37 +218,10 @@ export function ChessboardPanel() {
                 boardOrientation={orientedWhite ? "white" : "black"}
                 onPieceDrop={onPieceDrop}
                 onPieceClick={handlePieceClick}
-                onPieceDragBegin={handlePieceClick} // Reuse the same handler
+                onPieceDragBegin={handlePieceClick}
                 customArrows={customArrows}
-                customSquareStyles={{
-                    // Highlight selected piece with a consistent color
-                    ...(selectedPiece && {
-                        [selectedPiece]: {
-                            backgroundColor: "rgb(255, 217, 102, 0.1)"
-                        }
-                    }),
-                    // Highlight king in check with a red background
-                    ...(kingInCheck && {
-                        [kingInCheck]: {
-                            backgroundColor: "rgba(255, 0, 0, 0.3)",
-                            boxShadow: "0 0 10px 0 rgba(255, 0, 0, 0.6)",
-                            borderRadius: "20%",
-                        }
-                    }),
-                    // Highlight possible moves with consistent dots
-                    ...Object.fromEntries(
-                        possibleMoves.map(square => [
-                            square,
-                            {
-                                // Use the same background color for all move indicators
-                                backgroundImage: "radial-gradient(circle, rgba(0, 0, 0, 0.2) 25%, transparent 25%)",
-                                backgroundPosition: "center",
-                                backgroundSize: "50%",
-                                backgroundRepeat: "no-repeat",
-                            }
-                        ])
-                    )
-                }}
+                customSquareStyles={customSquareStyles}
+                animationDuration={200}
             />
 
             <ChessboardControls
