@@ -5,7 +5,7 @@ import { useGameStore } from "./stores/useGameStore";
 export function usePositionSync(options = { debounceMs: 100 }) {
     const updatePosition = useEngineStore(state => state.updatePosition);
     const isAnalyzing = useEngineStore(state => state.isAnalyzing);
-    const currentFen = useGameStore(state => state.currentPositionFen);
+    const currentFen = useGameStore(state => state.game.fen());
 
     // Use a ref to store the timeout ID for debouncing
     const debounceTimerRef = useRef(null);

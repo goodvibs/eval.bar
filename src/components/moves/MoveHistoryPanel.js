@@ -15,10 +15,10 @@ function groupMovesIntoPairs(moveHistory) {
 }
 
 export function MoveHistoryPanel() {
-    const { gameMoveHistory, currentMoveIndex, goToMove } = useGameStore();
+    const { pgn, getCurrentHalfmoveCount, goToMove } = useGameStore();
 
     // Group moves into pairs using the utility function
-    const moveGroups = groupMovesIntoPairs(gameMoveHistory);
+    const moveGroups = groupMovesIntoPairs(pgn.history.moves);
 
     return (
         <div className="flex flex-col rounded-lg overflow-hidden">
@@ -26,7 +26,7 @@ export function MoveHistoryPanel() {
             <div className="bg-slate-800 rounded-b-lg overflow-hidden h-[calc(100vh-18rem)]">
                 <MoveHistoryList
                     moveGroups={moveGroups}
-                    currentMoveIndex={currentMoveIndex}
+                    currentMoveIndex={getCurrentHalfmoveCount() - 1}
                     goToMove={goToMove}
                 />
             </div>

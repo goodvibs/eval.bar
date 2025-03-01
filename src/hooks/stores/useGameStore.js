@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import {Chess, FEN} from 'cm-chess';
 import {Pgn} from "cm-pgn/src/Pgn";
+import {useEngineStore} from "./useEngineStore";
 
 function processPgn(pgn) {
     pgn = pgn.trimEnd();
@@ -12,22 +13,13 @@ function processPgn(pgn) {
     return pgn.trimEnd();
 }
 
+function clonePgn(pgn) {
+    return new Pgn(pgn.render(false, false, false));
+}
+
 export const useGameStore = create((set, get) => ({
-    game: new Chess(),
-    gamePgn: new Pgn(),
-    gameMoveHistory: [],
-
-    currentMoveIndex: -1,
-    currentPositionFen: FEN.start,
-    currentPositionAnalysis: {
-        depth: 0,
-        evaluation: 0,
-        isAnalyzing: false,
-        lines: []
-    },
-
-    username: '',
-    usernameGameResult: null,
+    game: new Chess(), // represents the current game state
+    pgn: new Pgn(), // represents the overall PGN, which may not match the current game state
 
     gameMetadata: {
         white: null,
@@ -45,15 +37,6 @@ export const useGameStore = create((set, get) => ({
         event: null
     },
 
-    setUsername: (username) => {
-        set({ username });
-    },
-
-    setUsernameGameResult: (result) => {
-        set({ usernameGameResult: result });
-    },
-
-    // NEW METHOD: Check if king is in check and return the square
     isKingInCheck: () => {
         const { game } = get();
         if (!game.inCheck()) return null;
@@ -73,127 +56,103 @@ export const useGameStore = create((set, get) => ({
         return null;
     },
 
-    // NEW METHOD: Get legal moves for a square
     getLegalMovesForSquare: (square) => {
         const { game } = get();
         return game.moves({ square, verbose: true });
     },
 
-    // NEW METHOD: Get current turn
     getCurrentTurn: () => {
         return get().game.turn();
     },
 
     makeMove: (move) => {
-        const { game } = get();
-        const result = game.move(move);
+        let { game } = get();
+        const moveResult = game.move(move);
 
-        let moveHistory = get().gameMoveHistory;
-        let currentMoveIndex = get().currentMoveIndex;
-
-        if (result) {
-            if (currentMoveIndex !== moveHistory.length - 1) {
-                if (moveHistory[currentMoveIndex + 1].uci === result.uci) {
-                    set({
-                        currentPositionFen: game.fen(),
-                        currentMoveIndex: currentMoveIndex + 1
-                    });
-                    return true;
-                }
-                // Remove all moves after the current index
-                moveHistory = moveHistory.slice(0, currentMoveIndex + 1);
-            }
+        if (moveResult) {
             set({
-                currentPositionFen: game.fen(),
-                gamePgn: game.pgn,
-                gameMoveHistory: [...moveHistory, result],
-                currentMoveIndex: currentMoveIndex + 1
+                game: game,
+                pgn: clonePgn(game.pgn),
             });
             return true;
         }
+
         return false;
+
     },
 
     undo: () => {
-        const { game, currentMoveIndex } = get();
-        if (currentMoveIndex > -1) {
-            game.undo();
-            set({
-                currentPositionFen: game.fen(),
-                currentMoveIndex: currentMoveIndex - 1
-            });
+        let { game } = get();
+        if (game.history().length === 0) {
+            return;
         }
+        game.undo();
+
+        set({
+            game: game,
+        });
     },
 
     redo: () => {
-        const { game, gameMoveHistory, currentMoveIndex } = get();
-        if (currentMoveIndex < gameMoveHistory.length - 1) {
-            const move = gameMoveHistory[currentMoveIndex + 1];
-            game.move(move);
-            set({
-                currentPositionFen: game.fen(),
-                currentMoveIndex: currentMoveIndex + 1
-            });
-        }
+        let { game, pgn } = get();
+        const currentPly = game.plyCount();
+        const nextMove = pgn.history.moves[currentPly];
+        game.move(nextMove);
+
+        set({
+            game: game,
+        });
     },
 
     goToMove: (index) => {
-        let {game, currentMoveIndex, gameMoveHistory} = get();
+        const { pgn } = get();
 
-        while (currentMoveIndex < index) {
-            game.move(gameMoveHistory[currentMoveIndex + 1]);
-            currentMoveIndex++;
-        }
+        const moveHistory = pgn.history.moves;
+        const moveCount = moveHistory.length;
 
-        while (currentMoveIndex > index) {
-            game.undo();
-            currentMoveIndex--;
+        let game = new Chess();
+
+        if (index >= 0) {
+            const correctedIndex = Math.min(index, moveCount - 1);
+            for (let i = 0; i <= correctedIndex; i++) {
+                game.move(moveHistory[i]);
+            }
         }
 
         set({
-            currentPositionFen: game.fen(),
-            currentMoveIndex
+            game: game,
         });
-
-        return true;
     },
 
     // Load a game from PGN
-    loadChesscomGame: (game) => {
+    loadChesscomGame: (chesscomGame) => {
         try {
-            if (!game.isSupported) {
+            if (!chesscomGame.isSupported) {
                 return false;
             }
 
             // Process and load the game
-            let pgn = processPgn(game.pgn);
-            const newGame = new Chess();
+            let game = new Chess();
 
-            newGame.loadPgn(pgn);
-            const moves = newGame.history();
-
-            console.log(newGame.pgn)
+            game.loadPgn(processPgn(chesscomGame.pgn));
 
             set({
-                game: newGame,
-                currentPositionFen: newGame.fen(),
-                gamePgn: newGame.pgn,
-                gameMoveHistory: [...moves],
-                currentMoveIndex: moves.length - 1,
+                game: game,
+                pgn: clonePgn(game.pgn),
                 gameMetadata: {
-                    white: game.white,
-                    black: game.black,
-                    date: game.date,
-                    result: game.result,
-                    timeControl: game.timeControl,
-                    whiteElo: game.whiteElo,
-                    blackElo: game.blackElo,
-                    eco: game.ECO,
-                    opening: game.opening,
-                    variant: game.variant,
-                    finalPosition: game.fen,
-                    url: game.url,
-                    event: game.event
+                    white: chesscomGame.white,
+                    black: chesscomGame.black,
+                    date: chesscomGame.date,
+                    result: chesscomGame.result,
+                    timeControl: chesscomGame.timeControl,
+                    whiteElo: chesscomGame.whiteElo,
+                    blackElo: chesscomGame.blackElo,
+                    eco: chesscomGame.ECO,
+                    opening: chesscomGame.opening,
+                    variant: chesscomGame.variant,
+                    finalPosition: chesscomGame.fen,
+                    url: chesscomGame.url,
+                    event: chesscomGame.event
                 }
             });
         } catch (error) {
@@ -201,18 +160,14 @@ export const useGameStore = create((set, get) => ({
         }
     },
 
-    loadPgnGame: (pgn) => {
+    loadPgnGame: (pgnString) => {
         try {
-            let newGame = new Chess();
-            newGame.loadPgn(pgn);
-            const moves = newGame.history();
+            let game = new Chess();
+            game.loadPgn(processPgn(pgnString));
 
             set({
-                game: newGame,
-                currentPositionFen: newGame.fen(),
-                gamePgn: newGame.pgn,
-                gameMoveHistory: [...moves],
-                currentMoveIndex: moves.length - 1,
+                game: game,
+                pgn: clonePgn(game.pgn),
                 gameMetadata: {
                     white: null,
                     black: null,
@@ -234,19 +189,26 @@ export const useGameStore = create((set, get) => ({
         }
     },
 
-    getGamePgnString: () => {
-        return get().gamePgn.render(false, false, false);
-    },
-
-    getGameMoveHistoryHalfmoveCount: () => {
-        return get().gameMoveHistory.length;
-    },
-
-    getGameMoveHistoryFullmoveCount: () => {
-        return Math.ceil(get().gameMoveHistory.length / 2);
+    getCurrentHalfmoveCount: () => {
+        return get().game.plyCount();
     },
 
     getCurrentFullmove: () => {
-        return Math.floor(get().currentMoveIndex / 2) + 1;
+        return Math.floor(get().getCurrentHalfmoveCount() / 2) + 1;
+    },
+
+    getPgnHalfmoveCount: () => {
+        return get().pgn.history.moves.length;
+    },
+
+    getPgnFullmoveCount: () => {
+        return Math.floor(get().getPgnHalfmoveCount() - 1 / 2) + 1;
+    },
+
+    renderPgn: () => get().pgn.render(false, false, false),
+
+    uciTillNow: () => {
+        alert(get().game.history().map(move => move.uci))
+        return get().game.history().map(move => move.uci);
     }
 }));

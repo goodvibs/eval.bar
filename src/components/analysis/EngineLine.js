@@ -3,7 +3,8 @@ import { useGameStore } from "../../hooks/stores/useGameStore";
 import { processEvaluation } from "../../utils/evaluation";
 
 export function EngineLine({ line, isMainLine, isLastLine, onMoveClick }) {
-    const { currentMoveIndex } = useGameStore();
+    const { game, getCurrentFullmove } = useGameStore();
+    const baseMoveNumber = getCurrentFullmove();
 
     if (!line || !line.moves) return null;
 
@@ -12,13 +13,7 @@ export function EngineLine({ line, isMainLine, isLastLine, onMoveClick }) {
 
     // Function to determine move number and notation
     const getMoveNumbering = (idx) => {
-        // Get current position's turn (based on game move history and current index)
-        const isCurrentPositionBlackToMove =
-            (currentMoveIndex + 1) % 2 === 1; // +1 because moveIndex is 0-based
-
-        // Calculate the actual move number for this suggestion
-        // Current full move number + any additional full moves in the line
-        const baseMoveNumber = Math.floor((currentMoveIndex + 1) / 2) + 1;
+        const isCurrentPositionBlackToMove = game.turn() === 'b'
         const offsetInLine = Math.floor((idx + (isCurrentPositionBlackToMove ? 1 : 0)) / 2);
         const moveNumber = baseMoveNumber + offsetInLine;
 

@@ -3,21 +3,21 @@ import {useGameStore} from "../../hooks/stores/useGameStore";
 import {analyzeOnLichess} from "../../utils/lichess";
 
 export function MoveHistoryHeader() {
-    const { currentMoveIndex, getCurrentFullmove, getGameMoveHistoryFullmoveCount, getGamePgnString } = useGameStore();
+    const { renderPgn, getCurrentFullmove, getPgnFullmoveCount } = useGameStore();
 
-    const totalMoves = getGameMoveHistoryFullmoveCount();
+    const totalMoves = getPgnFullmoveCount();
     const currentMove = getCurrentFullmove();
 
     const handleCopyPgn = async () => {
         try {
-            await navigator.clipboard.writeText(getGamePgnString());
+            await navigator.clipboard.writeText(renderPgn());
         } catch (err) {
             console.error('Failed to copy PGN:', err);
         }
     };
 
     const handleDownloadPgn = () => {
-        const blob = new Blob([getGamePgnString()], { type: 'text/plain' });
+        const blob = new Blob([renderPgn()], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -29,7 +29,7 @@ export function MoveHistoryHeader() {
     };
 
     const handleLichessAnalysis = () => {
-        analyzeOnLichess(getGamePgnString(), false);
+        analyzeOnLichess(renderPgn(), false);
     };
 
     return (
@@ -39,14 +39,14 @@ export function MoveHistoryHeader() {
                 <div className="flex flex-col">
                     <span className="text-xs font-medium text-slate-300">Move</span>
                     <span className="text-xs text-slate-400">
-                        {currentMoveIndex >= 0 ? `${currentMove}/${totalMoves}` : '-'}
+                        {currentMove >= 0 ? `${currentMove}/${totalMoves}` : '-'}
                     </span>
                 </div>
                 {/* Side to move */}
                 <div className="flex flex-col">
                     <span className="text-xs font-medium text-slate-300">To Move</span>
                     <span className="text-xs text-slate-400">
-                        {currentMoveIndex === -1 ? 'White' : currentMoveIndex % 2 === 0 ? 'Black' : 'White'}
+                        {currentMove === -1 ? 'White' : currentMove % 2 === 0 ? 'Black' : 'White'}
                     </span>
                 </div>
             </div>

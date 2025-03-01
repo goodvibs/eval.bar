@@ -1,15 +1,15 @@
 import React from 'react';
 import {GameItemMetadata} from "./GameItemMetadata";
 import {GamePreview} from "./GamePreview";
+import {useGetUsernameGameResult} from "../../hooks/useGetUsernameGameResult";
 
 export function GameItem({
                              game,
                              username,
-                             getUsernameGameResult,
                              onSelect
                          }) {
     const [isHovered, setIsHovered] = React.useState(false);
-    const gameResult = getUsernameGameResult(game, username);
+    const gameResult = useGetUsernameGameResult(game, username);
 
     const resultBackgroundColor =
         gameResult === 'win' ? 'bg-emerald-600' :

@@ -3,45 +3,40 @@ import {useGameStore} from "../../hooks/stores/useGameStore";
 import {fetchChesscomGames} from "../../utils/chesscom";
 import {ChesscomImportForm} from "./ChesscomImportForm";
 import {GamesList} from "./GamesList";
+import {useChesscomConfigStore} from "../../hooks/stores/useChesscomConfigStore";
 
-function getUsernameGameResult(game, username) {
-    if (game.white.toLowerCase() === username.toLowerCase()) {
-        return game.result === '1-0' ? 'win' : game.result === '0-1' ? 'loss' : 'draw';
-    } else if (game.black.toLowerCase() === username.toLowerCase()) {
-        return game.result === '0-1' ? 'win' : game.result === '1-0' ? 'loss' : 'draw';
-    }
-    return null;
-}
+// Get current date and format it as YYYY-MM
+const getCurrentYearMonth = () => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+};
 
-export function ChesscomImportPanel({ closeSidebar }) {
-    const { username, setUsername, setUsernameGameResult, loadChesscomGame } = useGameStore();
+export function ChesscomImportPanel({ show, closeSidebar }) {
+    const { loadChesscomGame } = useGameStore();
+    const { chesscomUsername, setChesscomUsername, autoRetrieveGames } = useChesscomConfigStore();
 
     const [games, setGames] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(false);
     const [error, setError] = React.useState(null);
 
-    // Get current date and format it as YYYY-MM
-    const getCurrentYearMonth = () => {
-        const now = new Date();
-        return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-    };
-
+    const [chesscomUsernameLocal, setChesscomUsernameLocal] = React.useState(chesscomUsername);
     const [selectedDate, setSelectedDate] = React.useState(getCurrentYearMonth());
 
-    const handleFetchGames = async (e) => {
+    const fetchAndUpdateGames = async (e) => {
         // If called from a form submission, prevent default behavior
         if (e) e.preventDefault();
 
-        if (!username || !selectedDate) return;
+        if (!chesscomUsernameLocal || !selectedDate) return;
 
         setIsLoading(true);
         setError(null);
 
         try {
             const [year, month] = selectedDate.split('-');
-            const fetchedGames = await fetchChesscomGames(username, year, month);
-            let chronologicallyOrderedGames = fetchedGames.reverse();
+            const fetchedGames = await fetchChesscomGames(chesscomUsernameLocal, year, month);
+            let chronologicallyOrderedGames = fetchedGames.toReversed();
             setGames(chronologicallyOrderedGames);
+            setChesscomUsername(chesscomUsernameLocal);
         } catch (error) {
             setError('Failed to fetch games. Please check the username and try again.');
         } finally {
@@ -49,20 +44,25 @@ export function ChesscomImportPanel({ closeSidebar }) {
         }
     };
 
+    React.useEffect(() => {
+        if (autoRetrieveGames) {
+            fetchAndUpdateGames();
+        }
+    }, []);
+
     const handleGameSelect = (game) => {
         loadChesscomGame(game);
-        setUsernameGameResult(getUsernameGameResult(game, username));
         closeSidebar();
     };
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className={`${show ? "flex" : "hidden"} flex-col gap-4`}>
             <ChesscomImportForm
-                username={username}
-                setUsername={setUsername}
+                username={chesscomUsernameLocal}
+                setUsername={setChesscomUsernameLocal}
                 selectedDate={selectedDate}
                 setSelectedDate={setSelectedDate}
-                handleFetchGames={handleFetchGames}
+                handleFetchGames={fetchAndUpdateGames}
                 isLoading={isLoading}
             />
 
@@ -74,9 +74,8 @@ export function ChesscomImportPanel({ closeSidebar }) {
 
             <GamesList
                 games={games}
-                username={username}
+                username={chesscomUsernameLocal}
                 handleGameSelect={handleGameSelect}
-                getUsernameGameResult={getUsernameGameResult}
             />
         </div>
     );

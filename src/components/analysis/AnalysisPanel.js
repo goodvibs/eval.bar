@@ -2,23 +2,19 @@ import React from "react";
 import { EngineLine } from "./EngineLine";
 import { useGameStore } from "../../hooks/stores/useGameStore";
 import { useEngineStore } from "../../hooks/stores/useEngineStore";
-import { usePositionSync } from "../../hooks/usePositionSync";
 import { AnalysisPanelHeader } from "./AnalysisPanelHeader";
 
 export function AnalysisPanel() {
     const {
         currentLines,
         isAnalyzing,
-        depth,
+        currentSearchDepth,
         engineReady,
         startAnalysis,
         stopAnalysis
     } = useEngineStore();
 
     const { makeMove } = useGameStore();
-
-    // Keep position syncing
-    usePositionSync();
 
     const handleMoveClick = (sanMoves) => {
         for (let i = 0; i < sanMoves.length; i++) {
@@ -38,7 +34,7 @@ export function AnalysisPanel() {
         <div className="flex min-h-fit flex-col bg-slate-800 rounded-lg">
             <AnalysisPanelHeader
                 isAnalyzing={isAnalyzing}
-                depth={depth}
+                depth={currentSearchDepth}
                 currentLines={currentLines}
                 onAnalysisToggle={handleAnalysisToggle}
                 engineReady={engineReady}

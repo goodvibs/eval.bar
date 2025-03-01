@@ -13,15 +13,13 @@ const ARROW_UPDATE_THROTTLE = 300; // milliseconds
 export function ChessboardPanel() {
     // Get game state
     const {
-        currentPositionFen,
+        game,
         makeMove,
         goToMove,
         undo,
         redo,
         gameMetadata,
-        currentMoveIndex,
-        gameMoveHistory,
-        isKingInCheck
+        isKingInCheck,
     } = useGameStore();
 
     // Get engine state
@@ -50,11 +48,6 @@ export function ChessboardPanel() {
     const lastArrowUpdateRef = useRef(0);
     const chessInstanceRef = useRef(new Chess()); // Reuse chess instance for performance
 
-    // Additional refs to track previous values
-    const previousFenRef = useRef(currentPositionFen);
-    const previousLinesRef = useRef(currentLines);
-    const previousAnalyzingRef = useRef(isAnalyzing);
-
     // Function to update arrows - this needs useCallback as it's a dependency in useEffect
     const updateArrows = useCallback(() => {
         // Only proceed if analyzing and lines exist
@@ -76,7 +69,7 @@ export function ChessboardPanel() {
             }
 
             // Load current position
-            chessInstanceRef.current.load(currentPositionFen);
+            chessInstanceRef.current.load(game.fen());
 
             // Get the first move in the best line
             const sanMove = bestLine.moves[0];
@@ -100,24 +93,10 @@ export function ChessboardPanel() {
                 setCustomArrows([]);
             }
         }
-    }, [isAnalyzing, currentLines, currentPositionFen, customArrows, setCustomArrows]);
+    }, [isAnalyzing, currentLines, game, customArrows, setCustomArrows]);
 
     // Update analysis arrows with throttling
     useEffect(() => {
-        // Skip update if nothing important changed
-        if (
-            previousFenRef.current === currentPositionFen &&
-            previousLinesRef.current === currentLines &&
-            previousAnalyzingRef.current === isAnalyzing
-        ) {
-            return;
-        }
-
-        // Update refs
-        previousFenRef.current = currentPositionFen;
-        previousLinesRef.current = currentLines;
-        previousAnalyzingRef.current = isAnalyzing;
-
         // Clear any pending timeout
         if (updateTimeoutRef.current) {
             clearTimeout(updateTimeoutRef.current);
@@ -146,7 +125,7 @@ export function ChessboardPanel() {
                 clearTimeout(updateTimeoutRef.current);
             }
         };
-    }, [isAnalyzing, currentLines, currentPositionFen, updateArrows]);
+    }, [isAnalyzing, currentLines, updateArrows]);
 
     // Handle piece click to show possible moves
     const handlePieceClick = (piece, square) => {
@@ -168,9 +147,9 @@ export function ChessboardPanel() {
 
     // Navigation functions - simple implementations
     const firstMove = () => goToMove(-1);
-    const previousMove = () => currentMoveIndex > -1 && undo();
-    const nextMove = () => currentMoveIndex < gameMoveHistory.length - 1 && redo();
-    const lastMove = () => goToMove(gameMoveHistory.length > 0 ? gameMoveHistory.length - 1 : 0);
+    const previousMove = undo;
+    const nextMove = redo;
+    const lastMove = () => goToMove(Infinity);
 
     // Memoize square styles to prevent recalculation on every render
     const customSquareStyles = React.useMemo(() => {
@@ -211,7 +190,7 @@ export function ChessboardPanel() {
             className="flex z-0 flex-col duration-300 transition-all w-fit max-w-full border-slate-500 border rounded-lg p-2 pb-0"
         >
             <Chessboard
-                position={currentPositionFen}
+                position={game.fen()}
                 boardWidth={boardWidth}
                 customLightSquareStyle={{ backgroundColor: "#e1dfcb" }}
                 customDarkSquareStyle={{ backgroundColor: "#648b67" }}

@@ -1,7 +1,7 @@
 import React from 'react';
 import {GameItem} from './GameItem';
 
-export function GamesList({ games, username, handleGameSelect, getUsernameGameResult }) {
+export function GamesList({ games, username, handleGameSelect }) {
     return (
         <div className="relative">
             <div className="flex bg-slate-800 p-2 border rounded-lg border-slate-600 flex-1 flex-col gap-2
@@ -17,7 +17,6 @@ export function GamesList({ games, username, handleGameSelect, getUsernameGameRe
                             key={game.id}
                             game={game}
                             username={username}
-                            getUsernameGameResult={getUsernameGameResult}
                             onSelect={() => handleGameSelect(game)}
                         />
                     ))

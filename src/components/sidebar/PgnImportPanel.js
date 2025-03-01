@@ -1,7 +1,7 @@
 import {useGameStore} from "../../hooks/stores/useGameStore";
 import React from "react";
 
-export function PgnImportPanel({ closeSidebar }) {
+export function PgnImportPanel({ show, closeSidebar }) {
     const [pgnText, setPgnText] = React.useState('');
     const [error, setError] = React.useState('');
     const { loadPgnGame } = useGameStore();
@@ -32,7 +32,7 @@ export function PgnImportPanel({ closeSidebar }) {
     };
 
     return (
-        <form onSubmit={handleImport} className="flex flex-col gap-4">
+        <form onSubmit={handleImport} className={`${show ? "flex" : "hidden"} flex-col gap-4`}>
             <label htmlFor="pgn-input" className="flex flex-col gap-2">
                 <span className="text-sm lg:text-xs font-medium text-slate-300">
                     Paste PGN (Portable Game Notation)

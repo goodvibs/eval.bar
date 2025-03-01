@@ -1,7 +1,7 @@
 import {useEngineStore} from "../../hooks/stores/useEngineStore";
 
 export function DepthSetting({ isAnalyzing }) {
-    const { searchDepth, setSearchDepth } = useEngineStore();
+    const { goalSearchDepth, setSearchDepth } = useEngineStore();
 
     return (
         <div className="space-y-1">
@@ -11,7 +11,7 @@ export function DepthSetting({ isAnalyzing }) {
             <select
                 id="depth-select"
                 className="w-full bg-slate-700 text-slate-200 text-sm rounded px-2 py-2 border border-slate-600 disabled:opacity-50 outline-none"
-                value={searchDepth}
+                value={goalSearchDepth}
                 onChange={(e) => setSearchDepth(Number(e.target.value))}
                 disabled={isAnalyzing}
             >
