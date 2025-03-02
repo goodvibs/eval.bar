@@ -1,18 +1,23 @@
 import React from "react";
 import { EngineLine } from "./EngineLine";
 import { useGameStore } from "../../hooks/stores/useGameStore";
-import { useEngineStore } from "../../hooks/stores/useEngineStore";
 import { AnalysisPanelHeader } from "./AnalysisPanelHeader";
+import { useAnalysis } from "../../hooks/useAnalysis";
 
 export function AnalysisPanel() {
     const {
-        currentLines,
-        isAnalyzing,
+        advantage,
+        formattedEvaluation,
+        sanLines,
+        lineEvaluations,
+        setAndSendMultiPV,
+        setGoalSearchDepth,
         currentSearchDepth,
-        engineReady,
+        isAnalysisOn,
         startAnalysis,
-        stopAnalysis
-    } = useEngineStore();
+        endAnalysis,
+        isEngineReady,
+    } = useAnalysis();
 
     const { makeMove } = useGameStore();
 
@@ -22,42 +27,39 @@ export function AnalysisPanel() {
         }
     };
 
-    const handleAnalysisToggle = () => {
-        if (isAnalyzing) {
-            stopAnalysis();
-        } else {
-            startAnalysis();
-        }
-    };
-
     return (
         <div className="flex min-h-fit flex-col bg-slate-800 rounded-lg">
             <AnalysisPanelHeader
-                isAnalyzing={isAnalyzing}
+                isAnalyisOn={isAnalysisOn}
                 depth={currentSearchDepth}
-                currentLines={currentLines}
-                onAnalysisToggle={handleAnalysisToggle}
-                engineReady={engineReady}
+                formattedEvaluation={formattedEvaluation}
+                advantage={advantage}
+                handleAnalysisOn={startAnalysis}
+                handleAnalysisOff={endAnalysis}
+                handleMultiPVChange={setAndSendMultiPV}
+                handleGoalDepthChange={setGoalSearchDepth}
+                engineReady={isEngineReady()}
             />
 
             <div className="flex flex-1 flex-col divide-y divide-slate-700">
-                {currentLines.map((line, idx) => (
+                {sanLines.map((line, idx) => (
                     <EngineLine
                         key={idx}
                         line={line}
+                        evaluation={lineEvaluations[idx]}
                         isMainLine={idx === 0}
-                        isLastLine={idx === currentLines.length - 1}
+                        isLastLine={idx === sanLines.length - 1}
                         onMoveClick={handleMoveClick}
                     />
                 ))}
 
-                {currentLines.length === 0 && !isAnalyzing && (
+                {sanLines.length === 0 && !isAnalysisOn && (
                     <div className="p-4 text-sm text-slate-400 text-center">
                         Click the toggle to turn on computer analysis.
                     </div>
                 )}
 
-                {currentLines.length === 0 && isAnalyzing && (
+                {sanLines.length === 0 && isAnalysisOn && (
                     <div className="p-4 text-sm text-slate-400 text-center">
                         Analyzing position...
                     </div>

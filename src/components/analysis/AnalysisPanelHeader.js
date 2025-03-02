@@ -5,7 +5,7 @@ import {EngineInfo} from "./EngineInfo";
 import {AnalysisControls} from "./AnalysisControls";
 
 export function AnalysisPanelHeader({
-                                        isAnalyzing,
+                                        isAnalysisOn,
                                         depth,
                                         currentLines,
                                         onAnalysisToggle,
