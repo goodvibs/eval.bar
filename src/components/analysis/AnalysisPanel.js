@@ -18,7 +18,7 @@ export function AnalysisPanel() {
         isAnalysisOn,
         startAnalysis,
         endAnalysis,
-        isEngineReady,
+        engineReady,
     } = useAnalysis();
 
     const { makeMove } = useGameStore();

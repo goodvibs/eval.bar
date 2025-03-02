@@ -9,11 +9,11 @@ export const useEngineStore = create(
             isInitialized: false, // Whether the engine has been set up
 
             // engine configuration
-            multiPV: null,
+            multiPV: 3,
             isMultiPVFlushed: false,
 
             // not technically engine configuration, but related
-            goalSearchDepth: null, // Desired search depth
+            goalSearchDepth: 20, // Desired search depth
             isGoalSearchDepthFlushed: false,
 
             // Analysis state

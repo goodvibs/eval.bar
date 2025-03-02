@@ -1,7 +1,35 @@
 import { useMemo } from 'react';
 import { useEngineStore } from './stores/useEngineStore';
-import { shallow } from 'zustand/shallow';
 import { Chess } from 'cm-chess';
+
+/**
+ * Converts UCI moves to SAN format
+ * @param {string} currentFen - The current FEN position
+ * @param {Array<string>} uciMoves - Array of UCI format moves
+ * @returns {Array<object>} Array of formatted moves with SAN notation
+ */
+const formatUciMoves = (currentFen, uciMoves) => {
+    const formattedMoves = [];
+    let position = new Chess(currentFen);
+
+    for (const uciMove of uciMoves) {
+        // Skip processing if we've reached an invalid position
+        if (position.gameOver()) {
+            break;
+        }
+
+        // Try to make the move
+        const move = position.move(uciMove);
+        if (!move) {
+            console.error(`Invalid move in engine analysis: ${uciMove} in position ${position.fen()}`);
+            break;
+        }
+
+        formattedMoves.push(move);
+    }
+
+    return formattedMoves;
+};
 
 /**
  * Custom hook that provides a simplified interface for chess analysis
@@ -41,37 +69,9 @@ export function useAnalysis() {
             setGoalSearchDepth: state.setGoalSearchDepth,
             setPositionAndGoIfAnalysisOn: state.setPositionAndGoIfAnalysisOn,
         }),
-        shallow
     );
 
-    /**
-     * Converts UCI moves to SAN format
-     * @param {string} currentFen - The current FEN position
-     * @param {Array<string>} uciMoves - Array of UCI format moves
-     * @returns {Array<object>} Array of formatted moves with SAN notation
-     */
-    const formatUciMoves = (currentFen, uciMoves) => {
-        const formattedMoves = [];
-        let position = new Chess(currentFen);
-
-        for (const uciMove of uciMoves) {
-            // Skip processing if we've reached an invalid position
-            if (position.gameOver()) {
-                break;
-            }
-
-            // Try to make the move
-            const move = position.move(uciMove);
-            if (!move) {
-                console.error(`Invalid move in engine analysis: ${uciMove} in position ${position.fen()}`);
-                break;
-            }
-
-            formattedMoves.push(move);
-        }
-
-        return formattedMoves;
-    };
+    const engineReady = isEngineReady();
 
     // Process and format the analysis results
     const analysisResults = useMemo(() => {
@@ -88,9 +88,9 @@ export function useAnalysis() {
                 score = -score;
             }
 
-            if (score > 0.3) {
+            if (score > 0.0) {
                 advantage = 'white';
-            } else if (score < -0.3) {
+            } else if (score < 0.0) {
                 advantage = 'black';
             } else {
                 advantage = 'equal';
@@ -115,7 +115,7 @@ export function useAnalysis() {
                 } else if (score < 0) {
                     formattedEvaluation = score.toFixed(2); // Already has negative sign
                 } else {
-                    formattedEvaluation = "0.00";
+                    formattedEvaluation = "--";
                 }
             }
 
@@ -174,6 +174,6 @@ export function useAnalysis() {
         startAnalysis,
         endAnalysis,
         setPositionAndGoIfAnalysisOn,
-        isEngineReady
+        engineReady
     };
 }
