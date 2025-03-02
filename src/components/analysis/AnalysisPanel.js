@@ -32,7 +32,7 @@ export function AnalysisPanel() {
     return (
         <div className="flex min-h-fit flex-col bg-slate-800 rounded-lg">
             <AnalysisPanelHeader
-                isAnalyisOn={isAnalysisOn}
+                isAnalysisOn={isAnalysisOn}
                 depth={currentSearchDepth}
                 formattedEvaluation={formattedEvaluation}
                 advantage={advantage}
