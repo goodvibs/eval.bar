@@ -227,7 +227,6 @@ export const useGameStore = create((set, get) => ({
     renderPgn: () => get().pgn.render(false, false, false),
 
     uciTillNow: () => {
-        alert(get().game.history().map(move => move.uci))
         return get().game.history().map(move => move.uci);
     }
 }));

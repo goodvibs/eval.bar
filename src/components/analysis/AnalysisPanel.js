@@ -49,7 +49,7 @@ export function AnalysisPanel() {
                 {sanLines.map((line, idx) => (
                     <EngineLine
                         key={idx}
-                        line={line}
+                        sanMoves={line}
                         evaluation={lineEvaluations[idx]}
                         isMainLine={idx === 0}
                         isLastLine={idx === sanLines.length - 1}
