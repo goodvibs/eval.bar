@@ -24,7 +24,7 @@ export function EngineLine({ sanMoves, evaluation, isMainLine, isLastLine, onMov
 
     // Determine background color based on winning color using our utility
     const evalBgColor = evaluation.advantage === 'equal' ? "bg-slate-500 text-slate-100" : (
-        evaluation.advantage === 'white' && !isCurrentPositionBlackToMove
+        evaluation.advantage === 'white'
         ? "bg-slate-100 text-slate-900"
         : "bg-slate-900 text-slate-100"
     );

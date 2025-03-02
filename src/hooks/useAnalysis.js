@@ -75,17 +75,6 @@ export function useAnalysis() {
 
     // Process and format the analysis results
     const analysisResults = useMemo(() => {
-        if (!currentLines || currentLines.length === 0 || !currentFen) {
-            return {
-                advantage: null,
-                cp: null,
-                mate: null,
-                formattedEvaluation: null,
-                sanLines: null,
-                lineEvaluations: null,
-            };
-        }
-
         // Process each line to extract formatted evaluations and convert UCI to SAN (placeholder)
         const processedLines = currentLines.map(line => {
             // Determine advantage based on score and current turn
