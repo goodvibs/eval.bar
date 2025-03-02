@@ -1,97 +1,32 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Chess } from 'cm-chess';
 
-// Constants for engine settings
-const ENGINE_CONSTANTS = {
-    MIN_MULTIPV: 1,
-    MAX_MULTIPV: 5,
-    DEFAULT_MULTIPV: 3,
-    MIN_SEARCH_DEPTH: 10,
-    MAX_SEARCH_DEPTH: 30,
-    DEFAULT_SEARCH_DEPTH: 20,
-    STORAGE_KEY: 'engine-settings'
-};
-
-// Helper functions for processing engine output
-const parsePV = (message, currentFen) => {
-    const pvIndex = message.indexOf(' pv ') + 4;
-    if (pvIndex <= 4) return []; // No PV found
-
-    const movesStr = message.slice(pvIndex).split(' ');
-
-    // Create a new chess instance from current position and validate moves
-    const validMoves = [];
-    const validateChess = new Chess(currentFen);
-
-    for (const moveUCI of movesStr) {
-        try {
-            if (moveUCI.length < 4) continue; // Skip invalid moves
-
-            const from = moveUCI.slice(0, 2);
-            const to = moveUCI.slice(2, 4);
-            const promotion = moveUCI.length > 4 ? moveUCI[4] : undefined;
-
-            const move = validateChess.move({
-                from,
-                to,
-                promotion: promotion?.toLowerCase()
-            });
-
-            if (move) {
-                validMoves.push(move.san);
-            } else {
-                break; // Stop at first invalid move
-            }
-        } catch (e) {
-            break;
-        }
-    }
-
-    return validMoves;
-};
-
-const parseScore = (message, isBlackToMove) => {
-    const mateMatch = message.match(/score mate (-?\d+)/);
-    const cpMatch = message.match(/score cp (-?\d+)/);
-
-    if (mateMatch) {
-        const mateIn = parseInt(mateMatch[1]);
-        let score = mateIn > 0 ? `M${mateIn}` : `-M${Math.abs(mateIn)}`;
-
-        if (isBlackToMove && typeof score === 'string') {
-            score = score.startsWith('M') ? `-M${score.slice(1)}` : `M${score.slice(2)}`;
-        }
-
-        return score;
-    }
-
-    if (cpMatch) {
-        const score = parseInt(cpMatch[1]) / 100;
-        return isBlackToMove ? -score : score;
-    }
-
-    return 0;
-};
-
-// Main store definition with persistence for settings
 export const useEngineStore = create(
     persist(
         (set, get) => ({
             // Analysis state
-            isAnalyzing: false,
-            engineReady: false,
-            multipv: ENGINE_CONSTANTS.DEFAULT_MULTIPV,
+            engineInterface: null, // Engine interface instance
+            isInitialized: false, // Whether the engine has been set up
+
+            // engine configuration
+            multiPV: null,
+            isMultiPVFlushed: false,
+
+            // not technically engine configuration, but related
+            goalSearchDepth: null, // Desired search depth
+            isGoalSearchDepthFlushed: false,
+
+            // Analysis state
+            isAnalyzing: false, // Whether engine is analyzing
+            isAnalysisOn: false, // Whether analysis mode is on
             currentSearchDepth: 0,
-            goalSearchDepth: ENGINE_CONSTANTS.DEFAULT_SEARCH_DEPTH,
             currentLines: [],
 
-            fenPosition: '',
-            uciMoves: [],
-            turn: '',
-
-            // Reference to hold engine functions (set from outside)
-            engineInterface: null,
+            // updated together
+            startFen: null, // FEN of the starting position
+            currentFen: null, // FEN of the current position
+            uciMoves: '', // UCI moves to reach current position from starting position
+            turn: null, // Current turn (w or b)
 
             // Set the engine interface (called from EngineProvider)
             setEngineInterface: (engine) => {
@@ -102,132 +37,208 @@ export const useEngineStore = create(
             },
 
             // Set engine ready status
-            setEngineReady: (ready) => set({ engineReady: ready }),
+            setIsInitialized: (isInitialized) => set({ isInitialized: isInitialized }),
 
-            // Settings management
             setMultiPV: (value) => {
-                const newValue = parseInt(value);
-                if (isNaN(newValue) || newValue < ENGINE_CONSTANTS.MIN_MULTIPV || newValue > ENGINE_CONSTANTS.MAX_MULTIPV) return;
-
-                set({ multipv: newValue });
-
-                // Update engine setting if available
-                const { engineInterface } = get();
-                engineInterface.sendCommand('stop');
-                engineInterface.configure({ MultiPV: newValue });
+                set({ multiPV: value, isMultiPVFlushed: false });
             },
 
-            setSearchDepth: (value) => {
-                const newDepth = parseInt(value);
-                if (isNaN(newDepth) || newDepth < ENGINE_CONSTANTS.MIN_SEARCH_DEPTH || newDepth > ENGINE_CONSTANTS.MAX_SEARCH_DEPTH) return;
+            sendMultiPV: () => {
+                const { engineInterface, multiPV } = get();
+                engineInterface.configure({ MultiPV: multiPV });
+                set({ isMultiPVFlushed: true });
+            },
 
-                set({ goalSearchDepth: newDepth });
+            setAndSendMultiPV: (value) => {
+                const { setMultiPV, sendMultiPV } = get();
+                setMultiPV(value);
+                sendMultiPV();
+            },
+
+            setGoalSearchDepth: (value) => {
+                set({ goalSearchDepth: value });
+                set({ isGoalSearchDepthFlushed: false });
             },
 
             isEngineReady: () => {
-                const { engineReady, engineInterface } = get();
-                return engineReady && engineInterface !== null;
+                const { isInitialized, engineInterface, multiPV, goalSearchDepth, startFen, currentFen, turn, isMultiPVFlushed } = get();
+                return isInitialized &&
+                    engineInterface !== null &&
+                    multiPV !== null &&
+                    goalSearchDepth !== null &&
+                    startFen !== null &&
+                    currentFen !== null &&
+                    turn !== null &&
+                    isMultiPVFlushed;
             },
 
-            go: () => {
-                const { goalSearchDepth, engineInterface, fenPosition, uciMoves } = get();
-
-                engineInterface.sendCommand('stop');
-                engineInterface.sendCommand('position fen ' + fenPosition + (uciMoves ? ' moves ' + uciMoves : ''));
-                engineInterface.sendCommand(`go depth ${goalSearchDepth}`);
-            },
-
-            stop: () => {
+            pauseAnalysis: () => {
                 const { engineInterface } = get();
                 set({ isAnalyzing: false });
                 engineInterface.sendCommand('stop');
             },
 
-            updatePosition: (fenPosition, uciMoves, turn) => {
-                set({fenPosition, uciMoves, turn});
+            go: () => {
+                const { goalSearchDepth, engineInterface, currentFen, pauseAnalysis, isEngineReady} = get();
+                if (!isEngineReady()) {
+                    console.error('Engine is not ready to start analysis');
+                    return;
+                }
+
+                if (!goalSearchDepth) {
+                    console.error('Goal search depth must be set before starting analysis');
+                    return;
+                }
+
+                pauseAnalysis();
+                // engineInterface.sendCommand('position fen ' + startFen + (uciMoves ? ' moves ' + uciMoves : ''));
+                engineInterface.sendCommand('position fen ' + currentFen);
+                engineInterface.sendCommand(`go depth ${goalSearchDepth}`);
+
+                set({ isAnalyzing: true, isGoalSearchDepthFlushed: true });
             },
 
-            goIfAnalyzing: () => {
-                const { isEngineReady, isAnalyzing, go } = get();
+            endAnalysis: () => {
+                const { pauseAnalysis } = get();
+                pauseAnalysis();
+                set({
+                    isAnalysisOn: false,
+                    currentLines: []
+                });
+            },
 
-                if (isEngineReady() && isAnalyzing ) {
+            startAnalysis: () => {
+                const { go } = get();
+
+                set({ isAnalysisOn: true });
+
+                go();
+            },
+
+            setPosition: (startFen, currentFen, uciMoves, turn) => {
+                set({startFen, currentFen, uciMoves, turn });
+            },
+
+            goIfAnalysisOn: () => {
+                const { isAnalysisOn, go } = get();
+
+                if (isAnalysisOn ) {
                     go();
                 }
             },
 
-            updatePositionAndGoIfAnalyzing: (fenPosition, uciMoves, turn) => {
-                const { updatePosition, goIfAnalyzing } = get();
-
-                updatePosition(fenPosition, uciMoves, turn);
-                goIfAnalyzing();
+            setPositionAndGoIfAnalysisOn: (startFen, currentFen, uciMoves, turn) => {
+                const { setPosition, goIfAnalysisOn } = get();
+                setPosition(startFen, currentFen, uciMoves, turn);
+                goIfAnalysisOn();
             },
 
             // Process engine output
             handleEngineMessage: (message) => {
-                if (typeof message !== 'string') return;
+                console.log('[Engine message]:', message);
 
-                // Only process evaluation messages
-                if (!message.includes('info') || !message.includes('score') || !message.includes('pv')) {
-                    return;
-                }
-
-                try {
-                    const { currentFen, isBlackToMove, currentLines } = get();
-                    let lines = [...currentLines];
-
-                    // Extract multipv index
-                    const multipvMatch = message.match(/multipv (\d+)/);
-                    if (!multipvMatch) return;
-
-                    const lineIndex = parseInt(multipvMatch[1]) - 1;
-
-                    // Extract depth
+                // Parse info strings that contain analysis data
+                if (message.startsWith('info')) {
+                    // Extract depth information
                     const depthMatch = message.match(/depth (\d+)/);
-                    if (!depthMatch) return;
+                    if (depthMatch) {
+                        const depth = parseInt(depthMatch[1], 10);
+                        set({ currentSearchDepth: depth });
+                    }
 
-                    const currentDepth = parseInt(depthMatch[1]);
+                    // Extract multipv, score, and moves information (only process complete analysis lines)
+                    const hasPv = message.includes(' pv ');
+                    const hasMultiPv = message.includes(' multipv ');
+                    const hasScore = message.includes(' score ');
 
-                    // Extract and adjust score based on turn
-                    const score = parseScore(message, isBlackToMove);
+                    if (hasPv && hasMultiPv && hasScore) {
+                        try {
+                            // Extract multipv index (line number)
+                            const multiPvMatch = message.match(/multipv (\d+)/);
+                            const multiPvIndex = multiPvMatch ? parseInt(multiPvMatch[1], 10) : 1;
 
-                    // Extract and validate moves
-                    const validMoves = parsePV(message, currentFen);
+                            // Extract score information
+                            let scoreValue = 0;
+                            let scoreType = 'cp';
 
-                    // Skip incomplete analyses
-                    if (validMoves.length === 0) return;
+                            const mateMatch = message.match(/score mate (-?\d+)/);
+                            const cpMatch = message.match(/score cp (-?\d+)/);
 
-                    // Update the line
-                    lines[lineIndex] = {
-                        score,
-                        moves: validMoves,
-                        currentSearchDepth: currentDepth
-                    };
+                            if (mateMatch) {
+                                scoreValue = parseInt(mateMatch[1], 10);
+                                scoreType = 'mate';
+                            } else if (cpMatch) {
+                                scoreValue = parseInt(cpMatch[1], 10) / 100; // Convert centipawns to pawns
+                                scoreType = 'cp';
+                            }
 
-                    // Update state with new analysis
-                    const newLines = lines.filter(line => line !== undefined);
+                            // Extract PV (move sequence)
+                            const pvMatch = message.match(/ pv (.+)$/);
+                            const pvMoves = pvMatch ? pvMatch[1].trim().split(' ') : [];
 
-                    set({
-                        currentLines: newLines,
-                        currentSearchDepth: currentDepth,
-                    });
-                } catch (error) {
-                    console.error('Error processing engine message:', error, message);
+                            // Create the analysis line object
+                            const analysisLine = {
+                                multiPvIndex,
+                                scoreType,
+                                scoreValue,
+                                pvMoves,
+                                depth: depthMatch ? parseInt(depthMatch[1], 10) : 0,
+                                updatedAt: Date.now()
+                            };
+
+                            // Update the current lines in the store
+                            const { currentLines } = get();
+                            const updatedLines = [...currentLines];
+
+                            // Find and update or add the line at the correct index
+                            const lineIndex = updatedLines.findIndex(line => line.multiPvIndex === multiPvIndex);
+
+                            if (lineIndex !== -1) {
+                                updatedLines[lineIndex] = analysisLine;
+                            } else {
+                                updatedLines.push(analysisLine);
+                            }
+
+                            // Sort lines by multiPvIndex
+                            updatedLines.sort((a, b) => a.multiPvIndex - b.multiPvIndex);
+
+                            // Update the store
+                            set({ currentLines: updatedLines });
+                        } catch (error) {
+                            console.error('Error parsing engine message:', error, message);
+                        }
+                    }
                 }
-            },
 
-            getEvaluation: () => {
-                const { currentLines } = get();
-                if (currentLines.length === 0) return null;
+                // Handle "bestmove" messages when engine completes analysis
+                else if (message.startsWith('bestmove')) {
+                    // When engine completes analysis to requested depth, it sends bestmove
+                    // We can use this to potentially take further action, but we typically
+                    // don't stop analysis mode based on this alone
+                    set({ isAnalyzing: false });
 
-                // Return the top line's score
-                return currentLines[0]?.score || null;
+                    // You might want to add logic here for when analysis completes to desired depth
+                    // For continuous analysis, you'd typically restart analysis with go()
+                    const { isAnalysisOn, go } = get();
+                    if (isAnalysisOn) {
+                        // Small delay before restarting analysis to give UI time to update
+                        setTimeout(() => {
+                            go();
+                        }, 100);
+                    }
+                }
+
+                // Handle "readyok" messages
+                else if (message === 'readyok') {
+                    set({ isInitialized: true });
+                }
             }
         }),
         {
-            name: ENGINE_CONSTANTS.STORAGE_KEY,
+            name: 'engine-settings',
             partialize: (state) => ({
-                multipv: state.multipv,
-                goalSearchDepth: state.goalSearchDepth
+                multiPV: state.multiPV,
+                goalSearchDepth: state.goalSearchDepth,
             }),
         }
     )

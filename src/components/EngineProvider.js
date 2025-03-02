@@ -8,8 +8,9 @@ import { useStockfish } from '../hooks/useStockfish';
  */
 export function EngineProvider({ children }) {
     const setEngineInterface = useEngineStore(state => state.setEngineInterface);
-    const setEngineReady = useEngineStore(state => state.setEngineReady);
+    const setIsInitialized = useEngineStore(state => state.setIsInitialized);
     const handleEngineMessage = useEngineStore(state => state.handleEngineMessage);
+    const sendMultiPV = useEngineStore(state => state.sendMultiPV);
 
     // Here's where we properly use the useStockfish hook inside a React component
     const engineInterface = useStockfish(
@@ -19,7 +20,7 @@ export function EngineProvider({ children }) {
         },
         // Ready handler callback
         (ready) => {
-            setEngineReady(ready);
+            setIsInitialized(ready);
         }
     );
 
@@ -27,17 +28,12 @@ export function EngineProvider({ children }) {
     useEffect(() => {
         console.log('Connecting engine interface to store...');
         setEngineInterface(engineInterface);
+    }, [engineInterface, setEngineInterface]);
 
-        return () => {
-            // Clean up
-            if (engineInterface) {
-                engineInterface.terminate();
-            }
-            // Clear the engine interface from the store
-            setEngineInterface(null);
-            setEngineReady(false);
-        };
-    }, [engineInterface, setEngineInterface, setEngineReady]);
+    useEffect(() => {
+        console.log('Sending MultiPV to engine...');
+        sendMultiPV();
+    }, [sendMultiPV]);
 
     // This component doesn't render anything itself, just passes through children
     return <>{children}</>;

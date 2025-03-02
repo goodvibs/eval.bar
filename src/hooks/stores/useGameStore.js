@@ -65,15 +65,28 @@ export const useGameStore = create((set, get) => ({
         return get().game.turn();
     },
 
+    updateEngineStore: () => {
+        const { game } = get();
+        const uciMoves = game.history().map(move => move.uci).join(' ');
+        const turn = game.turn();
+
+        useEngineStore.getState().setPositionAndGoIfAnalysisOn(
+            FEN.start, game.fen(), uciMoves, turn
+        );
+    },
+
     makeMove: (move) => {
-        let { game } = get();
+        let { game, updateEngineStore } = get();
         const moveResult = game.move(move);
 
         if (moveResult) {
+            updateEngineStore();
+
             set({
                 game: game,
                 pgn: clonePgn(game.pgn),
             });
+
             return true;
         }
 
@@ -82,11 +95,13 @@ export const useGameStore = create((set, get) => ({
     },
 
     undo: () => {
-        let { game } = get();
+        let { game, updateEngineStore } = get();
         if (game.history().length === 0) {
             return;
         }
         game.undo();
+
+        updateEngineStore();
 
         set({
             game: game,
@@ -94,10 +109,12 @@ export const useGameStore = create((set, get) => ({
     },
 
     redo: () => {
-        let { game, pgn } = get();
+        let { game, pgn, updateEngineStore } = get();
         const currentPly = game.plyCount();
         const nextMove = pgn.history.moves[currentPly];
         game.move(nextMove);
+
+        updateEngineStore();
 
         set({
             game: game,
@@ -105,7 +122,7 @@ export const useGameStore = create((set, get) => ({
     },
 
     goToMove: (index) => {
-        const { pgn } = get();
+        const { pgn, updateEngineStore } = get();
 
         const moveHistory = pgn.history.moves;
         const moveCount = moveHistory.length;
@@ -118,6 +135,8 @@ export const useGameStore = create((set, get) => ({
                 game.move(moveHistory[i]);
             }
         }
+
+        updateEngineStore();
 
         set({
             game: game,
