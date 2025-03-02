@@ -14,6 +14,9 @@ export function useAnalysis() {
         turn,
         currentFen,
         isAnalyzing,
+        isAnalysisOn,
+        currentSearchDepth,
+        isEngineReady,
         startAnalysis,
         endAnalysis,
         setAndSendMultiPV,
@@ -25,6 +28,9 @@ export function useAnalysis() {
             turn: state.turn,
             currentFen: state.currentFen,
             isAnalyzing: state.isAnalyzing,
+            isAnalysisOn: state.isAnalysisOn,
+            currentSearchDepth: state.currentSearchDepth,
+            isEngineReady: state.isEngineReady,
             startAnalysis: state.startAnalysis,
             endAnalysis: state.endAnalysis,
             setAndSendMultiPV: state.setAndSendMultiPV,
@@ -167,9 +173,12 @@ export function useAnalysis() {
         // Control functions
         setAndSendMultiPV,
         setGoalSearchDepth,
+        currentSearchDepth,
+        isAnalysisOn,
         isAnalyzing,
         startAnalysis,
         endAnalysis,
         setPositionAndGoIfAnalysisOn,
+        isEngineReady
     };
 }
