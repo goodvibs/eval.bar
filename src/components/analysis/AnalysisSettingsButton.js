@@ -1,7 +1,7 @@
 import React from 'react';
 import {AnalysisSettingsMenu} from "./AnalysisSettingsMenu";
 
-export function SettingsButton({ isAnalyzing }) {
+export function AnalysisSettingsButton({ isAnalysisOn, handleMultiPVChange, handleGoalDepthChange, disabled }) {
     const [showSettings, setShowSettings] = React.useState(false);
     const settingsRef = React.useRef(null);
     const buttonRef = React.useRef(null);
@@ -27,6 +27,7 @@ export function SettingsButton({ isAnalyzing }) {
                 ref={buttonRef}
                 onClick={() => setShowSettings(!showSettings)}
                 aria-label="Engine Settings"
+                disabled={disabled}
                 className="rounded-full fill-slate-400 hover:rotate-45 hover:fill-slate-300 transition-all p-1 touch-manipulation outline-none"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" height="22" width="22" viewBox="0 -960 960 960">
@@ -37,7 +38,9 @@ export function SettingsButton({ isAnalyzing }) {
             <AnalysisSettingsMenu
                 settingsRef={settingsRef}
                 showSettings={showSettings}
-                isAnalyzing={isAnalyzing}
+                isAnalysisOn={isAnalysisOn}
+                handleMultiPVChange={handleMultiPVChange}
+                handleGoalDepthChange={handleGoalDepthChange}
             />
         </div>
     );
