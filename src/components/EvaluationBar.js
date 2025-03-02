@@ -1,17 +1,23 @@
-import React, { useMemo } from "react";
-import { useEngineStore } from "../hooks/stores/useEngineStore";
-import { processEvaluation } from "../utils/evaluation";
+import React, {useMemo} from "react";
+import {useAnalysis} from "../hooks/useAnalysis";
 
-export function EvaluationBar({ height = "h-1.5", showLabels = false }) {
-    const { currentLines } = useEngineStore();
+const calcBarPercentage = (advantage, cp, mate) => {
+    if (advantage === 'equal') {
+        return 50;
+    }
 
-    const mainLine = currentLines[0];
-    const rawEval = mainLine?.score ?? 0;
+    if (mate !== null) {
+        return advantage === 'white' ? 100 : 0;
+    }
 
-    // Process the evaluation using our centralized utility
-    const evalDetails = useMemo(() => {
-        return processEvaluation(rawEval);
-    }, [rawEval]);
+    const coefficient = 0.2; // Controls the curve steepness
+    const percentage = (1 / (1 + Math.exp(-(cp / 100) * coefficient))) * 100;
+     // Clamp between 2-98%
+    return Math.min(Math.max(percentage, 2), 98);
+}
+
+export function EvaluationBar({ height = "h-1.5" }) {
+    const { advantage, cp, mate } = useAnalysis();
 
     // Create marker positions (as percentages)
     const markers = useMemo(() => {
@@ -22,21 +28,15 @@ export function EvaluationBar({ height = "h-1.5", showLabels = false }) {
         }));
     }, []);
 
+    const barPercentage = useMemo(() => calcBarPercentage(advantage, cp, mate), [advantage, cp, mate]);
+
     return (
         <div className="flex flex-col w-full">
-            {showLabels && (
-                <div className="text-xs text-slate-300 mb-1 flex justify-between px-1">
-                    <span>White</span>
-                    <span>{evalDetails.formattedScore}</span>
-                    <span>Black</span>
-                </div>
-            )}
-
             <div className={`flex ${height} relative`}>
                 {/* White's side of the evaluation bar */}
                 <div
                     className="bg-slate-100 transition-all duration-300 ease-out"
-                    style={{ width: `${evalDetails.barPercentage}%` }}
+                    style={{ width: `${barPercentage}%` }}
                 />
 
                 {/* Black's side of the evaluation bar */}
