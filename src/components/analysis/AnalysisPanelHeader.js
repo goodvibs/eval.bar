@@ -1,5 +1,4 @@
 import React from "react";
-import { processEvaluation } from "../../utils/evaluation";
 import {EvaluationDisplay} from "./EvaluationDisplay";
 import {EngineInfo} from "./EngineInfo";
 import {AnalysisControls} from "./AnalysisControls";
@@ -7,27 +6,31 @@ import {AnalysisControls} from "./AnalysisControls";
 export function AnalysisPanelHeader({
                                         isAnalysisOn,
                                         depth,
-                                        currentLines,
-                                        onAnalysisToggle,
+                                        formattedEvaluation,
+                                        advantage,
+                                        handleAnalysisOn,
+                                        handleAnalysisOff,
+                                        handleMultiPVChange,
+                                        handleGoalDepthChange,
                                         engineReady
                                     }) {
-    const mainLine = currentLines[0];
-    const rawEval = mainLine?.score ?? 0;
-    const evalDetails = processEvaluation(rawEval);
 
     return (
         <div className="border-b bg-slate-700 border-slate-600 flex items-center justify-between">
-            <EvaluationDisplay evalDetails={evalDetails} />
+            <EvaluationDisplay formattedEvaluation={formattedEvaluation} advantage={advantage} />
             <div className="flex pl-4 flex-1 h-full items-center gap-4">
                 <EngineInfo
-                    isAnalyzing={isAnalyzing}
+                    isAnalysisOn={isAnalysisOn}
                     depth={depth}
                     engineReady={engineReady}
                 />
 
                 <AnalysisControls
-                    isAnalyzing={isAnalyzing}
-                    handleAnalysisClick={onAnalysisToggle}
+                    isAnalysisOn={isAnalysisOn}
+                    handleAnalysisOn={handleAnalysisOn}
+                    handleAnalysisOff={handleAnalysisOff}
+                    handleMultiPVChange={handleMultiPVChange}
+                    handleGoalDepthChange={handleGoalDepthChange}
                     disabled={!engineReady}
                 />
             </div>

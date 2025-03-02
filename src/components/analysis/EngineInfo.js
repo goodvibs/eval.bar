@@ -1,5 +1,5 @@
 // Updated EngineInfo component
-export function EngineInfo({ isAnalyzing, depth, engineReady }) {
+export function EngineInfo({ isAnalysisOn, depth, engineReady }) {
     return (
         <div className="flex flex-1 flex-col min-w-fit text-xs">
             <div className="flex flex-nowrap items-center gap-1">
@@ -9,7 +9,7 @@ export function EngineInfo({ isAnalyzing, depth, engineReady }) {
             <span className="text-xs text-slate-400">
                 {!engineReady
                     ? 'Loading...'
-                    : isAnalyzing
+                    : isAnalysisOn
                         ? `Depth ${depth}`
                         : 'Ready'
                 }
