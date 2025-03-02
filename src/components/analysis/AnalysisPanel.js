@@ -10,7 +10,9 @@ export function AnalysisPanel() {
         formattedEvaluation,
         sanLines,
         lineEvaluations,
+        multiPV,
         setAndSendMultiPV,
+        goalSearchDepth,
         setGoalSearchDepth,
         currentSearchDepth,
         isAnalysisOn,
@@ -39,6 +41,8 @@ export function AnalysisPanel() {
                 handleMultiPVChange={setAndSendMultiPV}
                 handleGoalDepthChange={setGoalSearchDepth}
                 engineReady={isEngineReady()}
+                goalSearchDepth={goalSearchDepth}
+                multiPV={multiPV}
             />
 
             <div className="flex flex-1 flex-col divide-y divide-slate-700">

@@ -12,7 +12,9 @@ export function AnalysisPanelHeader({
                                         handleAnalysisOff,
                                         handleMultiPVChange,
                                         handleGoalDepthChange,
-                                        engineReady
+                                        engineReady,
+                                        goalSearchDepth,
+                                        multiPV
                                     }) {
 
     return (
@@ -32,6 +34,8 @@ export function AnalysisPanelHeader({
                     handleMultiPVChange={handleMultiPVChange}
                     handleGoalDepthChange={handleGoalDepthChange}
                     disabled={!engineReady}
+                    goalSearchDepth={goalSearchDepth}
+                    multiPV={multiPV}
                 />
             </div>
 

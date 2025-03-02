@@ -1,8 +1,4 @@
-import { useEngineStore } from "../../hooks/stores/useEngineStore";
-
-export function MultiPVSetting({ isAnalyzing }) {
-    const { multipv, setMultiPV } = useEngineStore();
-
+export function MultiPVSetting({ isAnalysisOn, multiPV, handleMultiPVChange }) {
     return (
         <div className="space-y-1">
             <label htmlFor="multipv-select" className="text-slate-300 text-xs block">
@@ -11,9 +7,9 @@ export function MultiPVSetting({ isAnalyzing }) {
             <select
                 id="multipv-select"
                 className="w-full bg-slate-700 text-slate-200 text-sm rounded px-2 py-2 border border-slate-600 disabled:opacity-50 outline-none"
-                value={multipv}
-                onChange={(e) => setMultiPV(Number(e.target.value))}
-                disabled={isAnalyzing}
+                value={multiPV}
+                onChange={(e) => handleMultiPVChange(parseInt(e.target.value))}
+                disabled={isAnalysisOn}
             >
                 <option value={1}>1 line</option>
                 <option value={2}>2 lines</option>

@@ -1,7 +1,7 @@
 import React from 'react';
 import {AnalysisSettingsMenu} from "./AnalysisSettingsMenu";
 
-export function AnalysisSettingsButton({ isAnalysisOn, handleMultiPVChange, handleGoalDepthChange, disabled }) {
+export function AnalysisSettingsButton({ isAnalysisOn, handleMultiPVChange, handleGoalDepthChange, disabled, goalSearchDepth, multiPV }) {
     const [showSettings, setShowSettings] = React.useState(false);
     const settingsRef = React.useRef(null);
     const buttonRef = React.useRef(null);
@@ -41,6 +41,8 @@ export function AnalysisSettingsButton({ isAnalysisOn, handleMultiPVChange, hand
                 isAnalysisOn={isAnalysisOn}
                 handleMultiPVChange={handleMultiPVChange}
                 handleGoalDepthChange={handleGoalDepthChange}
+                goalSearchDepth={goalSearchDepth}
+                multiPV={multiPV}
             />
         </div>
     );

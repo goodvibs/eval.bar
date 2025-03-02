@@ -1,7 +1,7 @@
 import {MultiPVSetting} from "./MultiPVSetting";
 import {DepthSetting} from "./DepthSetting";
 
-export function AnalysisSettingsMenu({ settingsRef, showSettings, isAnalyzing }) {
+export function AnalysisSettingsMenu({ settingsRef, showSettings, isAnalysisOn, handleGoalDepthChange, handleMultiPVChange, goalSearchDepth, multiPV }) {
     return (
         <div
             ref={settingsRef}
@@ -14,8 +14,8 @@ export function AnalysisSettingsMenu({ settingsRef, showSettings, isAnalyzing })
             <h3 className="text-slate-200 text-sm font-semibold mb-3">Engine Settings</h3>
 
             <div className="space-y-4">
-                <MultiPVSetting isAnalyzing={isAnalyzing} />
-                <DepthSetting isAnalyzing={isAnalyzing} />
+                <MultiPVSetting isAnalysisOn={isAnalysisOn} handleMultiPVChange={handleMultiPVChange} multiPV={multiPV} />
+                <DepthSetting isAnalysisOn={isAnalysisOn} handleGoalDepthChange={handleGoalDepthChange} goalSearchDepth={goalSearchDepth} />
             </div>
         </div>
     );

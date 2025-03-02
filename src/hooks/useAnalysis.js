@@ -19,7 +19,9 @@ export function useAnalysis() {
         isEngineReady,
         startAnalysis,
         endAnalysis,
+        multiPV,
         setAndSendMultiPV,
+        goalSearchDepth,
         setGoalSearchDepth,
         setPositionAndGoIfAnalysisOn,
     } = useEngineStore(
@@ -33,7 +35,9 @@ export function useAnalysis() {
             isEngineReady: state.isEngineReady,
             startAnalysis: state.startAnalysis,
             endAnalysis: state.endAnalysis,
+            multiPV: state.multiPV,
             setAndSendMultiPV: state.setAndSendMultiPV,
+            goalSearchDepth: state.goalSearchDepth,
             setGoalSearchDepth: state.setGoalSearchDepth,
             setPositionAndGoIfAnalysisOn: state.setPositionAndGoIfAnalysisOn,
         }),
@@ -171,7 +175,9 @@ export function useAnalysis() {
         ...analysisResults,
 
         // Control functions
+        multiPV,
         setAndSendMultiPV,
+        goalSearchDepth,
         setGoalSearchDepth,
         currentSearchDepth,
         isAnalysisOn,
