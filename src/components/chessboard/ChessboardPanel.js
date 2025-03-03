@@ -152,6 +152,7 @@ export function ChessboardPanel() {
     const lastMove = () => goToMove(Infinity);
 
     // Memoize square styles to prevent recalculation on every render
+    // Modify the customSquareStyles to use a different approach for indicators
     const customSquareStyles = React.useMemo(() => {
         const styles = {};
 
@@ -171,18 +172,31 @@ export function ChessboardPanel() {
             };
         }
 
-        // Add possible move indicators
+        // Add possible move indicators that will be visible even with pieces
         possibleMoves.forEach(square => {
-            styles[square] = {
-                backgroundImage: "radial-gradient(circle, rgba(0, 0, 0, 0.2) 25%, transparent 25%)",
-                backgroundPosition: "center",
-                backgroundSize: "50%",
-                backgroundRepeat: "no-repeat",
-            };
+            const isOccupied = game.piece(square) !== null;
+
+            if (isOccupied) {
+                // For squares with pieces, use a colored border
+                styles[square] = {
+                    ...styles[square],
+                    boxShadow: "inset 0 0 0 4px rgba(0, 0, 0, 0.3)",
+                    borderRadius: "50%"
+                };
+            } else {
+                // For empty squares, use the dot indicator
+                styles[square] = {
+                    ...styles[square],
+                    backgroundImage: "radial-gradient(circle, rgba(0, 0, 0, 0.2) 25%, transparent 25%)",
+                    backgroundPosition: "center",
+                    backgroundSize: "50%",
+                    backgroundRepeat: "no-repeat",
+                };
+            }
         });
 
         return styles;
-    }, [selectedPiece, kingInCheck, possibleMoves]);
+    }, [selectedPiece, kingInCheck, possibleMoves, game]);
 
     return (
         <div
