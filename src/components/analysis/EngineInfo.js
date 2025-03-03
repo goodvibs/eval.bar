@@ -6,7 +6,7 @@ export function EngineInfo({ isAnalysisOn, depth, engineReady }) {
                 {/*<span className="font-medium text-slate-300 flex text-nowrap">Engine</span>*/}
                 <span className="font-medium text-slate-300 flex text-nowrap">Stockfish 16</span>
             </div>
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-slate-400 font-mono">
                 {!engineReady
                     ? 'Loading...'
                     : isAnalysisOn

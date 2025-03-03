@@ -26,7 +26,7 @@ export function MoveHistoryPanel() {
             <MoveHistoryHeader />
             {moveGroups.length === 0 && (
                 <div className="p-4 bg-slate-800 text-sm text-slate-400 text-center">
-                    Play a move or import a game to see move history here.
+                    Play a move or import a game to see your move history here.
                 </div>
             )}
             <MoveHistoryList
