@@ -239,14 +239,6 @@ export const useEngineStore = create(
                 // Handle "bestmove" messages when engine completes analysis
                 else if (message.startsWith('bestmove')) {
                     set({ isAnalyzing: false });
-
-                    const { isAnalysisOn, go } = get();
-                    if (isAnalysisOn) {
-                        // Use requestAnimationFrame for better performance
-                        requestAnimationFrame(() => {
-                            go();
-                        });
-                    }
                 }
 
                 // Handle "readyok" messages
