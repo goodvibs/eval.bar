@@ -1,25 +1,22 @@
 import React from "react";
-import { useGameStore } from "../../hooks/stores/useGameStore";
+import {useGameStore} from "../../hooks/stores/useGameStore";
 
 export function EngineLine({ sanMoves, evaluation, isMainLine, isLastLine, onMoveClick }) {
-    const { game, getCurrentFullmove } = useGameStore();
-    const baseMoveNumber = getCurrentFullmove();
+    const { getCurrentTurn, getCurrentHalfmoveCount } = useGameStore();
 
-    const isCurrentPositionBlackToMove = game.turn() === 'b';
+    const baseHalfmoveCount = getCurrentHalfmoveCount();
+    let blackTurn = getCurrentTurn() === 'b';
 
     // Function to determine move number and notation
     const getMoveNumbering = (idx) => {
-        const offsetInLine = Math.floor((idx + (isCurrentPositionBlackToMove ? 1 : 0)) / 2);
-        const moveNumber = baseMoveNumber + offsetInLine;
-
-        // Determine if this particular move is by black
-        const isBlackMove = (isCurrentPositionBlackToMove && idx % 2 === 0) ||
-            (!isCurrentPositionBlackToMove && idx % 2 === 1);
-
-        return {
-            number: moveNumber,
-            isBlackMove: isBlackMove
+        const result = {
+            number: Math.floor((baseHalfmoveCount + idx) / 2) + 1,
+            isBlackMove: blackTurn
         };
+
+        blackTurn = !blackTurn;
+
+        return result;
     };
 
     // Determine background color based on winning color using our utility
