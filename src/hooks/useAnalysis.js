@@ -39,7 +39,7 @@ export function useAnalysis() {
 
     return useMemo(() => {
         // Process each line to extract formatted evaluations and convert UCI to SAN (placeholder)
-        const processedLines = currentLines.map(line => {
+        const processedLines = currentLines.filter(line => line !== null).map(line => {
             // Determine advantage based on score and current turn
             let advantage;
             let score = line.scoreValue;

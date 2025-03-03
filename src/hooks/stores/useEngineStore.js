@@ -20,7 +20,7 @@ export const useEngineStore = create(
             isAnalyzing: false, // Whether engine is analyzing
             isAnalysisOn: false, // Whether analysis mode is on
             currentSearchDepth: 0,
-            currentLines: [],
+            currentLines: Array(3).fill(null), // Current analysis lines
 
             // updated together
             startFen: null, // FEN of the starting position
@@ -40,7 +40,27 @@ export const useEngineStore = create(
             setIsInitialized: (isInitialized) => set({ isInitialized: isInitialized }),
 
             setMultiPV: (value) => {
-                set({ multiPV: value, isMultiPVFlushed: false });
+                set((state) => {
+                    // Create new array for the lines with the new size
+                    let newLines;
+
+                    if (value > state.multiPV) {
+                        // Expanding - create larger array and copy existing values
+                        newLines = Array(value).fill(null);
+                        state.currentLines.forEach((line, index) => {
+                            if (line) newLines[index] = line;
+                        });
+                    } else {
+                        // Shrinking - truncate the array
+                        newLines = state.currentLines.slice(0, value);
+                    }
+
+                    return {
+                        multiPV: value,
+                        isMultiPVFlushed: false,
+                        currentLines: newLines
+                    };
+                });
             },
 
             sendMultiPV: () => {
@@ -135,18 +155,24 @@ export const useEngineStore = create(
 
             // Process engine output
             handleEngineMessage: (message) => {
+                // Skip processing empty messages
+                if (!message || typeof message !== 'string') return;
+
                 console.log('[Engine message]:', message);
 
                 // Parse info strings that contain analysis data
                 if (message.startsWith('info')) {
-                    // Extract depth information
+                    // Extract depth information - only update if it has changed
                     const depthMatch = message.match(/depth (\d+)/);
                     if (depthMatch) {
                         const depth = parseInt(depthMatch[1], 10);
-                        set({ currentSearchDepth: depth });
+                        const { currentSearchDepth } = get();
+                        if (depth !== currentSearchDepth) {
+                            set({ currentSearchDepth: depth });
+                        }
                     }
 
-                    // Extract multipv, score, and moves information (only process complete analysis lines)
+                    // Only process complete analysis lines
                     const hasPv = message.includes(' pv ');
                     const hasMultiPv = message.includes(' multipv ');
                     const hasScore = message.includes(' score ');
@@ -156,6 +182,10 @@ export const useEngineStore = create(
                             // Extract multipv index (line number)
                             const multiPvMatch = message.match(/multipv (\d+)/);
                             const multiPvIndex = multiPvMatch ? parseInt(multiPvMatch[1], 10) : 1;
+
+                            // Skip processing if this line is beyond our multiPV setting
+                            const { multiPV } = get();
+                            if (multiPvIndex > multiPV) return;
 
                             // Extract score information
                             let scoreValue = 0;
@@ -173,7 +203,7 @@ export const useEngineStore = create(
                             }
 
                             // Extract PV (move sequence)
-                            const pvMatch = message.match(/ pv (.+)$/);
+                            const pvMatch = message.match(/ pv ([^$]*)/);
                             const pvMoves = pvMatch ? pvMatch[1].trim().split(' ') : [];
 
                             // Create the analysis line object
@@ -186,24 +216,23 @@ export const useEngineStore = create(
                                 updatedAt: Date.now()
                             };
 
-                            // Update the current lines in the store
-                            const { currentLines } = get();
-                            const updatedLines = [...currentLines];
+                            // Update the current lines in the store using fixed-size array approach
+                            set((state) => {
+                                // Create a new array of the current size if needed
+                                let updatedLines = [...state.currentLines];
 
-                            // Find and update or add the line at the correct index
-                            const lineIndex = updatedLines.findIndex(line => line.multiPvIndex === multiPvIndex);
+                                // If the array is not initialized to the right size yet,
+                                // create a new array with the right size filled with nulls
+                                if (updatedLines.length < state.multiPV) {
+                                    updatedLines = Array(state.multiPV).fill(null);
+                                }
 
-                            if (lineIndex !== -1) {
-                                updatedLines[lineIndex] = analysisLine;
-                            } else {
-                                updatedLines.push(analysisLine);
-                            }
+                                // Update the specific index with the new analysis line
+                                // Note: multiPvIndex is 1-based, so we use index-1 for 0-based array
+                                updatedLines[multiPvIndex - 1] = analysisLine;
 
-                            // Sort lines by multiPvIndex
-                            updatedLines.sort((a, b) => a.multiPvIndex - b.multiPvIndex);
-
-                            // Update the store
-                            set({ currentLines: updatedLines });
+                                return { currentLines: updatedLines };
+                            });
                         } catch (error) {
                             console.error('Error parsing engine message:', error, message);
                         }
@@ -212,19 +241,14 @@ export const useEngineStore = create(
 
                 // Handle "bestmove" messages when engine completes analysis
                 else if (message.startsWith('bestmove')) {
-                    // When engine completes analysis to requested depth, it sends bestmove
-                    // We can use this to potentially take further action, but we typically
-                    // don't stop analysis mode based on this alone
                     set({ isAnalyzing: false });
 
-                    // You might want to add logic here for when analysis completes to desired depth
-                    // For continuous analysis, you'd typically restart analysis with go()
                     const { isAnalysisOn, go } = get();
                     if (isAnalysisOn) {
-                        // Small delay before restarting analysis to give UI time to update
-                        setTimeout(() => {
+                        // Use requestAnimationFrame instead of setTimeout for better performance
+                        requestAnimationFrame(() => {
                             go();
-                        }, 100);
+                        });
                     }
                 }
 
