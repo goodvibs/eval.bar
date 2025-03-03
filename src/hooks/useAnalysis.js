@@ -31,50 +31,13 @@ const formatUciMoves = (currentFen, uciMoves) => {
     return formattedMoves;
 };
 
-/**
- * Custom hook that provides a simplified interface for chess analysis
- * @returns {Object} Analysis state and functions
- */
 export function useAnalysis() {
     // Select necessary state and functions from the engine store
-    const {
-        currentLines,
-        turn,
-        currentFen,
-        isAnalyzing,
-        isAnalysisOn,
-        currentSearchDepth,
-        isEngineReady,
-        startAnalysis,
-        endAnalysis,
-        multiPV,
-        setAndSendMultiPV,
-        goalSearchDepth,
-        setGoalSearchDepth,
-        setPositionAndGoIfAnalysisOn,
-    } = useEngineStore(
-        state => ({
-            currentLines: state.currentLines,
-            turn: state.turn,
-            currentFen: state.currentFen,
-            isAnalyzing: state.isAnalyzing,
-            isAnalysisOn: state.isAnalysisOn,
-            currentSearchDepth: state.currentSearchDepth,
-            isEngineReady: state.isEngineReady,
-            startAnalysis: state.startAnalysis,
-            endAnalysis: state.endAnalysis,
-            multiPV: state.multiPV,
-            setAndSendMultiPV: state.setAndSendMultiPV,
-            goalSearchDepth: state.goalSearchDepth,
-            setGoalSearchDepth: state.setGoalSearchDepth,
-            setPositionAndGoIfAnalysisOn: state.setPositionAndGoIfAnalysisOn,
-        }),
-    );
+    const currentLines = useEngineStore(state => state.currentLines);
+    const turn = useEngineStore(state => state.turn);
+    const currentFen = useEngineStore(state => state.currentFen);
 
-    const engineReady = isEngineReady();
-
-    // Process and format the analysis results
-    const analysisResults = useMemo(() => {
+    return useMemo(() => {
         // Process each line to extract formatted evaluations and convert UCI to SAN (placeholder)
         const processedLines = currentLines.map(line => {
             // Determine advantage based on score and current turn
@@ -157,23 +120,4 @@ export function useAnalysis() {
             lineEvaluations,
         };
     }, [currentLines, turn, currentFen]);
-
-    // Combine everything into the required output format
-    return {
-        // Analysis results
-        ...analysisResults,
-
-        // Control functions
-        multiPV,
-        setAndSendMultiPV,
-        goalSearchDepth,
-        setGoalSearchDepth,
-        currentSearchDepth,
-        isAnalysisOn,
-        isAnalyzing,
-        startAnalysis,
-        endAnalysis,
-        setPositionAndGoIfAnalysisOn,
-        engineReady
-    };
 }
