@@ -2,7 +2,6 @@ import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { NavigationBar } from "./navigation/NavigationBar";
 import { EvaluationBar } from "./EvaluationBar";
-import { GameArea } from "./GameArea";
 import { Sidebar } from "./sidebar/Sidebar";
 import { useGameStore } from "../hooks/stores/useGameStore";
 import { fetchChesscomGame } from "../utils/chesscom";
@@ -147,22 +146,17 @@ export function MainContent() {
                     onClose={() => setSidebarOpen(false)}
                 />
 
-                {/* GameArea with flex-grow to take remaining space */}
-                <div className="flex-grow">
-                    <main className="flex flex-1 justify-center flex-wrap lg:flex-nowrap gap-4 lg:pl-1 p-4 overflow-hidden">
-                        <div className="flex h-fit flex-col gap-4">
-                            <GameMetadata />
-                            <ChessboardPanel />
-                        </div>
+                <main className="flex flex-grow justify-center flex-wrap lg:flex-nowrap gap-4 lg:pl-1 p-4">
+                    <div className="flex h-fit flex-col gap-4">
+                        <GameMetadata />
+                        <ChessboardPanel />
+                    </div>
 
-                        <div
-                            className="flex flex-col flex-1 min-w-72 gap-4"
-                        >
-                            <AnalysisPanel />
-                            <MoveHistoryPanel />
-                        </div>
-                    </main>
-                </div>
+                    <div className="flex flex-col flex-1 min-w-72 gap-4">
+                        <AnalysisPanel />
+                        <MoveHistoryPanel />
+                    </div>
+                </main>
             </div>
 
             {/* Loading overlay */}
