@@ -133,7 +133,7 @@ export function MainContent() {
         setError(null);
     };
 
-    const { containerRef, boardWidth, rightPanelWidth } = useBoardResize({
+    const { boardWidth, rightPanelWidth } = useBoardResize({
         sidebarWidthPercent: 30, // 30% of screen width for sidebar
         rightPanelPercent: 30 // 30% of remaining space for right panel
     });
@@ -152,14 +152,14 @@ export function MainContent() {
                     onClose={() => setSidebarOpen(false)}
                 />
 
-                <main className="flex flex-grow justify-center flex-wrap lg:flex-nowrap gap-4 lg:pl-1 p-4">
-                    <div className="flex h-fit flex-col gap-4" ref={containerRef}>
+                <main className="flex flex-grow justify-center flex-wrap gap-4 lg:pl-1 p-4">
+                    <div className="flex h-fit flex-col gap-4">
                         <GameMetadata />
                         <ChessboardPanel boardWidth={boardWidth} />
                     </div>
 
                     <div className="flex flex-col min-w-72 gap-4"
-                         style={{ width: window.innerWidth >= 1024 ? rightPanelWidth : '100%' }}
+                         style={{ width: rightPanelWidth }}
                     >
                         <AnalysisPanel />
                         <MoveHistoryPanel />

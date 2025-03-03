@@ -10,7 +10,6 @@ import {useGameStore} from "./stores/useGameStore";
  * @param {number} options.minBoardSize Minimum board size in pixels
  * @param {number} options.minRightPanelWidth Minimum width for the right panel in pixels
  * @param {number} options.padding Padding to subtract from available space
- * @param {number} options.rightPanelPercent Target percentage of available space for right panel (after sidebar)
  * @returns {Object} Containing containerRef, boardWidth, and rightPanelWidth
  */
 export function useBoardResize({
@@ -20,16 +19,12 @@ export function useBoardResize({
                                    minBoardSize = 300,
                                    minRightPanelWidth = 300,
                                    padding = 30,
-                                   rightPanelPercent = 30
                                }) {
     const [boardWidth, setBoardWidth] = useState(500);
     const [rightPanelWidth, setRightPanelWidth] = useState(300);
-    const containerRef = useRef(null);
 
     useEffect(() => {
         const updateSize = () => {
-            if (!containerRef.current) return;
-
             // Calculate available height
             const metadataHeight = gameMetadata?.white ? 60 : 0;
             const availableHeight = Math.max(
@@ -41,9 +36,8 @@ export function useBoardResize({
             const isScreenLarge = window.innerWidth >= 1024;
             const sidebarWidth = isScreenLarge ? window.innerWidth * (sidebarWidthPercent / 100) : 0;
 
-            const availableWidth = window.innerWidth - sidebarWidth - padding;
+            const availableWidth = window.innerWidth - sidebarWidth - 2 * padding;
 
-            // Set board width to the smaller of available height or width
             const idealBoardWidth = Math.min(availableHeight, availableWidth);
 
             if (availableWidth >= idealBoardWidth + minRightPanelWidth) {
@@ -51,11 +45,16 @@ export function useBoardResize({
                 const rightPanelWidth = availableWidth - idealBoardWidth;
                 setRightPanelWidth(rightPanelWidth);
             }
-            else {
+            else if (availableWidth >= minBoardSize + minRightPanelWidth) {
                 // reduce board width to fit right panel
                 const rightPanelWidth = minRightPanelWidth;
                 setRightPanelWidth(rightPanelWidth);
                 setBoardWidth(availableWidth - rightPanelWidth);
+            }
+            else {
+                // wrap right panel to new line
+                setBoardWidth(idealBoardWidth);
+                setRightPanelWidth(window.innerWidth);
             }
         };
 
@@ -65,7 +64,7 @@ export function useBoardResize({
         // Update on window resize
         window.addEventListener('resize', updateSize);
         return () => window.removeEventListener('resize', updateSize);
-    }, [gameMetadata?.white, headerHeight, sidebarWidthPercent, minBoardSize, padding, rightPanelPercent, minRightPanelWidth]);
+    }, [gameMetadata?.white, headerHeight, sidebarWidthPercent, minBoardSize, padding, minRightPanelWidth]);
 
-    return { containerRef, boardWidth, rightPanelWidth };
+    return { boardWidth, rightPanelWidth };
 }
