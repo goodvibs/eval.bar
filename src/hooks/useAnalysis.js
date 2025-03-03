@@ -119,7 +119,7 @@ export function useAnalysis() {
                 } else if (score < 0) {
                     formattedEvaluation = score.toFixed(2);
                 } else {
-                    formattedEvaluation = "(º～º)";
+                    formattedEvaluation = "(º~º)";
                 }
             }
 
@@ -146,7 +146,7 @@ export function useAnalysis() {
             advantage: 'equal',
             cp: null,
             mate: null,
-            formattedEvaluation: '(º～º)'
+            formattedEvaluation: '(º~º)'
         };
 
         setAnalysisResult({
