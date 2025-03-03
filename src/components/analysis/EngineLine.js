@@ -35,7 +35,7 @@ export function EngineLine({ sanMoves, evaluation, isMainLine, isLastLine, onMov
                 {evaluation.formattedEvaluation}
             </div>
             <div className="flex gap-1 text-slate-300 whitespace-nowrap overflow-x-auto scrollbar-none">
-                {sanMoves.map((move, idx) => {
+                {sanMoves.map((san, idx) => {
                     const { number, isBlackMove } = getMoveNumbering(idx);
                     const showMoveNumber = !isBlackMove || idx === 0;
 
@@ -50,7 +50,7 @@ export function EngineLine({ sanMoves, evaluation, isMainLine, isLastLine, onMov
                                     {number}{isBlackMove ? '...' : '.'}
                                 </span>
                             )}
-                            {move}
+                            {san}
                         </button>
                     );
                 })}

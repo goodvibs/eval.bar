@@ -3,6 +3,7 @@ import { EngineLine } from "./EngineLine";
 import { useGameStore } from "../../hooks/stores/useGameStore";
 import { AnalysisPanelHeader } from "./AnalysisPanelHeader";
 import { useAnalysis } from "../../hooks/useAnalysis";
+import {useEngineStore} from "../../hooks/stores/useEngineStore";
 
 export function AnalysisPanel() {
     const {
@@ -10,16 +11,19 @@ export function AnalysisPanel() {
         formattedEvaluation,
         sanLines,
         lineEvaluations,
+    } = useAnalysis();
+
+    const {
+        isAnalysisOn,
+        currentSearchDepth,
+        goalSearchDepth,
         multiPV,
         setAndSendMultiPV,
-        goalSearchDepth,
         setGoalSearchDepth,
-        currentSearchDepth,
-        isAnalysisOn,
         startAnalysis,
         endAnalysis,
-        engineReady,
-    } = useAnalysis();
+        isEngineReady,
+    } = useEngineStore();
 
     const { makeMove } = useGameStore();
 

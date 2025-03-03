@@ -162,14 +162,11 @@ export const useEngineStore = create(
 
                 // Parse info strings that contain analysis data
                 if (message.startsWith('info')) {
-                    // Extract depth information - only update if it has changed
+                    // Extract depth information
                     const depthMatch = message.match(/depth (\d+)/);
                     if (depthMatch) {
                         const depth = parseInt(depthMatch[1], 10);
-                        const { currentSearchDepth } = get();
-                        if (depth !== currentSearchDepth) {
-                            set({ currentSearchDepth: depth });
-                        }
+                        set({ currentSearchDepth: depth });
                     }
 
                     // Only process complete analysis lines
@@ -187,7 +184,7 @@ export const useEngineStore = create(
                             const { multiPV } = get();
                             if (multiPvIndex > multiPV) return;
 
-                            // Extract score information
+                            // Extract score information - store raw values only
                             let scoreValue = 0;
                             let scoreType = 'cp';
 
@@ -198,15 +195,15 @@ export const useEngineStore = create(
                                 scoreValue = parseInt(mateMatch[1], 10);
                                 scoreType = 'mate';
                             } else if (cpMatch) {
-                                scoreValue = parseInt(cpMatch[1], 10) / 100; // Convert centipawns to pawns
+                                scoreValue = parseInt(cpMatch[1], 10); // Keep as centipawns
                                 scoreType = 'cp';
                             }
 
-                            // Extract PV (move sequence)
+                            // Extract PV (move sequence) - just the raw UCI moves
                             const pvMatch = message.match(/ pv ([^$]*)/);
                             const pvMoves = pvMatch ? pvMatch[1].trim().split(' ') : [];
 
-                            // Create the analysis line object
+                            // Create the raw analysis line object - minimal processing
                             const analysisLine = {
                                 multiPvIndex,
                                 scoreType,
@@ -245,7 +242,7 @@ export const useEngineStore = create(
 
                     const { isAnalysisOn, go } = get();
                     if (isAnalysisOn) {
-                        // Use requestAnimationFrame instead of setTimeout for better performance
+                        // Use requestAnimationFrame for better performance
                         requestAnimationFrame(() => {
                             go();
                         });

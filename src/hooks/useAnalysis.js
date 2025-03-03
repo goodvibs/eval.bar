@@ -3,12 +3,16 @@ import {useEngineStore} from './stores/useEngineStore';
 import {Chess} from 'cm-chess';
 
 /**
- * Converts UCI moves to SAN format
+ * Converts UCI moves to SAN format strings
  * @param {string} currentFen - The current FEN position
  * @param {Array<string>} uciMoves - Array of UCI format moves
- * @returns {Array<object>} Array of formatted moves with SAN notation
+ * @returns {Array<string>} Array of SAN notation strings
  */
 const formatUciMoves = (currentFen, uciMoves) => {
+    if (!currentFen || !uciMoves || uciMoves.length === 0) {
+        return [];
+    }
+
     const formattedMoves = [];
     let position = new Chess(currentFen);
 
@@ -18,10 +22,11 @@ const formatUciMoves = (currentFen, uciMoves) => {
             break;
         }
 
-        // Try to make the move
-        const from = uciMove.substring(0, 2);
-        const to = uciMove.substring(2, 4);
-        const promotion = uciMove.length > 4 ? uciMove.substring(4, 5) : undefined;
+        try {
+            // Convert UCI to move object that Chess.js can understand
+            const from = uciMove.substring(0, 2);
+            const to = uciMove.substring(2, 4);
+            const promotion = uciMove.length > 4 ? uciMove.substring(4, 5) : undefined;
 
         const move = position.move({from, to, promotion});
         if (!move) {
@@ -29,14 +34,18 @@ const formatUciMoves = (currentFen, uciMoves) => {
             break;
         }
 
-        formattedMoves.push(move);
+            // Just extract the SAN notation string instead of the whole move object
+            formattedMoves.push(move.san);
+        } catch (error) {
+            break;
+        }
     }
 
     return formattedMoves;
-};
+}
 
 /**
- * A more effective throttling mechanism for analysis calculations
+ * Throttled analysis hook that processes raw engine data for UI
  */
 export function useAnalysis() {
     // Select necessary state from the engine store
@@ -70,7 +79,14 @@ export function useAnalysis() {
         const processedLines = validLines.map(line => {
             // Determine advantage based on score and current turn
             let advantage;
-            let score = line.scoreValue;
+            let score;
+
+            // Convert centipawns to pawns if it's a cp score
+            if (line.scoreType === 'cp') {
+                score = line.scoreValue / 100; // Now we convert centipawns to pawns here
+            } else {
+                score = line.scoreValue; // Mate score stays as is
+            }
 
             // Adjust score perspective based on turn
             if (turn === 'b') {
@@ -95,7 +111,7 @@ export function useAnalysis() {
                 cp = Infinity;
                 formattedEvaluation = `#${mate}`;
             } else {
-                cp = Math.abs(score * 100);
+                cp = Math.abs(score * 100); // Convert back to absolute centipawns for UI
                 mate = null;
 
                 if (score > 0) {
@@ -108,7 +124,7 @@ export function useAnalysis() {
             }
 
             // Convert UCI moves to SAN format
-            const sanMoves = formatUciMoves(currentFen, line.pvMoves);
+            const sanMoves = formatUciMoves(currentFen, line.pvMoves || []);
 
             return {
                 sanMoves,
