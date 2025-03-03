@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
-import { useEngineStore } from './stores/useEngineStore';
-import { Chess } from 'cm-chess';
+import {useState, useEffect, useRef} from 'react';
+import {useEngineStore} from './stores/useEngineStore';
+import {Chess} from 'cm-chess';
 
 /**
  * Converts UCI moves to SAN format
@@ -19,7 +19,11 @@ const formatUciMoves = (currentFen, uciMoves) => {
         }
 
         // Try to make the move
-        const move = position.move(uciMove);
+        const from = uciMove.substring(0, 2);
+        const to = uciMove.substring(2, 4);
+        const promotion = uciMove.length > 4 ? uciMove.substring(4, 5) : undefined;
+
+        const move = position.move({from, to, promotion});
         if (!move) {
             console.error(`Invalid move in engine analysis: ${uciMove} in position ${position.fen()}`);
             break;
@@ -31,22 +35,44 @@ const formatUciMoves = (currentFen, uciMoves) => {
     return formattedMoves;
 };
 
+/**
+ * A more effective throttling mechanism for analysis calculations
+ */
 export function useAnalysis() {
-    // Select necessary state and functions from the engine store
+    // Select necessary state from the engine store
     const currentLines = useEngineStore(state => state.currentLines);
     const turn = useEngineStore(state => state.turn);
     const currentFen = useEngineStore(state => state.currentFen);
 
-    return useMemo(() => {
-        // Process each line to extract formatted evaluations and convert UCI to SAN (placeholder)
-        const processedLines = currentLines.filter(line => line !== null).map(line => {
+    // State to hold the processed analysis results
+    const [analysisResult, setAnalysisResult] = useState({
+        advantage: null,
+        cp: null,
+        mate: null,
+        formattedEvaluation: null,
+        sanLines: [],
+        lineEvaluations: [],
+    });
+
+    // Refs for throttling
+    const timeoutRef = useRef(null);
+    const pendingUpdateRef = useRef(false);
+    const inputsRef = useRef({currentLines, turn, currentFen});
+
+    // Process the engine lines
+    const processLines = () => {
+        const {currentLines, turn, currentFen} = inputsRef.current;
+
+        // Filter out null lines from the fixed-size array
+        const validLines = currentLines.filter(line => line !== null);
+
+        // Process each line to extract formatted evaluations and convert UCI to SAN
+        const processedLines = validLines.map(line => {
             // Determine advantage based on score and current turn
             let advantage;
             let score = line.scoreValue;
 
             // Adjust score perspective based on turn
-            // In UCI, scores are always from the perspective of the side to move
-            // We want consistent white/black perspective regardless of turn
             if (turn === 'b') {
                 score = -score;
             }
@@ -59,7 +85,7 @@ export function useAnalysis() {
                 advantage = 'equal';
             }
 
-            // Calculate cp and mate values (always positive for UI)
+            // Calculate cp and mate values
             let cp = null;
             let mate = null;
             let formattedEvaluation;
@@ -69,21 +95,20 @@ export function useAnalysis() {
                 cp = Infinity;
                 formattedEvaluation = `#${mate}`;
             } else {
-                cp = Math.abs(score * 100); // Convert to centipawns and make positive
+                cp = Math.abs(score * 100);
                 mate = null;
 
-                // Format evaluation string with + for white advantage, - for black advantage
                 if (score > 0) {
                     formattedEvaluation = `+${score.toFixed(2)}`;
                 } else if (score < 0) {
-                    formattedEvaluation = score.toFixed(2); // Already has negative sign
+                    formattedEvaluation = score.toFixed(2);
                 } else {
                     formattedEvaluation = "--";
                 }
             }
 
             // Convert UCI moves to SAN format
-            const sanMoves = formatUciMoves(currentFen, line.pvMoves || []);
+            const sanMoves = formatUciMoves(currentFen, line.pvMoves);
 
             return {
                 sanMoves,
@@ -108,16 +133,53 @@ export function useAnalysis() {
             formattedEvaluation: null
         };
 
-        return {
-            // Top-level evaluation (from best line)
+        setAnalysisResult({
             advantage: bestEval.advantage,
             cp: bestEval.cp,
             mate: bestEval.mate,
             formattedEvaluation: bestEval.formattedEvaluation,
-
-            // All lines data
             sanLines,
             lineEvaluations,
+        });
+    };
+
+    // Effect to handle throttled updates
+    useEffect(() => {
+        // Update the inputs ref
+        inputsRef.current = {currentLines, turn, currentFen};
+
+        // Set pending flag
+        pendingUpdateRef.current = true;
+
+        // If no update is scheduled, schedule one
+        if (!timeoutRef.current) {
+            timeoutRef.current = setTimeout(() => {
+                // Only process if there's a pending update
+                if (pendingUpdateRef.current) {
+                    processLines();
+                    pendingUpdateRef.current = false;
+                }
+                timeoutRef.current = null;
+
+                // If changes occurred during processing, schedule another update
+                if (pendingUpdateRef.current) {
+                    timeoutRef.current = setTimeout(() => {
+                        processLines();
+                        pendingUpdateRef.current = false;
+                        timeoutRef.current = null;
+                    }, 100);
+                }
+            }, 100);
+        }
+
+        // Cleanup function
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+                timeoutRef.current = null;
+            }
         };
     }, [currentLines, turn, currentFen]);
+
+    return analysisResult;
 }
