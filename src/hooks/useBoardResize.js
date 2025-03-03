@@ -16,7 +16,7 @@ export function useBoardResize({
                                    gameMetadata = useGameStore.getState().gameMetadata,
                                    headerHeight = 160,
                                    sidebarWidthPercent = 30,
-                                   minBoardSize = 300,
+                                   minBoardSize = 310,
                                    minRightPanelWidth = 300,
                                    padding = 30,
                                }) {
@@ -54,7 +54,7 @@ export function useBoardResize({
             else {
                 // wrap right panel to new line
                 setBoardWidth(idealBoardWidth);
-                setRightPanelWidth(window.innerWidth);
+                setRightPanelWidth(window.innerWidth - padding);
             }
         };
 
