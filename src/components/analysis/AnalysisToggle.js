@@ -21,7 +21,7 @@ export function AnalysisToggle({ disabled, isAnalysisOn, handleAnalysisOn, handl
                 <div className={`
                     relative flex items-center w-14 h-7 rounded-full transition-all duration-300 ease-in-out bg-size-200 bg-pos-0 hover:bg-pos-100
                     ${isAnalysisOn
-                    ? 'bg-gradient-to-r from-blue-500 via-green-400 to-purple-500'
+                    ? 'bg-gradient-to-r from-green-400 to-orange-500'
                     : 'bg-gradient-to-r from-gray-400 to-gray-300'
                 }
                     ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
@@ -39,7 +39,8 @@ export function AnalysisToggle({ disabled, isAnalysisOn, handleAnalysisOn, handl
                         <div className={`
                             transition-colors duration-300
                         `}>
-                            {isAnalysisOn ? <StopIcon /> : <AnalyzeIcon />}
+                            {/*{isAnalysisOn ? <StopIcon /> : <AnalyzeIcon />}*/}
+                            <AnalyzeIcon />
                         </div>
                     </div>
                     {/* Text inside the toggle */}

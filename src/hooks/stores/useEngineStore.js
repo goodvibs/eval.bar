@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import {FEN} from "cm-chess";
 
 export const useEngineStore = create(
     persist(
@@ -23,10 +24,10 @@ export const useEngineStore = create(
             currentLines: Array(3).fill(null), // Current analysis lines
 
             // updated together
-            startFen: null, // FEN of the starting position
-            currentFen: null, // FEN of the current position
+            startFen: FEN.start, // FEN of the starting position
+            currentFen: FEN.start, // FEN of the current position
             uciMoves: '', // UCI moves to reach current position from starting position
-            turn: null, // Current turn (w or b)
+            turn: 'w', // Current turn (w or b)
 
             // Set the engine interface (called from EngineProvider)
             setEngineInterface: (engine) => {

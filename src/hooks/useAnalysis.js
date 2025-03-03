@@ -143,10 +143,10 @@ export function useAnalysis() {
 
         // Get best line evaluation (first line)
         const bestEval = processedLines[0]?.evaluation || {
-            advantage: null,
+            advantage: 'equal',
             cp: null,
             mate: null,
-            formattedEvaluation: null
+            formattedEvaluation: '--'
         };
 
         setAnalysisResult({
