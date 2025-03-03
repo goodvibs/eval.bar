@@ -26,8 +26,8 @@ export function Sidebar({ isOpen, onOpen, onClose, height }) {
                 className={`
                 fixed lg:static 
                 inset-y-0 lg:inset-auto left-0
-                w-full lg:w-auto
-                min-w-0 lg:min-w-72
+                w-full
+                min-w-0 lg:min-w-72 lg:w-[30%]
                 lg:flex lg:flex-col lg:flex-grow
                 bg-slate-700
                 ${isOpen ? 'outline outline-1 outline-slate-500 lg:outline-none' : ''}

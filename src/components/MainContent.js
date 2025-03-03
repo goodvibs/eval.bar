@@ -12,6 +12,7 @@ import {GameMetadata} from "./GameMetadata";
 import {ChessboardPanel} from "./chessboard/ChessboardPanel";
 import {AnalysisPanel} from "./analysis/AnalysisPanel";
 import {MoveHistoryPanel} from "./moves/MoveHistoryPanel";
+import {useBoardResize} from "../hooks/useBoardResize";
 
 // Parse chess.com game URL to extract type and ID
 export const parseChesscomGameUrl = (pathname) => {
@@ -132,6 +133,11 @@ export function MainContent() {
         setError(null);
     };
 
+    const { containerRef, boardWidth, rightPanelWidth } = useBoardResize({
+        sidebarWidthPercent: 30, // 30% of screen width for sidebar
+        rightPanelPercent: 30 // 30% of remaining space for right panel
+    });
+
     return (
         <div className="flex flex-col min-h-screen bg-slate-700" onKeyDown={handleKeyDown}>
             <NavigationBar onMenuClick={() => setSidebarOpen(!isSidebarOpen)} />
@@ -147,12 +153,14 @@ export function MainContent() {
                 />
 
                 <main className="flex flex-grow justify-center flex-wrap lg:flex-nowrap gap-4 lg:pl-1 p-4">
-                    <div className="flex h-fit flex-col gap-4">
+                    <div className="flex h-fit flex-col gap-4" ref={containerRef}>
                         <GameMetadata />
-                        <ChessboardPanel />
+                        <ChessboardPanel boardWidth={boardWidth} />
                     </div>
 
-                    <div className="flex flex-col flex-1 min-w-72 gap-4">
+                    <div className="flex flex-col min-w-72 gap-4"
+                         style={{ width: window.innerWidth >= 1024 ? rightPanelWidth : '100%' }}
+                    >
                         <AnalysisPanel />
                         <MoveHistoryPanel />
                     </div>

@@ -4,13 +4,12 @@ import React, { useEffect, useRef, useCallback } from "react";
 import { useGameStore } from "../../hooks/stores/useGameStore";
 import { useEngineStore } from "../../hooks/stores/useEngineStore";
 import { useChessboardStore } from "../../hooks/stores/useChessboardStore";
-import { useBoardResize } from "../../hooks/useBoardResize";
 import { Chess } from "cm-chess";
 
 // Configure the throttling value - only update arrows this often at maximum
 const ARROW_UPDATE_THROTTLE = 300; // milliseconds
 
-export function ChessboardPanel() {
+export function ChessboardPanel({ boardWidth }) {
     // Get game state
     const {
         game,
@@ -18,7 +17,6 @@ export function ChessboardPanel() {
         goToMove,
         undo,
         redo,
-        gameMetadata,
         isKingInCheck,
     } = useGameStore();
 
@@ -36,9 +34,6 @@ export function ChessboardPanel() {
         clearSelection,
         setCustomArrows
     } = useChessboardStore();
-
-    // Use the custom hook for board resizing
-    const { containerRef, boardWidth } = useBoardResize({ gameMetadata });
 
     // Get the square of the king in check (if any)
     const kingInCheck = isKingInCheck();
@@ -200,7 +195,6 @@ export function ChessboardPanel() {
 
     return (
         <div
-            ref={containerRef}
             className="flex z-0 flex-col duration-300 transition-all w-fit max-w-full gap-3"
         >
             <Chessboard
