@@ -3,12 +3,12 @@ import React from "react";
 import {ChesscomImportPanel} from "./ChesscomImportPanel";
 import {PgnImportPanel} from "./PgnImportPanel";
 
-export function Sidebar({ isOpen, onOpen, onClose, height }) {  // Separate open and close actions
+export function Sidebar({ isOpen, onOpen, onClose, height }) {
     const [currTab, setCurrTab] = React.useState(0);
 
     return (
         <>
-            {/* Mobile overlay */}
+            {/* Mobile overlay - only visible on small screens */}
             <div
                 className={`
                 fixed inset-0 
@@ -16,24 +16,26 @@ export function Sidebar({ isOpen, onOpen, onClose, height }) {  // Separate open
                 transition-all duration-1000
                 lg:hidden
                 z-30
-                ${isOpen ? 'backdrop-blur bg-opacity-50' : 'bg-opacity-0'}
+                ${isOpen ? 'backdrop-blur bg-opacity-50 pointer-events-auto' : 'bg-opacity-0'}
                 `}
                 onClick={onClose}
             />
 
-            {/* Sidebar wrapper with tab */}
+            {/* Sidebar wrapper - fixed on mobile, flex item on desktop */}
             <aside
                 className={`
-                fixed lg:relative lg:block
-                inset-y-0 lg:inset-y-auto left-0 
-                w-full lg:w-72
+                fixed lg:static 
+                inset-y-0 lg:inset-auto left-0
+                w-full lg:w-auto
+                min-w-0 lg:min-w-72
+                lg:flex lg:flex-col lg:flex-grow
                 bg-slate-700
                 ${isOpen ? 'outline outline-1 outline-slate-500 lg:outline-none' : ''}
                 z-40
-                transform transition-transform duration-1000
+                transform transition-transform duration-1000 lg:transform-none
                 ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
             `}>
-                {/* Pull-out tab - only for opening */}
+                {/* Pull-out tab - only for opening on mobile */}
                 <button
                     onClick={onOpen}
                     className={`
@@ -54,8 +56,9 @@ export function Sidebar({ isOpen, onOpen, onClose, height }) {  // Separate open
                     </svg>
                 </button>
 
-                <div className="flex flex-col p-4 lg:pr-3 gap-4 overflow-y-auto max-h-full lg:max-h-[calc(100vh-3rem)] scrollbar-track-transparent">
-                    <div className="flex lg:hidden items-center justify-between py-4 ">
+                <div className="flex flex-col p-4 lg:pr-3 gap-4 h-full overflow-y-auto lg:overflow-y-auto scrollbar-track-transparent">
+                    {/* Mobile header with close button */}
+                    <div className="flex lg:hidden items-center justify-between py-4">
                         <h1 className="flex justify-center font-medium text-2xl text-slate-200">
                             Import a Chess Game
                         </h1>
@@ -83,8 +86,8 @@ export function Sidebar({ isOpen, onOpen, onClose, height }) {  // Separate open
                     </div>
 
                     {/* Sidebar content */}
-                    <div className="flex flex-1 lg:flex-none flex-col gap-4 text-slate-100">
-                        <div className="flex flex-1 gap-1 border-b border-slate-600">
+                    <div className="flex flex-1 flex-col gap-4 text-slate-100">
+                        <div className="flex gap-1 border-b border-slate-600">
                             <SidebarTabButton
                                 active={currTab === 0}
                                 label="Chess.com"

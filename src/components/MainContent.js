@@ -9,6 +9,10 @@ import { fetchChesscomGame } from "../utils/chesscom";
 import { checkExtensionInstalled } from "../utils/extension";
 import {LoadingOverlay} from "./LoadingOverlay";
 import {ExtensionPrompt} from "./ExtensionPrompt";
+import {GameMetadata} from "./GameMetadata";
+import {ChessboardPanel} from "./chessboard/ChessboardPanel";
+import {AnalysisPanel} from "./analysis/AnalysisPanel";
+import {MoveHistoryPanel} from "./moves/MoveHistoryPanel";
 
 // Parse chess.com game URL to extract type and ID
 export const parseChesscomGameUrl = (pathname) => {
@@ -134,14 +138,31 @@ export function MainContent() {
             <NavigationBar onMenuClick={() => setSidebarOpen(!isSidebarOpen)} />
             <EvaluationBar />
 
-            <div className="flex items-center justify-center lg:items-start overflow-hidden">
+            {/* Fixed container with proper flex properties */}
+            <div className="flex flex-col lg:flex-row w-full overflow-hidden">
+                {/* Sidebar with max-width constraint */}
                 <Sidebar
                     isOpen={isSidebarOpen}
                     onOpen={() => setSidebarOpen(true)}
                     onClose={() => setSidebarOpen(false)}
                 />
 
-                <GameArea />
+                {/* GameArea with flex-grow to take remaining space */}
+                <div className="flex-grow">
+                    <main className="flex flex-1 justify-center flex-wrap lg:flex-nowrap gap-4 lg:pl-1 p-4 overflow-hidden">
+                        <div className="flex h-fit flex-col gap-4">
+                            <GameMetadata />
+                            <ChessboardPanel />
+                        </div>
+
+                        <div
+                            className="flex flex-col flex-1 min-w-72 gap-4"
+                        >
+                            <AnalysisPanel />
+                            <MoveHistoryPanel />
+                        </div>
+                    </main>
+                </div>
             </div>
 
             {/* Loading overlay */}
