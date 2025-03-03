@@ -3,7 +3,7 @@ import {MoveGroup} from './MoveGroup';
 
 export function MoveHistoryList({ moveGroups, currentMoveIndex, goToMove }) {
     return (
-        <div className="p-2 flex flex-wrap gap-1 max-h-[calc(100vh-18rem)] overflow-y-auto">
+        <div className={`bg-slate-800 rounded-b-lg flex-wrap p-2 gap-1 ${moveGroups.length === 0 ? 'hidden' : 'flex'}`}>
             {moveGroups.map(({ number, white, black }, groupIndex) => (
                 <MoveGroup
                     key={number}

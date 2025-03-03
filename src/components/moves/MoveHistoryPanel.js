@@ -1,6 +1,7 @@
 import {useGameStore} from "../../hooks/stores/useGameStore";
 import {MoveHistoryHeader} from "./MoveHistoryHeader";
 import {MoveHistoryList} from "./MoveHistoryList";
+import React from "react";
 
 function groupMovesIntoPairs(moveHistory) {
     const moveGroups = [];
@@ -23,13 +24,16 @@ export function MoveHistoryPanel() {
     return (
         <div className="flex flex-col rounded-lg overflow-hidden">
             <MoveHistoryHeader />
-            <div className="bg-slate-800 rounded-b-lg overflow-y-auto max-h-40">
-                <MoveHistoryList
-                    moveGroups={moveGroups}
-                    currentMoveIndex={getCurrentHalfmoveCount() - 1}
-                    goToMove={goToMove}
-                />
-            </div>
+            {moveGroups.length === 0 && (
+                <div className="p-4 bg-slate-800 text-sm text-slate-400 text-center">
+                    Play a move or import a game to see move history here.
+                </div>
+            )}
+            <MoveHistoryList
+                moveGroups={moveGroups}
+                currentMoveIndex={getCurrentHalfmoveCount() - 1}
+                goToMove={goToMove}
+            />
         </div>
     );
 }
