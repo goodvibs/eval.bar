@@ -201,7 +201,7 @@ export function ChessboardPanel() {
     return (
         <div
             ref={containerRef}
-            className="flex z-0 flex-col duration-300 transition-all w-fit max-w-full border-slate-500 border rounded-lg p-2 pb-0"
+            className="flex z-0 flex-col duration-300 transition-all w-fit max-w-full gap-3"
         >
             <Chessboard
                 position={game.fen()}
