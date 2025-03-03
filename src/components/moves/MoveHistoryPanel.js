@@ -22,7 +22,7 @@ export function MoveHistoryPanel() {
     const moveGroups = groupMovesIntoPairs(pgn.history.moves);
 
     return (
-        <div className="flex flex-col rounded-lg overflow-hidden">
+        <div className="flex flex-col rounded-lg">
             <MoveHistoryHeader />
             {moveGroups.length === 0 && (
                 <div className="p-4 bg-slate-800 text-sm text-slate-400 text-center">

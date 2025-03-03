@@ -92,10 +92,10 @@ export function MainContent() {
                 />
 
                 {/* Main content area */}
-                <div className="flex flex-col flex-grow">
+                <div className="flex flex-col flex-grow overflow-hidden">
                     <main
                         ref={mainRef}
-                        className="flex flex-1 flex-grow justify-center flex-wrap gap-4 lg:pl-1 p-4 min-h-[calc(100vh-3rem)]"
+                        className="flex justify-center flex-wrap gap-4 lg:pl-1 p-4 min-h-[calc(100vh-3rem)] overflow-auto"
                     >
                         {/* Chess board section */}
                         <div className="flex h-fit flex-col gap-4">
@@ -111,9 +111,7 @@ export function MainContent() {
                             <AnalysisPanel />
                             <MoveHistoryPanel />
                         </div>
-                        <div className="flex flex-col flex-1 h-full flex-grow"></div>
                     </main>
-                    <div className="flex flex-1 flex-grow"></div>
                 </div>
             </div>
 
