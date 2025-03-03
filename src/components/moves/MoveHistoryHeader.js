@@ -3,10 +3,11 @@ import {useGameStore} from "../../hooks/stores/useGameStore";
 import {analyzeOnLichess} from "../../utils/lichess";
 
 export function MoveHistoryHeader() {
-    const { renderPgn, getCurrentFullmove, getPgnFullmoveCount } = useGameStore();
+    const { renderPgn, getCurrentFullmove, getPgnFullmoveCount, getCurrentTurn } = useGameStore();
 
-    const totalMoves = getPgnFullmoveCount();
-    const currentMove = getCurrentFullmove();
+    const totalFullmoveCount = getPgnFullmoveCount();
+    const currentFullmove = getCurrentFullmove();
+    const turn = getCurrentTurn();
 
     const handleCopyPgn = async () => {
         try {
@@ -38,15 +39,15 @@ export function MoveHistoryHeader() {
                 {/* Move count */}
                 <div className="flex flex-col">
                     <span className="text-xs font-medium text-slate-300">Move</span>
-                    <span className="text-xs text-slate-400">
-                        {currentMove >= 0 ? `${currentMove}/${totalMoves}` : '-'}
+                    <span className="text-xs font-mono text-center text-slate-400">
+                        {`${currentFullmove}/${totalFullmoveCount}`}
                     </span>
                 </div>
                 {/* Side to move */}
                 <div className="flex flex-col">
                     <span className="text-xs font-medium text-slate-300">To Move</span>
-                    <span className="text-xs text-slate-400">
-                        {currentMove === -1 ? 'White' : currentMove % 2 === 0 ? 'Black' : 'White'}
+                    <span className="text-xs font-mono text-center text-slate-400">
+                        {turn === 'w' ? 'White' : turn ==='b' ? 'Black' : null}
                     </span>
                 </div>
             </div>

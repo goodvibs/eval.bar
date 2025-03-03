@@ -23,7 +23,7 @@ export function MoveHistoryPanel() {
     return (
         <div className="flex flex-col rounded-lg overflow-hidden">
             <MoveHistoryHeader />
-            <div className="bg-slate-800 rounded-b-lg overflow-hidden h-[calc(100vh-18rem)]">
+            <div className="bg-slate-800 rounded-b-lg overflow-y-auto max-h-40">
                 <MoveHistoryList
                     moveGroups={moveGroups}
                     currentMoveIndex={getCurrentHalfmoveCount() - 1}

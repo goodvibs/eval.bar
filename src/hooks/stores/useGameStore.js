@@ -213,7 +213,7 @@ export const useGameStore = create((set, get) => ({
     },
 
     getCurrentFullmove: () => {
-        return Math.floor(get().getCurrentHalfmoveCount() / 2) + 1;
+        return Math.floor((get().getCurrentHalfmoveCount() - 1) / 2) + 1;
     },
 
     getPgnHalfmoveCount: () => {
@@ -221,7 +221,7 @@ export const useGameStore = create((set, get) => ({
     },
 
     getPgnFullmoveCount: () => {
-        return Math.floor(get().getPgnHalfmoveCount() - 1 / 2) + 1;
+        return Math.floor((get().getPgnHalfmoveCount() - 1) / 2) + 1;
     },
 
     renderPgn: () => get().pgn.render(false, false, false),
