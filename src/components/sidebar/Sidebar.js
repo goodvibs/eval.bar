@@ -23,6 +23,7 @@ export function Sidebar({ isOpen, onOpen, onClose, height }) {
 
             {/* Sidebar wrapper - fixed on mobile, flex item on desktop */}
             <aside
+                style={{ height: window.innerWidth >= 1024 ? (height > 0 ? `${height}px` : 'auto') : '100%' }}
                 className={`
                 fixed lg:static 
                 inset-y-0 lg:inset-auto left-0

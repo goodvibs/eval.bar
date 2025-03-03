@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { NavigationBar } from "./navigation/NavigationBar";
 import { EvaluationBar } from "./EvaluationBar";
@@ -47,6 +47,37 @@ export function MainContent() {
             }
         }
     };
+
+    const [mainHeight, setMainHeight] = useState(500);
+    const mainRef = React.useRef(null);
+
+    const updateSidebarHeight = () => {
+        if (mainRef.current && window.innerWidth >= 1024) {
+            const height = mainRef.current.offsetHeight;
+            setMainHeight(height);
+        }
+    };
+
+    // Set up resize observer to track main content height changes
+    useEffect(() => {
+        const resizeObserver = new ResizeObserver(() => {
+            updateSidebarHeight();
+        });
+
+        if (mainRef.current) {
+            resizeObserver.observe(mainRef.current);
+            // Initial measurement
+            updateSidebarHeight();
+        }
+
+        // Also update on window resize
+        window.addEventListener('resize', updateSidebarHeight);
+
+        return () => {
+            resizeObserver.disconnect();
+            window.removeEventListener('resize', updateSidebarHeight);
+        };
+    }, []);
 
     // Check for chess.com game URLs
     React.useEffect(() => {
@@ -134,7 +165,6 @@ export function MainContent() {
     };
 
     const { boardWidth, rightPanelWidth } = useBoardResize({
-        sidebarWidthPercent: 30, // 30% of screen width for sidebar
         rightPanelPercent: 30 // 30% of remaining space for right panel
     });
 
@@ -144,27 +174,33 @@ export function MainContent() {
             <EvaluationBar />
 
             {/* Fixed container with proper flex properties */}
-            <div className="flex flex-col lg:flex-row w-full overflow-hidden">
+            <div className="flex flex-col lg:flex-row w-full flex-grow overflow-hidden">
                 {/* Sidebar with max-width constraint */}
                 <Sidebar
                     isOpen={isSidebarOpen}
                     onOpen={() => setSidebarOpen(true)}
                     onClose={() => setSidebarOpen(false)}
+                    height={mainHeight}
                 />
 
-                <main className="flex flex-grow justify-center flex-wrap gap-4 lg:pl-1 p-4">
-                    <div className="flex h-fit flex-col gap-4">
-                        <GameMetadata />
-                        <ChessboardPanel boardWidth={boardWidth} />
-                    </div>
+                <div className="flex flex-col flex-grow">
+                    <main ref={mainRef} className="flex flex-1 flex-grow justify-center flex-wrap gap-4 lg:pl-1 p-4 min-h-[calc(100vh-3rem)]">
+                        <div className="flex h-fit flex-col gap-4">
+                            <GameMetadata />
+                            <ChessboardPanel boardWidth={boardWidth} />
+                        </div>
 
-                    <div className="flex flex-col min-w-72 gap-4"
-                         style={{ width: rightPanelWidth }}
-                    >
-                        <AnalysisPanel />
-                        <MoveHistoryPanel />
-                    </div>
-                </main>
+                        <div className="flex flex-col min-w-72 gap-4"
+                             style={{ width: rightPanelWidth }}
+                        >
+                            <AnalysisPanel />
+                            <MoveHistoryPanel />
+                        </div>
+                        <div className="flex flex-col flex-1 h-full flex-grow"></div>
+                    </main>
+                    <div className="flex flex-1 flex-grow"></div>
+                </div>
+
             </div>
 
             {/* Loading overlay */}
