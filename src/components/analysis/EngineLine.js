@@ -31,7 +31,7 @@ export function EngineLine({ sanMoves, evaluation, isMainLine, isLastLine, onMov
 
     return (
         <div className="flex items-center hover:bg-slate-700 transition-colors text-sm gap-2">
-            <div className={`flex font-mono px-0.5 rounded-r-3xl ${isMainLine ? "font-bold" : ""} ${isLastLine ? "rounded-bl-lg" : ""} ${evalBgColor}`}>
+            <div className={`flex flex-nowrap text-nowrap font-mono px-0.5 rounded-r-3xl ${isMainLine ? "font-bold" : ""} ${isLastLine ? "rounded-bl-lg" : ""} ${evalBgColor}`}>
                 {evaluation.formattedEvaluation}
             </div>
             <div className="flex gap-1 text-slate-300 whitespace-nowrap overflow-x-auto scrollbar-none">
