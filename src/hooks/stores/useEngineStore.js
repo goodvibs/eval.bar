@@ -183,7 +183,7 @@ export const useEngineStore = create(
                             const multiPvIndex = multiPvMatch ? parseInt(multiPvMatch[1], 10) : 1;
 
                             // Skip processing if this line is beyond our multiPV setting
-                            const { multiPV } = get();
+                            const { multiPV, turn } = get();
                             if (multiPvIndex > multiPV) return;
 
                             // Extract score information - store raw values only
@@ -204,8 +204,7 @@ export const useEngineStore = create(
                                 mate = null;
                             }
 
-                            const self_color = get().turn === 'w' ? 'white' : 'black';
-                            const opponent_color = self_color === 'white' ? 'black' : 'white';
+                            const [self_color, opponent_color] = turn === 'w' ? ['white', 'black'] : ['black', 'white'];
                             const advantage = scoreValue > 0 ? self_color : opponent_color;
 
                             // Extract PV (move sequence) - just the raw UCI moves
@@ -225,12 +224,10 @@ export const useEngineStore = create(
                             // Update the current lines in the store using fixed-size array approach
                             set((state) => {
                                 // Create a new array of the current size if needed
-                                let updatedLines = [...state.currentLines];
+                                let updatedLines = Array(state.multiPV).fill(null);
 
-                                // If the array is not initialized to the right size yet,
-                                // create a new array with the right size filled with nulls
-                                if (updatedLines.length < state.multiPV) {
-                                    updatedLines = Array(state.multiPV).fill(null);
+                                for (let i = 0; i < state.currentLines.length; i++) {
+                                    updatedLines[i] = state.currentLines[i];
                                 }
 
                                 // Update the specific index with the new analysis line
