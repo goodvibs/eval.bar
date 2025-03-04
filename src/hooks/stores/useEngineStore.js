@@ -112,6 +112,7 @@ export const useEngineStore = create(
                 }
 
                 pauseAnalysis();
+                set({ currentLines: Array(get().multiPV).fill(null) });
                 // engineInterface.sendCommand('position fen ' + startFen + (uciMoves ? ' moves ' + uciMoves : ''));
                 engineInterface.sendCommand('position fen ' + currentFen);
                 engineInterface.sendCommand(`go depth ${goalSearchDepth}`);
@@ -159,7 +160,7 @@ export const useEngineStore = create(
                 // Skip processing empty messages
                 if (!message || typeof message !== 'string') return;
 
-                console.log('[Engine message]:', message);
+                // console.log('[Engine message]:', message);
 
                 // Parse info strings that contain analysis data
                 if (message.startsWith('info')) {
@@ -211,7 +212,6 @@ export const useEngineStore = create(
                                 scoreValue,
                                 pvMoves,
                                 depth: depthMatch ? parseInt(depthMatch[1], 10) : 0,
-                                updatedAt: Date.now()
                             };
 
                             // Update the current lines in the store using fixed-size array approach

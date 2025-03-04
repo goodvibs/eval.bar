@@ -1,13 +1,9 @@
 import { Chessboard } from "react-chessboard";
 import { ChessboardControls } from "./ChessboardControls";
-import React, { useEffect, useRef, useCallback } from "react";
+import React, { useEffect, useCallback } from "react";
 import { useGameStore } from "../../hooks/stores/useGameStore";
 import { useEngineStore } from "../../hooks/stores/useEngineStore";
 import { useChessboardStore } from "../../hooks/stores/useChessboardStore";
-import { Chess } from "cm-chess";
-
-// Configure the throttling value - only update arrows this often at maximum
-const ARROW_UPDATE_THROTTLE = 300; // milliseconds
 
 export function ChessboardPanel({ boardWidth }) {
     // Get game state
@@ -21,7 +17,7 @@ export function ChessboardPanel({ boardWidth }) {
     } = useGameStore();
 
     // Get engine state
-    const { isAnalyzing, currentLines } = useEngineStore();
+    const { isAnalysisOn, currentLines } = useEngineStore();
 
     // Get UI state
     const {
@@ -38,15 +34,10 @@ export function ChessboardPanel({ boardWidth }) {
     // Get the square of the king in check (if any)
     const kingInCheck = isKingInCheck();
 
-    // Use refs to track state and timing for throttling
-    const updateTimeoutRef = useRef(null);
-    const lastArrowUpdateRef = useRef(0);
-    const chessInstanceRef = useRef(new Chess()); // Reuse chess instance for performance
-
     // Function to update arrows - this needs useCallback as it's a dependency in useEffect
     const updateArrows = useCallback(() => {
         // Only proceed if analyzing and lines exist
-        if (!isAnalyzing || !currentLines || currentLines.length === 0) {
+        if (!isAnalysisOn || !currentLines || currentLines.length === 0) {
             if (customArrows.length > 0) {
                 setCustomArrows([]);
             }
@@ -63,23 +54,14 @@ export function ChessboardPanel({ boardWidth }) {
                 return;
             }
 
-            // Load current position
-            chessInstanceRef.current.load(game.fen());
-
             // Get the first move in the best line
-            const sanMove = bestLine.moves[0];
+            const uciMove = bestLine.pvMoves[0];
 
-            // Convert SAN to move object with from/to
-            const moveObj = chessInstanceRef.current.move(sanMove);
-            if (!moveObj) {
-                if (customArrows.length > 0) {
-                    setCustomArrows([]);
-                }
-                return;
-            }
+            const from = uciMove.substring(0, 2);
+            const to = uciMove.substring(2, 4);
 
             // Create new arrow array
-            const newArrows = [[moveObj.from, moveObj.to, "#285b8d"]];
+            const newArrows = [[from, to, "#285b8d"]];
 
             setCustomArrows(newArrows);
         } catch (e) {
@@ -88,39 +70,12 @@ export function ChessboardPanel({ boardWidth }) {
                 setCustomArrows([]);
             }
         }
-    }, [isAnalyzing, currentLines, game, customArrows, setCustomArrows]);
+    }, [isAnalysisOn, currentLines, customArrows, setCustomArrows]);
 
     // Update analysis arrows with throttling
     useEffect(() => {
-        // Clear any pending timeout
-        if (updateTimeoutRef.current) {
-            clearTimeout(updateTimeoutRef.current);
-            updateTimeoutRef.current = null;
-        }
-
-        // Check if we need to throttle
-        const now = Date.now();
-        const timeSinceLastUpdate = now - lastArrowUpdateRef.current;
-
-        if (timeSinceLastUpdate < ARROW_UPDATE_THROTTLE) {
-            // We updated too recently, schedule a deferred update
-            updateTimeoutRef.current = setTimeout(() => {
-                lastArrowUpdateRef.current = Date.now();
-                updateArrows();
-            }, ARROW_UPDATE_THROTTLE - timeSinceLastUpdate);
-        } else {
-            // Enough time has passed, update immediately
-            lastArrowUpdateRef.current = now;
-            updateArrows();
-        }
-
-        // Cleanup on unmount
-        return () => {
-            if (updateTimeoutRef.current) {
-                clearTimeout(updateTimeoutRef.current);
-            }
-        };
-    }, [isAnalyzing, currentLines, updateArrows]);
+        updateArrows();
+    }, [isAnalysisOn, currentLines, updateArrows]);
 
     // Handle piece click to show possible moves
     const handlePieceClick = (piece, square) => {

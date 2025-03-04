@@ -10,13 +10,32 @@ import { ChessboardPanel } from "./chessboard/ChessboardPanel";
 import { AnalysisPanel } from "./analysis/AnalysisPanel";
 import { MoveHistoryPanel } from "./moves/MoveHistoryPanel";
 import { useBoardResize } from "../hooks/useBoardResize";
-import { useChessGameImport } from "../hooks/useUrlImport"; // New custom hook
+import { useChessGameImport } from "../hooks/useUrlImport";
+import {useGameStore} from "../hooks/stores/useGameStore";
+import {usePositionSync} from "../hooks/usePositionSync";
+import {useEngineStore} from "../hooks/stores/useEngineStore";
+import {useAnalysis} from "../hooks/useAnalysis"; // New custom hook
 
 export function MainContent() {
     const [isSidebarOpen, setSidebarOpen] = useState(true);
     const location = useLocation();
     const mainRef = useRef(null);
     const [mainHeight, setMainHeight] = useState(500);
+
+    const { getCurrentTurn, getCurrentFen } = useGameStore();
+
+    usePositionSync({ debounceMs: 100, currentFen: getCurrentFen() });
+
+    const currentLines = useEngineStore(state => state.currentLines);
+
+    const {
+        cp,
+        mate,
+        advantage,
+        formattedEvaluation,
+        sanLines,
+        lineEvaluations
+    } = useAnalysis({currentLines, currentFen: getCurrentFen(), turn: getCurrentTurn()});
 
     // Use our new custom hook
     const {
@@ -79,7 +98,11 @@ export function MainContent() {
     return (
         <div className="flex flex-col min-h-screen bg-slate-700" onKeyDown={handleKeyDown}>
             <NavigationBar onMenuClick={toggleSidebar} />
-            <EvaluationBar />
+            <EvaluationBar
+                cp={cp}
+                mate={mate}
+                advantage={advantage}
+            />
 
             {/* Main layout container */}
             <div className="flex flex-col lg:flex-row w-full flex-grow overflow-hidden">
@@ -108,7 +131,12 @@ export function MainContent() {
                             className="flex flex-col min-w-72 gap-4"
                             style={{ width: rightPanelWidth }}
                         >
-                            <AnalysisPanel />
+                            <AnalysisPanel
+                                advantage={advantage}
+                                formattedEvaluation={formattedEvaluation}
+                                sanLines={sanLines}
+                                lineEvaluations={lineEvaluations}
+                            />
                             <MoveHistoryPanel />
                         </div>
                     </main>

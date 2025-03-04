@@ -1,7 +1,6 @@
 import { create } from 'zustand';
-import {Chess, FEN} from 'cm-chess';
+import {Chess} from 'cm-chess';
 import {Pgn} from "cm-pgn/src/Pgn";
-import {useEngineStore} from "./useEngineStore";
 
 function processPgn(pgn) {
     pgn = pgn.trimEnd();
@@ -65,23 +64,15 @@ export const useGameStore = create((set, get) => ({
         return get().game.turn();
     },
 
-    updateEngineStore: () => {
-        const { game } = get();
-        const uciMoves = game.history().map(move => move.uci).join(' ');
-        const turn = game.turn();
-
-        useEngineStore.getState().setPositionAndGoIfAnalysisOn(
-            FEN.start, game.fen(), uciMoves, turn
-        );
+    getCurrentFen: () => {
+        return get().game.fen();
     },
 
     makeMove: (move) => {
-        let { game, updateEngineStore } = get();
+        let { game } = get();
         const moveResult = game.move(move);
 
         if (moveResult) {
-            updateEngineStore();
-
             set({
                 game: game,
                 pgn: clonePgn(game.pgn),
@@ -95,13 +86,11 @@ export const useGameStore = create((set, get) => ({
     },
 
     undo: () => {
-        let { game, updateEngineStore } = get();
+        let { game } = get();
         if (game.history().length === 0) {
             return;
         }
         game.undo();
-
-        updateEngineStore();
 
         set({
             game: game,
@@ -109,12 +98,10 @@ export const useGameStore = create((set, get) => ({
     },
 
     redo: () => {
-        let { game, pgn, updateEngineStore } = get();
+        let { game, pgn } = get();
         const currentPly = game.plyCount();
         const nextMove = pgn.history.moves[currentPly];
         game.move(nextMove);
-
-        updateEngineStore();
 
         set({
             game: game,
@@ -122,7 +109,7 @@ export const useGameStore = create((set, get) => ({
     },
 
     goToMove: (index) => {
-        const { pgn, updateEngineStore } = get();
+        const { pgn } = get();
 
         const moveHistory = pgn.history.moves;
         const moveCount = moveHistory.length;
@@ -135,8 +122,6 @@ export const useGameStore = create((set, get) => ({
                 game.move(moveHistory[i]);
             }
         }
-
-        updateEngineStore();
 
         set({
             game: game,

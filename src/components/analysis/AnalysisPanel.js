@@ -2,17 +2,9 @@ import React from "react";
 import { EngineLine } from "./EngineLine";
 import { useGameStore } from "../../hooks/stores/useGameStore";
 import { AnalysisPanelHeader } from "./AnalysisPanelHeader";
-import { useAnalysis } from "../../hooks/useAnalysis";
 import {useEngineStore} from "../../hooks/stores/useEngineStore";
 
-export function AnalysisPanel() {
-    const {
-        advantage,
-        formattedEvaluation,
-        sanLines,
-        lineEvaluations,
-    } = useAnalysis();
-
+export function AnalysisPanel({ advantage, formattedEvaluation, sanLines, lineEvaluations }) {
     const {
         isAnalysisOn,
         currentSearchDepth,

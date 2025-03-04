@@ -1,5 +1,4 @@
 import React, {useMemo} from "react";
-import {useAnalysis} from "../hooks/useAnalysis";
 
 const calcBarPercentage = (advantage, cp, mate) => {
     if (advantage === 'equal') {
@@ -11,14 +10,12 @@ const calcBarPercentage = (advantage, cp, mate) => {
     }
 
     const coefficient = 0.2; // Controls the curve steepness
-    const percentage = (1 / (1 + Math.exp(-(cp / 100) * coefficient))) * 100;
+    const percentage = (1 / (1 + Math.exp(-((advantage === 'white' ? cp : -cp) / 100) * coefficient))) * 100;
      // Clamp between 2-98%
     return Math.min(Math.max(percentage, 2), 98);
 }
 
-export function EvaluationBar({ height = "h-1.5" }) {
-    const { advantage, cp, mate } = useAnalysis();
-
+export function EvaluationBar({ advantage, cp, mate, height = "h-1.5" }) {
     // Create marker positions (as percentages)
     const markers = useMemo(() => {
         return [10, 20, 30, 40, 50, 60, 70, 80, 90].map(pos => ({
