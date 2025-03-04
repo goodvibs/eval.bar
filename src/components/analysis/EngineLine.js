@@ -5,19 +5,7 @@ export function EngineLine({ uciMoves, evaluation, isMainLine, isLastLine, onMov
     const { getCurrentTurn, getCurrentHalfmoveCount } = useGameStore();
 
     const baseHalfmoveCount = getCurrentHalfmoveCount();
-    let blackTurn = getCurrentTurn() === 'b';
-
-    // Function to determine move number and notation
-    const getMoveNumbering = (idx) => {
-        const result = {
-            number: Math.floor((baseHalfmoveCount + idx) / 2) + 1,
-            isBlackMove: blackTurn
-        };
-
-        blackTurn = !blackTurn;
-
-        return result;
-    };
+    const baseIsBlackMove = getCurrentTurn() === 'b';
 
     // Determine background color based on winning color using our utility
     const evalBgColor = evaluation.advantage === 'equal' ? "bg-slate-500 text-slate-100" : (
@@ -33,7 +21,8 @@ export function EngineLine({ uciMoves, evaluation, isMainLine, isLastLine, onMov
             </div>
             <div className="flex gap-1 text-slate-300 whitespace-nowrap overflow-x-auto scrollbar-none">
                 {uciMoves.map((uci, idx) => {
-                    const { number, isBlackMove } = getMoveNumbering(idx);
+                    const number = Math.floor((baseHalfmoveCount + idx) / 2) + 1;
+                    const isBlackMove = baseIsBlackMove ? idx % 2 === 0 : idx % 2 === 1;
                     const showMoveNumber = !isBlackMove || idx === 0;
 
                     return (
