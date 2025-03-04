@@ -3,7 +3,7 @@ import { ChessboardControls } from "./ChessboardControls";
 import React, { useEffect, useCallback } from "react";
 import { useGameStore } from "../../hooks/stores/useGameStore";
 import { useEngineStore } from "../../hooks/stores/useEngineStore";
-import { useChessboardStore } from "../../hooks/stores/useChessboardStore";
+import { useChessboard } from "../../hooks/useChessboard";
 
 export function ChessboardPanel({ boardWidth }) {
     // Get game state
@@ -29,7 +29,7 @@ export function ChessboardPanel({ boardWidth }) {
         selectPiece,
         clearSelection,
         setCustomArrows
-    } = useChessboardStore();
+    } = useChessboard();
 
     // Get the square of the king in check (if any)
     const kingInCheck = isKingInCheck();
@@ -47,7 +47,7 @@ export function ChessboardPanel({ boardWidth }) {
         try {
             // Get the best line (first line)
             const bestLine = currentLines[0];
-            if (!bestLine || !bestLine.moves || bestLine.moves.length === 0) {
+            if (!bestLine || !bestLine.pvMoves || bestLine.pvMoves.length === 0) {
                 if (customArrows.length > 0) {
                     setCustomArrows([]);
                 }

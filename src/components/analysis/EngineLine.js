@@ -41,7 +41,8 @@ export function EngineLine({ uciMoves, evaluation, isMainLine, isLastLine, onMov
         : "bg-slate-900 text-slate-100"
     );
 
-    const sanMoves = uciMovesToSan(getCurrentFen(), uciMoves);
+    // const sanMoves = uciMovesToSan(getCurrentFen(), uciMoves);
+    const sanMoves = uciMoves;
 
     return (
         <div className="flex items-center hover:bg-slate-700 transition-colors text-sm gap-2">
