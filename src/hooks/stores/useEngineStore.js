@@ -1,48 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import {Chess, FEN} from "cm-chess";
-
-/**
- * Converts UCI moves to SAN format strings
- * @param {string} currentFen - The current FEN position
- * @param {Array<string>} uciMoves - Array of UCI format moves
- * @returns {Array<string>} Array of SAN notation strings
- */
-const formatUciMoves = (currentFen, uciMoves) => {
-    if (!currentFen || !uciMoves || uciMoves.length === 0) {
-        return [];
-    }
-
-    const formattedMoves = [];
-    let position = new Chess(currentFen);
-
-    for (const uciMove of uciMoves) {
-        // Skip processing if we've reached an invalid position
-        if (position.gameOver()) {
-            break;
-        }
-
-        try {
-            // Convert UCI to move object that Chess.js can understand
-            const from = uciMove.substring(0, 2);
-            const to = uciMove.substring(2, 4);
-            const promotion = uciMove.length > 4 ? uciMove.substring(4, 5) : undefined;
-
-            const move = position.move({from, to, promotion});
-            if (!move) {
-                console.error(`Invalid move in engine analysis: ${uciMove} in position ${position.fen()}`);
-                break;
-            }
-
-            // Just extract the SAN notation string instead of the whole move object
-            formattedMoves.push(move.san);
-        } catch (error) {
-            break;
-        }
-    }
-
-    return formattedMoves;
-}
+import {FEN} from "cm-chess";
 
 const processLines = (currentLines, currentFen) => {
     // Filter out null lines from the fixed-size array
