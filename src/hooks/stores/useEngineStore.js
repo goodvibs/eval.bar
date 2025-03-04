@@ -53,12 +53,11 @@ export const useEngineStore = create(
     persist(
         (set, get) => ({
             // Analysis state
-            engineInterface: null, // Engine interface instance
             isInitialized: false, // Whether the engine has been set up
 
             // engine configuration
             multiPV: 3,
-            isMultiPVFlushed: false,
+            isMultiPVFlushed: true,
 
             // not technically engine configuration, but related
             goalSearchDepth: 20, // Desired search depth
@@ -76,14 +75,6 @@ export const useEngineStore = create(
             currentFen: FEN.start, // FEN of the current position
             uciMoves: '', // UCI moves to reach current position from starting position
             turn: 'w', // Current turn (w or b)
-
-            // Set the engine interface (called from EngineProvider)
-            setEngineInterface: (engine) => {
-                // Only update if engine is valid and different
-                if (engine && engine !== get().engineInterface) {
-                    set({ engineInterface: engine });
-                }
-            },
 
             // Set engine ready status
             setIsInitialized: (isInitialized) => set({ isInitialized: isInitialized }),
@@ -113,8 +104,8 @@ export const useEngineStore = create(
             },
 
             sendMultiPV: () => {
-                const { engineInterface, multiPV } = get();
-                engineInterface.configure({ MultiPV: multiPV });
+                const { multiPV } = get();
+                window.stockfish.postMessage(`setoption name MultiPV value ${multiPV}`);
                 set({ isMultiPVFlushed: true });
             },
 
@@ -130,9 +121,8 @@ export const useEngineStore = create(
             },
 
             isEngineReady: () => {
-                const { isInitialized, engineInterface, multiPV, goalSearchDepth, startFen, currentFen, turn, isMultiPVFlushed } = get();
+                const { isInitialized, multiPV, goalSearchDepth, startFen, currentFen, turn, isMultiPVFlushed } = get();
                 return isInitialized &&
-                    engineInterface !== null &&
                     multiPV !== null &&
                     goalSearchDepth !== null &&
                     startFen !== null &&
@@ -142,7 +132,7 @@ export const useEngineStore = create(
             },
 
             go: () => {
-                const { isEngineReady, goalSearchDepth, multiPV, currentFen, engineInterface } = get();
+                const { isEngineReady, goalSearchDepth, multiPV, currentFen } = get();
                 if (!isEngineReady()) {
                     console.error('Engine is not ready to start analysis');
                     return;
@@ -155,20 +145,20 @@ export const useEngineStore = create(
 
                 set({ isAnalyzing: true, isGoalSearchDepthFlushed: true, time: 0, currentLines: Array(multiPV).fill(null) });
 
-                engineInterface.sendCommand('stop');
-                // engineInterface.sendCommand('position fen ' + startFen + (uciMoves ? ' moves ' + uciMoves : ''));
-                engineInterface.sendCommand('position fen ' + currentFen);
-                engineInterface.sendCommand(`go depth ${goalSearchDepth}`);
+                window.stockfish.postMessage('stop');
+                // window.stockfish.postMessage('position fen ' + startFen + (uciMoves ? ' moves ' + uciMoves : ''));
+                window.stockfish.postMessage(`position fen ${currentFen}`);
+                window.stockfish.postMessage(`go depth ${goalSearchDepth}`);
             },
 
             endAnalysis: () => {
-                const { multiPV, engineInterface } = get();
+                const { multiPV } = get();
                 set({
                     isAnalysisOn: false,
                     isAnalyzing: false,
                     currentLines: Array(multiPV).fill(null),
                 });
-                engineInterface.sendCommand('stop');
+                window.stockfish.postMessage('stop');
             },
 
             startAnalysis: () => {

@@ -1,112 +1,70 @@
 import { useEffect, useRef, useCallback } from 'react';
+import { useEngineStore } from "./stores/useEngineStore";
 
-/**
- * Custom hook for managing a Stockfish chess engine instance
- *
- * @param {Function} onMessage - Callback function for engine messages
- * @param {Function} onReady - Callback function for engine ready state changes
- * @returns {Object} Engine control interface
- */
-export function useStockfish(onMessage, onReady) {
-    // Reference to store the worker instance
+export function useStockfish() {
+    const {
+        handleEngineMessage,
+        multiPV,
+        setIsInitialized,
+    } = useEngineStore();
+
     const engineRef = useRef(null);
 
-    /**
-     * Send a command to the engine
-     */
-    const sendCommand = useCallback((command) => {
-        if (engineRef.current) {
-            console.debug('[Engine] Sending command:', command);
-            engineRef.current.postMessage(command);
-            return true;
-        }
-        console.warn('[Engine] Cannot send command, engine not initialized:', command);
-        return false;
-    }, []);
-
-    /**
-     * Initialize the engine
-     */
-    const initialize = useCallback(() => {
+    // Initialize engine
+    const initEngine = useCallback(() => {
         if (!engineRef.current) {
             try {
-                console.debug('[Engine] Initializing Stockfish engine');
+                console.log('Initializing Stockfish engine');
                 engineRef.current = new Worker('stockfish.wasm.js');
 
-                // Set up message handler
+                // Initial UCI setup
+                engineRef.current.postMessage('uci');
+                engineRef.current.postMessage(`setoption name MultiPV value ${multiPV}`);
+                engineRef.current.postMessage('isready');
+                engineRef.current.postMessage('ucinewgame');
+
+                // Listen for engine messages
+                console.log('Waiting for readyok message');
+
                 engineRef.current.addEventListener('message', (e) => {
                     // Handle "readyok" message to update engine ready state
-                    if (e.data === "readyok" && onReady) {
-                        console.debug('[Engine] Engine is ready');
-                        onReady(true);
+                    if (e.data === "readyok") {
+                        setIsInitialized(true);
+                        console.log('readyok received, Stockfish is ready');
                     }
 
-                    // Pass all messages to the caller
-                    if (onMessage) {
-                        onMessage(e.data);
-                    }
+                    handleEngineMessage(e.data);
                 });
 
-                // Initial setup
-                sendCommand('uci');
-                sendCommand('isready');
-                sendCommand('ucinewgame');
+                // Expose engine to window for direct store access
+                window.stockfish = engineRef.current;
 
                 return true;
             } catch (error) {
-                console.error('[Engine] Failed to initialize Stockfish engine:', error);
-                if (onReady) onReady(false);
+                console.error('Failed to initialize Stockfish engine:', error);
+                setIsInitialized(false);
                 return false;
             }
         }
         return true;
-    }, [onMessage, onReady, sendCommand]);
+    }, [handleEngineMessage, multiPV, setIsInitialized]);
 
-    /**
-     * Configure the engine
-     */
-    const configure = useCallback((options = {}) => {
-        if (!engineRef.current) {
-            console.warn('[Engine] Cannot configure engine, not initialized');
-            return false;
-        }
-
-        // Set engine options
-        Object.entries(options).forEach(([name, value]) => {
-            sendCommand(`setoption name ${name} value ${value}`);
-        });
-
-        return true;
-    }, [sendCommand]);
-
-    /**
-     * Terminate the engine
-     */
-    const terminate = useCallback(() => {
-        if (engineRef.current) {
-            console.debug('[Engine] Terminating engine');
-            engineRef.current.terminate();
-            engineRef.current = null;
-            if (onReady) onReady(false);
-            return true;
-        }
-        return false;
-    }, [onReady]);
-
-    // Initialize engine on component mount and clean up on unmount
     useEffect(() => {
-        initialize();
+        // Initialize engine on component mount
+        initEngine();
 
+        // Cleanup function to terminate engine on unmount
         return () => {
-            terminate();
-        };
-    }, [initialize, terminate]);
+            if (engineRef.current) {
+                engineRef.current.terminate();
+                engineRef.current = null;
 
-    // Return the engine interface
-    return {
-        sendCommand,
-        configure,
-        terminate,
-        isInitialized: !!engineRef.current
-    };
+                // Clean up window reference
+                window.stockfish = null;
+                setIsInitialized(false);
+            }
+        };
+    }, [initEngine, setIsInitialized]);
+
+    // No need to return anything - the store will handle engine commands
 }

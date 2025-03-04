@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, {useState, useRef, useCallback, useEffect} from "react";
 import { useLocation } from "react-router-dom";
 import { NavigationBar } from "./navigation/NavigationBar";
 import { EvaluationBar } from "./EvaluationBar";
@@ -14,6 +14,7 @@ import { useChessGameImport } from "../hooks/useUrlImport";
 import {useGameStore} from "../hooks/stores/useGameStore";
 import {usePositionSync} from "../hooks/usePositionSync";
 import {useEngineStore} from "../hooks/stores/useEngineStore";
+import {useStockfish} from "../hooks/useStockfish";
 
 export function MainContent() {
     const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -22,6 +23,7 @@ export function MainContent() {
 
     const currentFen = useGameStore.getState().getCurrentFen();
 
+    useStockfish();
     usePositionSync({ currentFen });
 
     const {
