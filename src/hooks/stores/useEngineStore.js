@@ -211,11 +211,7 @@ export const useEngineStore = create(
 
                 // Parse info strings that contain analysis data
                 if (message.startsWith('info')) {
-                    if (message === 'readyok') {
-                        set({ isInitialized: true });
-                    }
-
-                    else if (!isAnalysisOn) {
+                    if (!isAnalysisOn) {
                         return;
                     }
 
