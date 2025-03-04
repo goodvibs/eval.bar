@@ -21,9 +21,9 @@ export function MainContent() {
     const mainRef = useRef(null);
     const [mainHeight, setMainHeight] = useState(500);
 
-    const { getCurrentFen } = useGameStore();
+    const currentFen = useGameStore.getState().getCurrentFen();
 
-    usePositionSync({ currentFen: getCurrentFen() });
+    usePositionSync({ currentFen });
 
     const {
         cp,
@@ -34,7 +34,6 @@ export function MainContent() {
         lineEvaluations
     } = useEngineStore().getAnalysis();
 
-    // Use our new custom hook
     const {
         loading,
         error,

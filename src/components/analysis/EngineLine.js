@@ -29,7 +29,7 @@ const uciMovesToSan = (initialFen, uciMoves) => {
 }
 
 export function EngineLine({ uciMoves, evaluation, isMainLine, isLastLine, onMoveClick }) {
-    const { getCurrentTurn, getCurrentHalfmoveCount } = useGameStore();
+    const { getCurrentTurn, getCurrentHalfmoveCount, getCurrentFen } = useGameStore.getState();
 
     const baseHalfmoveCount = getCurrentHalfmoveCount();
     const baseIsBlackMove = getCurrentTurn() === 'b';
@@ -41,13 +41,15 @@ export function EngineLine({ uciMoves, evaluation, isMainLine, isLastLine, onMov
         : "bg-slate-900 text-slate-100"
     );
 
+    const sanMoves = uciMovesToSan(getCurrentFen(), uciMoves);
+
     return (
         <div className="flex items-center hover:bg-slate-700 transition-colors text-sm gap-2">
             <div className={`flex whitespace-nowrap font-mono px-0.5 rounded-r-3xl ${isMainLine ? "font-bold" : ""} ${isLastLine ? "rounded-bl-lg" : ""} ${evalBgColor}`}>
                 {evaluation.formattedEvaluation}
             </div>
             <div className="flex gap-1 text-slate-300 whitespace-nowrap overflow-x-auto scrollbar-none">
-                {uciMoves.map((uci, idx) => {
+                {sanMoves.map((san, idx) => {
                     const number = Math.floor((baseHalfmoveCount + idx) / 2) + 1;
                     const isBlackMove = baseIsBlackMove ? idx % 2 === 0 : idx % 2 === 1;
                     const showMoveNumber = !isBlackMove || idx === 0;
@@ -55,7 +57,7 @@ export function EngineLine({ uciMoves, evaluation, isMainLine, isLastLine, onMov
                     return (
                         <button
                             key={idx}
-                            onClick={() => onMoveClick(uciMoves.slice(0, idx + 1))}
+                            onClick={() => onMoveClick(sanMoves.slice(0, idx + 1))}
                             className="hover:text-slate-100 hover:underline transition-colors flex-none"
                         >
                             {showMoveNumber && (
@@ -63,7 +65,7 @@ export function EngineLine({ uciMoves, evaluation, isMainLine, isLastLine, onMov
                                     {number}{isBlackMove ? '...' : '.'}
                                 </span>
                             )}
-                            {uci}
+                            {san}
                         </button>
                     );
                 })}
