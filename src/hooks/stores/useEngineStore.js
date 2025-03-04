@@ -282,7 +282,7 @@ export const useEngineStore = create(
                         }
                         else if (get().time === 0) {
                             if (time > 100) {
-                                console.warn(message)
+                                console.warn('Time is too high, skipping. Time:', time);
                                 return;
                             }
                         }
