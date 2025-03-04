@@ -15,7 +15,6 @@ import {useGameStore} from "./stores/useGameStore";
 export function useBoardResize({
                                    gameMetadata = useGameStore.getState().gameMetadata,
                                    headerHeight = 160,
-                                   sidebarWidthPercent = 30,
                                    minBoardSize = 310,
                                    minRightPanelWidth = 300,
                                    padding = 30,
@@ -34,7 +33,7 @@ export function useBoardResize({
 
             // Calculate available width, accounting for sidebar on larger screens
             const isScreenLarge = window.innerWidth >= 1024;
-            const sidebarWidth = isScreenLarge ? window.innerWidth * (sidebarWidthPercent / 100) : 0;
+            const sidebarWidth = isScreenLarge ? 300 : 0;
 
             const availableWidth = window.innerWidth - sidebarWidth - 2 * padding;
 
@@ -64,7 +63,7 @@ export function useBoardResize({
         // Update on window resize
         window.addEventListener('resize', updateSize);
         return () => window.removeEventListener('resize', updateSize);
-    }, [gameMetadata?.white, headerHeight, sidebarWidthPercent, minBoardSize, padding, minRightPanelWidth]);
+    }, [gameMetadata?.white, headerHeight, minBoardSize, padding, minRightPanelWidth]);
 
     return { boardWidth, rightPanelWidth };
 }

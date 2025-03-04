@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { NavigationBar } from "./navigation/NavigationBar";
 import { EvaluationBar } from "./EvaluationBar";
@@ -19,7 +19,6 @@ export function MainContent() {
     const [isSidebarOpen, setSidebarOpen] = useState(true);
     const location = useLocation();
     const mainRef = useRef(null);
-    const [mainHeight, setMainHeight] = useState(500);
 
     const currentFen = useGameStore.getState().getCurrentFen();
 
@@ -54,29 +53,6 @@ export function MainContent() {
         }
     }, [isSidebarOpen, showExtensionPrompt, setShowExtensionPrompt]);
 
-    const updateSidebarHeight = useCallback(() => {
-        if (mainRef.current && window.innerWidth >= 1024) {
-            setMainHeight(mainRef.current.offsetHeight);
-        }
-    }, []);
-
-    // Set up resize observer to track main content height changes
-    useEffect(() => {
-        const resizeObserver = new ResizeObserver(updateSidebarHeight);
-
-        if (mainRef.current) {
-            resizeObserver.observe(mainRef.current);
-            updateSidebarHeight(); // Initial measurement
-        }
-
-        window.addEventListener('resize', updateSidebarHeight);
-
-        return () => {
-            resizeObserver.disconnect();
-            window.removeEventListener('resize', updateSidebarHeight);
-        };
-    }, [updateSidebarHeight]);
-
     // Close the loading overlay
     const handleCloseOverlay = useCallback(() => {
         setLoading(false);
@@ -87,9 +63,7 @@ export function MainContent() {
         setSidebarOpen(prev => !prev);
     }, []);
 
-    const { boardWidth, rightPanelWidth } = useBoardResize({
-        rightPanelPercent: 30 // 30% of remaining space for right panel
-    });
+    const { boardWidth, rightPanelWidth } = useBoardResize({});
 
     return (
         <div className="flex flex-col min-h-screen bg-slate-700" onKeyDown={handleKeyDown}>
@@ -107,7 +81,6 @@ export function MainContent() {
                     isOpen={isSidebarOpen}
                     onOpen={() => setSidebarOpen(true)}
                     onClose={() => setSidebarOpen(false)}
-                    height={mainHeight}
                 />
 
                 {/* Main content area */}

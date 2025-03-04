@@ -3,7 +3,7 @@ import React from "react";
 import {ChesscomImportPanel} from "./ChesscomImportPanel";
 import {PgnImportPanel} from "./PgnImportPanel";
 
-export function Sidebar({ isOpen, onOpen, onClose, height }) {
+export function Sidebar({ isOpen, onOpen, onClose }) {
     const [currTab, setCurrTab] = React.useState(0);
 
     return (
@@ -23,12 +23,11 @@ export function Sidebar({ isOpen, onOpen, onClose, height }) {
 
             {/* Sidebar wrapper - fixed on mobile, flex item on desktop */}
             <aside
-                style={{ height: window.innerWidth >= 1024 ? (height > 0 ? `${height}px` : 'auto') : '100%' }}
                 className={`
                 fixed lg:static 
                 inset-y-0 lg:inset-auto left-0
                 w-full
-                min-w-0 lg:min-w-72 lg:w-[30%]
+                min-w-0 lg:min-w-72 lg:w-72 lg:max-h-[calc(100vh-3rem)]
                 lg:flex lg:flex-col lg:flex-grow
                 bg-slate-700
                 ${isOpen ? 'outline outline-1 outline-slate-500 lg:outline-none' : ''}
