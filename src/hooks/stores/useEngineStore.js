@@ -187,14 +187,8 @@ export const useEngineStore = create(
                     isMultiPVFlushed;
             },
 
-            pauseAnalysis: () => {
-                const { engineInterface } = get();
-                set({ isAnalyzing: false });
-                engineInterface.sendCommand('stop');
-            },
-
             go: () => {
-                const { isEngineReady, goalSearchDepth, pauseAnalysis, multiPV, currentFen, engineInterface } = get();
+                const { isEngineReady, goalSearchDepth, multiPV, currentFen, engineInterface } = get();
                 if (!isEngineReady()) {
                     console.error('Engine is not ready to start analysis');
                     return;
@@ -207,19 +201,20 @@ export const useEngineStore = create(
 
                 set({ isAnalyzing: true, isGoalSearchDepthFlushed: true, time: 0, currentLines: Array(multiPV).fill(null) });
 
-                pauseAnalysis();
+                engineInterface.sendCommand('stop');
                 // engineInterface.sendCommand('position fen ' + startFen + (uciMoves ? ' moves ' + uciMoves : ''));
                 engineInterface.sendCommand('position fen ' + currentFen);
                 engineInterface.sendCommand(`go depth ${goalSearchDepth}`);
             },
 
             endAnalysis: () => {
-                const { multiPV, pauseAnalysis } = get();
+                const { multiPV, engineInterface } = get();
                 set({
                     isAnalysisOn: false,
+                    isAnalyzing: false,
                     currentLines: Array(multiPV).fill(null),
                 });
-                pauseAnalysis();
+                engineInterface.sendCommand('stop');
             },
 
             startAnalysis: () => {
