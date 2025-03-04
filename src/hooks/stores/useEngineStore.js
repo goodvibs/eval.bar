@@ -194,30 +194,32 @@ export const useEngineStore = create(
             },
 
             go: () => {
-                if (!get().isEngineReady()) {
+                const { isEngineReady, goalSearchDepth, pauseAnalysis, multiPV, currentFen, engineInterface } = get();
+                if (!isEngineReady()) {
                     console.error('Engine is not ready to start analysis');
                     return;
                 }
 
-                if (!get().goalSearchDepth) {
+                if (!goalSearchDepth) {
                     console.error('Goal search depth must be set before starting analysis');
                     return;
                 }
 
-                set({ isAnalyzing: true, isGoalSearchDepthFlushed: true, time: 0, currentLines: Array(get().multiPV).fill(null) });
+                set({ isAnalyzing: true, isGoalSearchDepthFlushed: true, time: 0, currentLines: Array(multiPV).fill(null) });
 
-                get().pauseAnalysis();
+                pauseAnalysis();
                 // engineInterface.sendCommand('position fen ' + startFen + (uciMoves ? ' moves ' + uciMoves : ''));
-                get().engineInterface.sendCommand('position fen ' + get().currentFen);
-                get().engineInterface.sendCommand(`go depth ${get().goalSearchDepth}`);
+                engineInterface.sendCommand('position fen ' + currentFen);
+                engineInterface.sendCommand(`go depth ${goalSearchDepth}`);
             },
 
             endAnalysis: () => {
+                const { multiPV, pauseAnalysis } = get();
                 set({
                     isAnalysisOn: false,
-                    currentLines: Array(get().multiPV).fill(null),
+                    currentLines: Array(multiPV).fill(null),
                 });
-                get().pauseAnalysis();
+                pauseAnalysis();
             },
 
             startAnalysis: () => {
@@ -251,6 +253,8 @@ export const useEngineStore = create(
 
             // Process engine output
             handleEngineMessage: (message) => {
+                const { isAnalysisOn, time } = get();
+
                 // Skip processing empty messages
                 if (!message || typeof message !== 'string') return;
 
@@ -262,7 +266,7 @@ export const useEngineStore = create(
                         set({ isInitialized: true });
                     }
 
-                    else if (!get().isAnalysisOn) {
+                    else if (!isAnalysisOn) {
                         return;
                     }
 
@@ -275,18 +279,18 @@ export const useEngineStore = create(
 
                     const timeMatch = message.match(/time (\d+)/);
                     if (timeMatch) {
-                        const time = parseInt(timeMatch[1], 10);
-                        if (time < get().time) {
-                            console.log('Time decreased:', time, get().time);
+                        const parsedTime = parseInt(timeMatch[1], 10);
+                        if (parsedTime < time) {
+                            console.log('Time decreased:', parsedTime, time);
                             return;
                         }
-                        else if (get().time === 0) {
-                            if (time > 100) {
-                                console.warn('Time is too high, skipping. Time:', time);
+                        else if (time === 0) {
+                            if (parsedTime > 100) {
+                                console.warn('Time is too high, skipping. Time:', parsedTime);
                                 return;
                             }
                         }
-                        set({ time: time });
+                        set({ time: parsedTime });
                     }
 
                     // Only process complete analysis lines
