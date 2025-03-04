@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import {FEN} from "cm-chess";
 
-const processLines = (currentLines, currentFen) => {
+const processLines = (currentLines) => {
     // Filter out null lines from the fixed-size array
     const validLines = currentLines.filter(line => line !== null);
 
@@ -196,8 +196,8 @@ export const useEngineStore = create(
             },
 
             getAnalysis: () => {
-                const { currentLines, currentFen } = get();
-                return processLines(currentLines, currentFen);
+                const { currentLines } = get();
+                return processLines(currentLines);
             },
 
             // Process engine output
