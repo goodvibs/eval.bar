@@ -4,7 +4,7 @@ import { useGameStore } from "../../hooks/stores/useGameStore";
 import { AnalysisPanelHeader } from "./AnalysisPanelHeader";
 import {useEngineStore} from "../../hooks/stores/useEngineStore";
 
-export function AnalysisPanel({ advantage, formattedEvaluation, sanLines, lineEvaluations }) {
+export function AnalysisPanel({ advantage, formattedEvaluation, uciLines, lineEvaluations }) {
     const {
         isAnalysisOn,
         currentSearchDepth,
@@ -42,24 +42,24 @@ export function AnalysisPanel({ advantage, formattedEvaluation, sanLines, lineEv
             />
 
             <div className="flex flex-1 flex-col divide-y divide-slate-700">
-                {sanLines.map((line, idx) => (
+                {uciLines.map((line, idx) => (
                     <EngineLine
                         key={idx}
-                        sanMoves={line}
+                        uciMoves={line}
                         evaluation={lineEvaluations[idx]}
                         isMainLine={idx === 0}
-                        isLastLine={idx === sanLines.length - 1}
+                        isLastLine={idx === uciLines.length - 1}
                         onMoveClick={handleMoveClick}
                     />
                 ))}
 
-                {sanLines.length === 0 && !isAnalysisOn && (
+                {uciLines.length === 0 && !isAnalysisOn && (
                     <div className="p-4 text-sm text-slate-400 text-center">
                         Click the toggle to turn on computer analysis.
                     </div>
                 )}
 
-                {sanLines.length === 0 && isAnalysisOn && (
+                {uciLines.length === 0 && isAnalysisOn && (
                     <div className="p-4 text-sm text-slate-400 text-center">
                         Analyzing position...
                     </div>

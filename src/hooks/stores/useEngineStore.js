@@ -59,11 +59,8 @@ const processLines = (currentLines, currentFen) => {
             formattedEvaluation = `${line.advantage === 'black' ? '-' : '+'}${(line.cp / 100).toFixed(2)}`;
         }
 
-        // Convert UCI moves to SAN format
-        const sanMoves = formatUciMoves(currentFen, line.pvMoves || []);
-
         return {
-            sanMoves,
+            uciMoves: line.pvMoves,
             evaluation: {
                 advantage: line.advantage,
                 cp: line.cp,
@@ -73,8 +70,7 @@ const processLines = (currentLines, currentFen) => {
         };
     });
 
-    // Extract arrays of SAN moves and evaluations
-    const sanLines = processedLines.map(line => line.sanMoves);
+    const uciLines = processedLines.map(line => line.uciMoves);
     const lineEvaluations = processedLines.map(line => line.evaluation);
 
     // Get best line evaluation (first line)
@@ -90,7 +86,7 @@ const processLines = (currentLines, currentFen) => {
         cp: bestEval.cp,
         mate: bestEval.mate,
         formattedEvaluation: bestEval.formattedEvaluation,
-        sanLines,
+        uciLines,
         lineEvaluations,
     };
 };

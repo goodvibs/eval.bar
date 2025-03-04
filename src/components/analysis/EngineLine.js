@@ -1,7 +1,7 @@
 import React from "react";
 import {useGameStore} from "../../hooks/stores/useGameStore";
 
-export function EngineLine({ sanMoves, evaluation, isMainLine, isLastLine, onMoveClick }) {
+export function EngineLine({ uciMoves, evaluation, isMainLine, isLastLine, onMoveClick }) {
     const { getCurrentTurn, getCurrentHalfmoveCount } = useGameStore();
 
     const baseHalfmoveCount = getCurrentHalfmoveCount();
@@ -32,14 +32,14 @@ export function EngineLine({ sanMoves, evaluation, isMainLine, isLastLine, onMov
                 {evaluation.formattedEvaluation}
             </div>
             <div className="flex gap-1 text-slate-300 whitespace-nowrap overflow-x-auto scrollbar-none">
-                {sanMoves.map((san, idx) => {
+                {uciMoves.map((uci, idx) => {
                     const { number, isBlackMove } = getMoveNumbering(idx);
                     const showMoveNumber = !isBlackMove || idx === 0;
 
                     return (
                         <button
                             key={idx}
-                            onClick={() => onMoveClick(sanMoves.slice(0, idx + 1))}
+                            onClick={() => onMoveClick(uciMoves.slice(0, idx + 1))}
                             className="hover:text-slate-100 hover:underline transition-colors flex-none"
                         >
                             {showMoveNumber && (
@@ -47,7 +47,7 @@ export function EngineLine({ sanMoves, evaluation, isMainLine, isLastLine, onMov
                                     {number}{isBlackMove ? '...' : '.'}
                                 </span>
                             )}
-                            {san}
+                            {uci}
                         </button>
                     );
                 })}

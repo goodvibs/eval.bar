@@ -30,7 +30,7 @@ export function MainContent() {
         mate,
         advantage,
         formattedEvaluation,
-        sanLines,
+        uciLines,
         lineEvaluations
     } = useEngineStore().getAnalysis();
 
@@ -131,7 +131,7 @@ export function MainContent() {
                             <AnalysisPanel
                                 advantage={advantage}
                                 formattedEvaluation={formattedEvaluation}
-                                sanLines={sanLines}
+                                uciLines={uciLines}
                                 lineEvaluations={lineEvaluations}
                             />
                             <MoveHistoryPanel />
