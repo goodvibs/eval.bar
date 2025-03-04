@@ -1,5 +1,32 @@
 import React from "react";
 import {useGameStore} from "../../hooks/stores/useGameStore";
+import {Chess} from "cm-chess";
+
+
+const uciMovesToSan = (initialFen, uciMoves) => {
+    if (!initialFen || !uciMoves || uciMoves.length === 0) {
+        return [];
+    }
+
+    const formattedMoves = [];
+    let position = new Chess(initialFen);
+
+    for (const uciMove of uciMoves) {
+        const from = uciMove.substring(0, 2);
+        const to = uciMove.substring(2, 4);
+        const promotion = uciMove.length > 4 ? uciMove.substring(4, 5) : '';
+
+        const move = position.move({from, to, promotion});
+        if (!move) {
+            console.error(`Invalid move in engine line: ${uciMove} in position ${position.fen()}`);
+            break;
+        }
+
+        formattedMoves.push(move.san);
+    }
+
+    return formattedMoves;
+}
 
 export function EngineLine({ uciMoves, evaluation, isMainLine, isLastLine, onMoveClick }) {
     const { getCurrentTurn, getCurrentHalfmoveCount } = useGameStore();
