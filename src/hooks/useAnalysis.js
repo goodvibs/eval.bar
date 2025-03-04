@@ -43,55 +43,19 @@ const formatUciMoves = (currentFen, uciMoves) => {
     return formattedMoves;
 }
 
-const processLines = (currentLines, turn, currentFen) => {
+const processLines = (currentLines, currentFen) => {
     // Filter out null lines from the fixed-size array
     const validLines = currentLines.filter(line => line !== null);
 
     // Process each line to extract formatted evaluations and convert UCI to SAN
     const processedLines = validLines.map(line => {
         // Determine advantage based on score and current turn
-        let advantage;
-        let score;
-
-        // Convert centipawns to pawns if it's a cp score
-        if (line.scoreType === 'cp') {
-            score = line.scoreValue / 100; // Now we convert centipawns to pawns here
-        } else {
-            score = line.scoreValue; // Mate score stays as is
-        }
-
-        // Adjust score perspective based on turn
-        if (turn === 'b') {
-            score = -score;
-        }
-
-        if (score > 0.0) {
-            advantage = 'white';
-        } else if (score < 0.0) {
-            advantage = 'black';
-        } else {
-            advantage = 'equal';
-        }
-
-        // Calculate cp and mate values
-        let cp = null;
-        let mate = null;
         let formattedEvaluation;
 
-        if (line.scoreType === 'mate') {
-            mate = Math.abs(line.scoreValue);
-            cp = Infinity;
-            formattedEvaluation = `#${mate}`;
+        if (line.mate !== null) {
+            formattedEvaluation = `#${line.mate}`;
         } else {
-            cp = Math.abs(score * 100); // Convert back to absolute centipawns for UI
-            mate = null;
-
-            if (score === 0) {
-                formattedEvaluation = "(º~º)";
-            }
-            else {
-                formattedEvaluation = `${score >= 0 ? '+' : '-'}${score.toFixed(2)}`;
-            }
+            formattedEvaluation = `${line.advantage === 'black' ? '-' : '+'}${line.cp.toFixed(2) / 100}`;
         }
 
         // Convert UCI moves to SAN format
@@ -100,9 +64,9 @@ const processLines = (currentLines, turn, currentFen) => {
         return {
             sanMoves,
             evaluation: {
-                advantage,
-                cp,
-                mate,
+                advantage: line.advantage,
+                cp: line.cp,
+                mate: line.mate,
                 formattedEvaluation
             }
         };
@@ -146,7 +110,7 @@ export function useAnalysis({ currentLines, turn, currentFen }) {
 
     // Effect to handle throttled updates
     useEffect(() => {
-        setAnalysisResult(processLines(currentLines, turn, currentFen));
+        setAnalysisResult(processLines(currentLines, currentFen));
     }, [currentFen, currentLines, turn]);
 
     return analysisResult;

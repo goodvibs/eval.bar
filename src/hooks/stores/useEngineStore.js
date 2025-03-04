@@ -188,18 +188,25 @@ export const useEngineStore = create(
 
                             // Extract score information - store raw values only
                             let scoreValue = 0;
-                            let scoreType = 'cp';
+                            let cp;
+                            let mate;
 
                             const mateMatch = message.match(/score mate (-?\d+)/);
                             const cpMatch = message.match(/score cp (-?\d+)/);
 
                             if (mateMatch) {
                                 scoreValue = parseInt(mateMatch[1], 10);
-                                scoreType = 'mate';
+                                mate = Math.abs(scoreValue);
+                                cp = Infinity;
                             } else if (cpMatch) {
                                 scoreValue = parseInt(cpMatch[1], 10); // Keep as centipawns
-                                scoreType = 'cp';
+                                cp = Math.abs(scoreValue);
+                                mate = null;
                             }
+
+                            const self_color = get().turn === 'w' ? 'white' : 'black';
+                            const opponent_color = self_color === 'white' ? 'black' : 'white';
+                            const advantage = scoreValue > 0 ? self_color : opponent_color;
 
                             // Extract PV (move sequence) - just the raw UCI moves
                             const pvMatch = message.match(/ pv ([^$]*)/);
@@ -208,8 +215,9 @@ export const useEngineStore = create(
                             // Create the raw analysis line object - minimal processing
                             const analysisLine = {
                                 multiPvIndex,
-                                scoreType,
-                                scoreValue,
+                                cp,
+                                mate,
+                                advantage,
                                 pvMoves,
                                 depth: depthMatch ? parseInt(depthMatch[1], 10) : 0,
                             };
@@ -234,6 +242,9 @@ export const useEngineStore = create(
                         } catch (error) {
                             console.error('Error parsing engine message:', error, message);
                         }
+                    }
+                    else {
+                        console.warn('Skipping incomplete analysis:', message);
                     }
                 }
 
