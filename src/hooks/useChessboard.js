@@ -11,13 +11,14 @@ export const useChessboard = (boardWidth) => {
 
     // Get game state from store
     const {
-        game,
+        getCurrentFen,
         makeMove,
         goToMove,
         undo,
         redo,
         isKingInCheck,
-        getLegalMovesForSquare
+        getLegalMovesForSquare,
+        isSquareOccupied
     } = useGameStore();
 
     // Get engine state from store
@@ -122,7 +123,7 @@ export const useChessboard = (boardWidth) => {
     // Update analysis arrows
     useEffect(() => {
         updateArrows();
-    }, [isAnalysisOn, currentLines, updateArrows]);
+    }, [updateArrows]);
 
     // Navigation functions
     const firstMove = useCallback(() => goToMove(-1), [goToMove]);
@@ -152,7 +153,7 @@ export const useChessboard = (boardWidth) => {
 
         // Add possible move indicators that will be visible even with pieces
         possibleMoves.forEach(square => {
-            const isOccupied = game.piece(square) !== null;
+            const isOccupied = isSquareOccupied(square);
 
             if (isOccupied) {
                 // For squares with pieces, use a colored border
@@ -174,12 +175,11 @@ export const useChessboard = (boardWidth) => {
         });
 
         return styles;
-    }, [selectedPiece, kingInCheck, possibleMoves, game]);
+    }, [selectedPiece, kingInCheck, possibleMoves, isSquareOccupied]);
 
     return {
         // State
-        game,
-        position: game.fen(),
+        position: getCurrentFen(),
         orientedWhite,
         selectedPiece,
         possibleMoves,

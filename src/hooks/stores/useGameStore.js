@@ -55,6 +55,10 @@ export const useGameStore = create((set, get) => ({
         return null;
     },
 
+    isSquareOccupied: (square) => {
+        return get().game.piece(square) !== null
+    },
+
     getLegalMovesForSquare: (square) => {
         const { game } = get();
         return game.moves({ square, verbose: true });
