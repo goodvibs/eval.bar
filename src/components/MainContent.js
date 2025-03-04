@@ -14,7 +14,6 @@ import { useChessGameImport } from "../hooks/useUrlImport";
 import {useGameStore} from "../hooks/stores/useGameStore";
 import {usePositionSync} from "../hooks/usePositionSync";
 import {useEngineStore} from "../hooks/stores/useEngineStore";
-import {useAnalysis} from "../hooks/useAnalysis"; // New custom hook
 
 export function MainContent() {
     const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -22,11 +21,9 @@ export function MainContent() {
     const mainRef = useRef(null);
     const [mainHeight, setMainHeight] = useState(500);
 
-    const { getCurrentTurn, getCurrentFen } = useGameStore();
+    const { getCurrentFen } = useGameStore();
 
-    usePositionSync({ debounceMs: 100, currentFen: getCurrentFen() });
-
-    const currentLines = useEngineStore(state => state.currentLines);
+    usePositionSync({ currentFen: getCurrentFen() });
 
     const {
         cp,
@@ -35,7 +32,7 @@ export function MainContent() {
         formattedEvaluation,
         sanLines,
         lineEvaluations
-    } = useAnalysis({currentLines, currentFen: getCurrentFen(), turn: getCurrentTurn()});
+    } = useEngineStore().getAnalysis();
 
     // Use our new custom hook
     const {

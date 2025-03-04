@@ -3,7 +3,7 @@ import { useGameStore } from "./stores/useGameStore";
 import {useEngineStore} from "./stores/useEngineStore";
 import {FEN} from "cm-chess";
 
-export function usePositionSync(options = { debounceMs: 100, currentFen: FEN.start }) {
+export function usePositionSync( { debounceMs = 100, currentFen }) {
     // Use a ref to store the timeout ID for debouncing
     const debounceTimerRef = useRef(null);
 
@@ -18,14 +18,13 @@ export function usePositionSync(options = { debounceMs: 100, currentFen: FEN.sta
         debounceTimerRef.current = setTimeout(() => {
             const uciMoves = useGameStore.getState().uciTillNow().join(' ');
             const turn = useGameStore.getState().getCurrentTurn();
-            const currentFen = options.currentFen;
 
             useEngineStore.getState().setPositionAndGoIfAnalysisOn(
                 FEN.start, currentFen, uciMoves, turn
             );
 
             debounceTimerRef.current = null;
-        }, options.debounceMs);
+        }, debounceMs);
 
         // Cleanup on unmount
         return () => {
@@ -33,5 +32,5 @@ export function usePositionSync(options = { debounceMs: 100, currentFen: FEN.sta
                 clearTimeout(debounceTimerRef.current);
             }
         };
-    }, [options.currentFen, options.debounceMs]);
+    }, [currentFen, debounceMs]);
 }

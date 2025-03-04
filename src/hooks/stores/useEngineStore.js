@@ -1,6 +1,99 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import {FEN} from "cm-chess";
+import {Chess, FEN} from "cm-chess";
+
+/**
+ * Converts UCI moves to SAN format strings
+ * @param {string} currentFen - The current FEN position
+ * @param {Array<string>} uciMoves - Array of UCI format moves
+ * @returns {Array<string>} Array of SAN notation strings
+ */
+const formatUciMoves = (currentFen, uciMoves) => {
+    if (!currentFen || !uciMoves || uciMoves.length === 0) {
+        return [];
+    }
+
+    const formattedMoves = [];
+    let position = new Chess(currentFen);
+
+    for (const uciMove of uciMoves) {
+        // Skip processing if we've reached an invalid position
+        if (position.gameOver()) {
+            break;
+        }
+
+        try {
+            // Convert UCI to move object that Chess.js can understand
+            const from = uciMove.substring(0, 2);
+            const to = uciMove.substring(2, 4);
+            const promotion = uciMove.length > 4 ? uciMove.substring(4, 5) : undefined;
+
+            const move = position.move({from, to, promotion});
+            if (!move) {
+                console.error(`Invalid move in engine analysis: ${uciMove} in position ${position.fen()}`);
+                break;
+            }
+
+            // Just extract the SAN notation string instead of the whole move object
+            formattedMoves.push(move.san);
+        } catch (error) {
+            break;
+        }
+    }
+
+    return formattedMoves;
+}
+
+const processLines = (currentLines, currentFen) => {
+    // Filter out null lines from the fixed-size array
+    const validLines = currentLines.filter(line => line !== null);
+
+    // Process each line to extract formatted evaluations and convert UCI to SAN
+    const processedLines = validLines.map(line => {
+        // Determine advantage based on score and current turn
+        let formattedEvaluation;
+
+        if (line.mate !== null) {
+            formattedEvaluation = `#${line.mate}`;
+        } else {
+            formattedEvaluation = `${line.advantage === 'black' ? '-' : '+'}${(line.cp / 100).toFixed(2)}`;
+        }
+
+        // Convert UCI moves to SAN format
+        const sanMoves = formatUciMoves(currentFen, line.pvMoves || []);
+
+        return {
+            sanMoves,
+            evaluation: {
+                advantage: line.advantage,
+                cp: line.cp,
+                mate: line.mate,
+                formattedEvaluation
+            }
+        };
+    });
+
+    // Extract arrays of SAN moves and evaluations
+    const sanLines = processedLines.map(line => line.sanMoves);
+    const lineEvaluations = processedLines.map(line => line.evaluation);
+
+    // Get best line evaluation (first line)
+    const bestEval = processedLines[0]?.evaluation || {
+        advantage: 'equal',
+        cp: null,
+        mate: null,
+        formattedEvaluation: '(º~º)'
+    };
+
+    return {
+        advantage: bestEval.advantage,
+        cp: bestEval.cp,
+        mate: bestEval.mate,
+        formattedEvaluation: bestEval.formattedEvaluation,
+        sanLines,
+        lineEvaluations,
+    };
+};
 
 export const useEngineStore = create(
     persist(
@@ -21,6 +114,7 @@ export const useEngineStore = create(
             isAnalyzing: false, // Whether engine is analyzing
             isAnalysisOn: false, // Whether analysis mode is on
             currentSearchDepth: 0,
+            time: 0,
             currentLines: Array(3).fill(null), // Current analysis lines
 
             // updated together
@@ -100,45 +194,40 @@ export const useEngineStore = create(
             },
 
             go: () => {
-                const { goalSearchDepth, engineInterface, currentFen, pauseAnalysis, isEngineReady} = get();
-                if (!isEngineReady()) {
+                if (!get().isEngineReady()) {
                     console.error('Engine is not ready to start analysis');
                     return;
                 }
 
-                if (!goalSearchDepth) {
+                if (!get().goalSearchDepth) {
                     console.error('Goal search depth must be set before starting analysis');
                     return;
                 }
 
-                pauseAnalysis();
-                set({ currentLines: Array(get().multiPV).fill(null) });
-                // engineInterface.sendCommand('position fen ' + startFen + (uciMoves ? ' moves ' + uciMoves : ''));
-                engineInterface.sendCommand('position fen ' + currentFen);
-                engineInterface.sendCommand(`go depth ${goalSearchDepth}`);
+                set({ isAnalyzing: true, isGoalSearchDepthFlushed: true, time: 0, currentLines: Array(get().multiPV).fill(null) });
 
-                set({ isAnalyzing: true, isGoalSearchDepthFlushed: true });
+                get().pauseAnalysis();
+                // engineInterface.sendCommand('position fen ' + startFen + (uciMoves ? ' moves ' + uciMoves : ''));
+                get().engineInterface.sendCommand('position fen ' + get().currentFen);
+                get().engineInterface.sendCommand(`go depth ${get().goalSearchDepth}`);
             },
 
             endAnalysis: () => {
-                const { pauseAnalysis } = get();
-                pauseAnalysis();
                 set({
                     isAnalysisOn: false,
-                    currentLines: []
+                    currentLines: Array(get().multiPV).fill(null),
                 });
+                get().pauseAnalysis();
             },
 
             startAnalysis: () => {
-                const { go } = get();
-
                 set({ isAnalysisOn: true });
 
-                go();
+                get().go();
             },
 
             setPosition: (startFen, currentFen, uciMoves, turn) => {
-                set({startFen, currentFen, uciMoves, turn });
+                set({startFen, currentFen, uciMoves, turn, currentSearchDepth: 0, currentLines: Array(get().multiPV).fill(null) });
             },
 
             goIfAnalysisOn: () => {
@@ -155,6 +244,11 @@ export const useEngineStore = create(
                 goIfAnalysisOn();
             },
 
+            getAnalysis: () => {
+                const { currentLines, currentFen } = get();
+                return processLines(currentLines, currentFen);
+            },
+
             // Process engine output
             handleEngineMessage: (message) => {
                 // Skip processing empty messages
@@ -164,11 +258,35 @@ export const useEngineStore = create(
 
                 // Parse info strings that contain analysis data
                 if (message.startsWith('info')) {
+                    if (message === 'readyok') {
+                        set({ isInitialized: true });
+                    }
+
+                    else if (!get().isAnalysisOn) {
+                        return;
+                    }
+
                     // Extract depth information
                     const depthMatch = message.match(/depth (\d+)/);
                     if (depthMatch) {
                         const depth = parseInt(depthMatch[1], 10);
                         set({ currentSearchDepth: depth });
+                    }
+
+                    const timeMatch = message.match(/time (\d+)/);
+                    if (timeMatch) {
+                        const time = parseInt(timeMatch[1], 10);
+                        if (time < get().time) {
+                            console.log('Time decreased:', time, get().time);
+                            return;
+                        }
+                        else if (get().time === 0) {
+                            if (time > 100) {
+                                console.warn(message)
+                                return;
+                            }
+                        }
+                        set({ time: time });
                     }
 
                     // Only process complete analysis lines
@@ -248,11 +366,6 @@ export const useEngineStore = create(
                 // Handle "bestmove" messages when engine completes analysis
                 else if (message.startsWith('bestmove')) {
                     set({ isAnalyzing: false });
-                }
-
-                // Handle "readyok" messages
-                else if (message === 'readyok') {
-                    set({ isInitialized: true });
                 }
             }
         }),
