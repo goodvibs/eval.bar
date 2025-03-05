@@ -1,6 +1,5 @@
 import {persist} from "zustand/middleware";
 import {create} from "zustand";
-import {useMemo} from "react";
 
 export const useChesscomConfigStore = create(
     persist(

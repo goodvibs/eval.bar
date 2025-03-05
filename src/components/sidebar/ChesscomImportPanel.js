@@ -1,9 +1,9 @@
 import React from 'react';
-import {useGameStore} from "../../hooks/stores/useGameStore";
 import {fetchChesscomGames} from "../../utils/chesscom";
 import {ChesscomImportForm} from "./ChesscomImportForm";
 import {GamesList} from "./GamesList";
 import {useChesscomConfigStore} from "../../hooks/stores/useChesscomConfigStore";
+import {useLoadGame} from "../../hooks/stores/useGameStore";
 
 // Get current date and format it as YYYY-MM
 const getCurrentYearMonth = () => {
@@ -12,7 +12,7 @@ const getCurrentYearMonth = () => {
 };
 
 export function ChesscomImportPanel({ show, closeSidebar }) {
-    const { loadChesscomGame } = useGameStore();
+    const { loadChesscomGame } = useLoadGame();
     const { chesscomUsername, setChesscomUsername, autoRetrieveGames } = useChesscomConfigStore();
 
     const [games, setGames] = React.useState([]);

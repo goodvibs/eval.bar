@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchChesscomGame } from '../utils/chesscom';
 import { checkExtensionInstalled } from '../utils/extension';
-import { useGameStore } from './stores/useGameStore';
+import {useLoadGame} from './stores/useGameStore';
 
 // Parse chess.com game URL to extract type and ID
 export const parseChesscomGameUrl = (pathname) => {
@@ -22,7 +22,7 @@ export function useChessGameImport(pathname) {
     const [error, setError] = useState(null);
     const [showExtensionPrompt, setShowExtensionPrompt] = useState(false);
 
-    const { loadGame } = useGameStore();
+    const { loadChesscomGame } = useLoadGame();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -52,7 +52,7 @@ export function useChessGameImport(pathname) {
                     // Try direct import
                     try {
                         const result = await fetchChesscomGame(gameInfo.type, gameInfo.id);
-                        loadGame(result.pgn);
+                        loadChesscomGame(result.pgn);
                     } catch (importError) {
                         if (importError.message?.includes('CORS') ||
                             importError.message?.includes('network') ||
@@ -74,7 +74,7 @@ export function useChessGameImport(pathname) {
         };
 
         importGame();
-    }, [pathname, loadGame, navigate]);
+    }, [pathname, navigate, loadChesscomGame]);
 
     return {
         loading,

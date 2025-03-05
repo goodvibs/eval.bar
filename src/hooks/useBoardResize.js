@@ -1,19 +1,16 @@
 import { useState, useEffect } from 'react';
-import {useGameStore} from "./stores/useGameStore";
+import {useGameMetadata} from "./stores/useGameStore";
 
 /**
  * Custom hook to handle chessboard and right panel resizing based on available screen space
  * @param {Object} options Configuration options
- * @param {Object} options.gameMetadata Game metadata for determining extra space needs
  * @param {number} options.headerHeight Height of the header/navbar in pixels
- * @param {number} options.sidebarWidthPercent Width of the sidebar as percentage of screen width (on large screens)
  * @param {number} options.minBoardSize Minimum board size in pixels
  * @param {number} options.minRightPanelWidth Minimum width for the right panel in pixels
  * @param {number} options.padding Padding to subtract from available space
  * @returns {Object} Containing containerRef, boardWidth, and rightPanelWidth
  */
 export function useBoardResize({
-                                   gameMetadata = useGameStore.getState().gameMetadata,
                                    headerHeight = 160,
                                    minBoardSize = 310,
                                    minRightPanelWidth = 300,
@@ -21,6 +18,8 @@ export function useBoardResize({
                                }) {
     const [boardWidth, setBoardWidth] = useState(500);
     const [rightPanelWidth, setRightPanelWidth] = useState(300);
+
+    const gameMetadata = useGameMetadata();
 
     useEffect(() => {
         const updateSize = () => {

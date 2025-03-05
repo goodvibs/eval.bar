@@ -11,20 +11,20 @@ import { AnalysisPanel } from "./analysis/AnalysisPanel";
 import { MoveHistoryPanel } from "./moves/MoveHistoryPanel";
 import { useBoardResize } from "../hooks/useBoardResize";
 import { useChessGameImport } from "../hooks/useUrlImport";
-import {useGameStore} from "../hooks/stores/useGameStore";
 import {usePositionSync} from "../hooks/usePositionSync";
 import {useEngineStore} from "../hooks/stores/useEngineStore";
 import {useStockfish} from "../hooks/useStockfish";
+import {useGameDerivedState} from "../hooks/stores/useGameStore";
 
 export function MainContent() {
+    useStockfish();
+
     const [isSidebarOpen, setSidebarOpen] = useState(true);
     const location = useLocation();
     const mainRef = useRef(null);
 
-    const currentFen = useGameStore.getState().getCurrentFen();
-
-    useStockfish();
-    usePositionSync({ currentFen });
+    const { fen } = useGameDerivedState();
+    usePositionSync({ fen });
 
     const {
         cp,

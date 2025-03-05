@@ -1,5 +1,5 @@
 import React from "react";
-import {useGameStore} from "../../hooks/stores/useGameStore";
+import {useGameDerivedState} from "../../hooks/stores/useGameStore";
 import {Chess} from "cm-chess";
 
 
@@ -29,10 +29,10 @@ const uciMovesToSan = (initialFen, uciMoves) => {
 }
 
 export function EngineLine({ uciMoves, evaluation, isMainLine, isLastLine, onMoveClick }) {
-    const { getCurrentTurn, getCurrentHalfmoveCount, getCurrentFen } = useGameStore.getState();
+    const { turn, halfmoveCount, fen } = useGameDerivedState();
 
-    const baseHalfmoveCount = getCurrentHalfmoveCount();
-    const baseIsBlackMove = getCurrentTurn() === 'b';
+    const baseHalfmoveCount = halfmoveCount;
+    const baseIsBlackMove = turn === 'b';
 
     // Determine background color based on winning color using our utility
     const evalBgColor = evaluation.advantage === 'equal' ? "bg-slate-500 text-slate-100" : (
@@ -41,8 +41,8 @@ export function EngineLine({ uciMoves, evaluation, isMainLine, isLastLine, onMov
         : "bg-slate-900 text-slate-100"
     );
 
-    // const sanMoves = uciMovesToSan(getCurrentFen(), uciMoves);
-    const sanMoves = uciMoves;
+    const sanMoves = uciMovesToSan(fen, uciMoves);
+    // const sanMoves = uciMoves;
 
     return (
         <div className="flex items-center hover:bg-slate-700 transition-colors text-sm gap-2">

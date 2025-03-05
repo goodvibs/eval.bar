@@ -1,24 +1,21 @@
 import React from 'react';
-import {useGameStore} from "../../hooks/stores/useGameStore";
+import {useGameDerivedState, usePgnDerivedState} from "../../hooks/stores/useGameStore";
 import {analyzeOnLichess} from "../../utils/lichess";
 
 export function MoveHistoryHeader() {
-    const { renderPgn, getCurrentFullmove, getPgnFullmoveCount, getCurrentTurn } = useGameStore();
-
-    const totalFullmoveCount = getPgnFullmoveCount();
-    const currentFullmove = getCurrentFullmove();
-    const turn = getCurrentTurn();
+    const { fullmoveCount: currentFullmove, turn } = useGameDerivedState();
+    const { fullmoveCount: totalFullmoveCount, pgnText } = usePgnDerivedState();
 
     const handleCopyPgn = async () => {
         try {
-            await navigator.clipboard.writeText(renderPgn());
+            await navigator.clipboard.writeText(pgnText);
         } catch (err) {
             console.error('Failed to copy PGN:', err);
         }
     };
 
     const handleDownloadPgn = () => {
-        const blob = new Blob([renderPgn()], { type: 'text/plain' });
+        const blob = new Blob([pgnText], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -30,7 +27,7 @@ export function MoveHistoryHeader() {
     };
 
     const handleLichessAnalysis = () => {
-        analyzeOnLichess(renderPgn(), false);
+        analyzeOnLichess(pgnText, false);
     };
 
     return (

@@ -1,10 +1,10 @@
-import {useGameStore} from "../../hooks/stores/useGameStore";
 import React from "react";
+import {useLoadGame} from "../../hooks/stores/useGameStore";
 
 export function PgnImportPanel({ show, closeSidebar }) {
     const [pgnText, setPgnText] = React.useState('');
     const [error, setError] = React.useState('');
-    const { loadPgnGame } = useGameStore();
+    const { loadPgnGame } = useLoadGame();
 
     const handleImport = (e) => {
         // Prevent default form submission behavior

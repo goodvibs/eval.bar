@@ -1,10 +1,10 @@
 import React from "react";
-import {useGameStore} from "../hooks/stores/useGameStore";
 import {useChesscomConfigStore} from "../hooks/stores/useChesscomConfigStore";
 import {useGetUsernameGameResult} from "../hooks/useGetUsernameGameResult";
+import {useGameMetadata} from "../hooks/stores/useGameStore";
 
 export function GameMetadata() {
-    const { gameMetadata } = useGameStore();
+    const gameMetadata = useGameMetadata();
     const { chesscomUsername } = useChesscomConfigStore();
 
     const usernameGameResult = useGetUsernameGameResult(gameMetadata, chesscomUsername);

@@ -1,8 +1,8 @@
 import React from "react";
 import { EngineLine } from "./EngineLine";
-import { useGameStore } from "../../hooks/stores/useGameStore";
 import { AnalysisPanelHeader } from "./AnalysisPanelHeader";
 import {useEngineStore} from "../../hooks/stores/useEngineStore";
+import {useGameActions} from "../../hooks/stores/useGameStore";
 
 export function AnalysisPanel({ advantage, formattedEvaluation, uciLines, lineEvaluations }) {
     const {
@@ -17,7 +17,7 @@ export function AnalysisPanel({ advantage, formattedEvaluation, uciLines, lineEv
         isEngineReady,
     } = useEngineStore();
 
-    const { makeMove } = useGameStore();
+    const { makeMove } = useGameActions();
 
     const handleMoveClick = (sanMoves) => {
         for (let i = 0; i < sanMoves.length; i++) {

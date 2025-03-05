@@ -1,4 +1,4 @@
-import {useGameStore} from "../../hooks/stores/useGameStore";
+import {useGameActions, useGameDerivedState, usePgnDerivedState} from "../../hooks/stores/useGameStore";
 import {MoveHistoryHeader} from "./MoveHistoryHeader";
 import {MoveHistoryList} from "./MoveHistoryList";
 import React from "react";
@@ -16,10 +16,12 @@ function groupMovesIntoPairs(moveHistory) {
 }
 
 export function MoveHistoryPanel() {
-    const { pgn, getCurrentHalfmoveCount, goToMove } = useGameStore();
+    const { goToMove } = useGameActions();
+    const { halfmoveCount } = useGameDerivedState();
+    const { moves } = usePgnDerivedState();
 
     // Group moves into pairs using the utility function
-    const moveGroups = groupMovesIntoPairs(pgn.history.moves);
+    const moveGroups = groupMovesIntoPairs(moves);
 
     return (
         <div className="flex flex-col rounded-lg">
@@ -31,7 +33,7 @@ export function MoveHistoryPanel() {
             )}
             <MoveHistoryList
                 moveGroups={moveGroups}
-                currentMoveIndex={getCurrentHalfmoveCount() - 1}
+                currentMoveIndex={halfmoveCount - 1}
                 goToMove={goToMove}
             />
         </div>

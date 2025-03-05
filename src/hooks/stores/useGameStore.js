@@ -1,6 +1,7 @@
 import { create } from 'zustand';
-import {Chess} from 'cm-chess';
-import {Pgn} from "cm-pgn/src/Pgn";
+import { useShallow } from 'zustand/shallow';
+import { Chess } from 'cm-chess';
+import { Pgn } from "cm-pgn/src/Pgn";
 
 function processPgn(pgn) {
     pgn = pgn.trimEnd();
@@ -16,7 +17,8 @@ function clonePgn(pgn) {
     return new Pgn(pgn.render(false, false, false));
 }
 
-export const useGameStore = create((set, get) => ({
+// Create the base store without helper methods
+const useGameStore = create((set, get) => ({
     game: new Chess(), // represents the current game state
     pgn: new Pgn(), // represents the overall PGN, which may not match the current game state
 
@@ -36,117 +38,69 @@ export const useGameStore = create((set, get) => ({
         event: null
     },
 
-    isKingInCheck: () => {
-        const { game } = get();
-        if (!game.inCheck()) return null;
-
-        const turn = game.turn();
-
-        // Find the king's position
-        for (let row = 0; row < 8; row++) {
-            for (let col = 0; col < 8; col++) {
-                const square = String.fromCharCode(97 + col) + (8 - row);
-                const piece = game.piece(square);
-                if (piece && piece.type === 'k' && piece.color === turn) {
-                    return square;
-                }
-            }
-        }
-        return null;
-    },
-
-    isSquareOccupied: (square) => {
-        return get().game.piece(square) !== null
-    },
-
-    getLegalMovesForSquare: (square) => {
-        const { game } = get();
-        return game.moves({ square, verbose: true });
-    },
-
-    getCurrentTurn: () => {
-        return get().game.turn();
-    },
-
-    getCurrentFen: () => {
-        return get().game.fen();
-    },
-
+    // Actions that modify state
     makeMove: (move) => {
-        let { game } = get();
+        const { game } = get();
         const moveResult = game.move(move);
 
         if (moveResult) {
             set({
-                game: game,
+                game,
                 pgn: clonePgn(game.pgn),
             });
-
             return true;
         }
-
         return false;
-
     },
 
     undo: () => {
-        let { game } = get();
+        const { game } = get();
         if (game.history().length === 0) {
             return;
         }
         game.undo();
-
-        set({
-            game: game,
-        });
+        set({ game });
     },
 
     redo: () => {
-        let { game, pgn } = get();
+        const { game, pgn } = get();
         const currentPly = game.plyCount();
         const nextMove = pgn.history.moves[currentPly];
-        game.move(nextMove);
 
-        set({
-            game: game,
-        });
+        if (nextMove) {
+            game.move(nextMove);
+            set({ game });
+        }
     },
 
     goToMove: (index) => {
         const { pgn } = get();
-
         const moveHistory = pgn.history.moves;
         const moveCount = moveHistory.length;
 
-        let game = new Chess();
-
+        const newGame = new Chess();
         if (index >= 0) {
             const correctedIndex = Math.min(index, moveCount - 1);
             for (let i = 0; i <= correctedIndex; i++) {
-                game.move(moveHistory[i]);
+                newGame.move(moveHistory[i]);
             }
         }
 
-        set({
-            game: game,
-        });
+        set({ game: newGame });
     },
 
-    // Load a game from PGN
     loadChesscomGame: (chesscomGame) => {
         try {
             if (!chesscomGame.isSupported) {
                 return false;
             }
 
-            // Process and load the game
-            let game = new Chess();
-
-            game.loadPgn(processPgn(chesscomGame.pgn));
+            const newGame = new Chess();
+            newGame.loadPgn(processPgn(chesscomGame.pgn));
 
             set({
-                game: game,
-                pgn: clonePgn(game.pgn),
+                game: newGame,
+                pgn: clonePgn(newGame.pgn),
                 gameMetadata: {
                     white: chesscomGame.white,
                     black: chesscomGame.black,
@@ -163,6 +117,7 @@ export const useGameStore = create((set, get) => ({
                     event: chesscomGame.event
                 }
             });
+            return true;
         } catch (error) {
             throw Error('Failed to load game: ' + error.message);
         }
@@ -170,12 +125,12 @@ export const useGameStore = create((set, get) => ({
 
     loadPgnGame: (pgnString) => {
         try {
-            let game = new Chess();
-            game.loadPgn(processPgn(pgnString));
+            const newGame = new Chess();
+            newGame.loadPgn(processPgn(pgnString));
 
             set({
-                game: game,
-                pgn: clonePgn(game.pgn),
+                game: newGame,
+                pgn: clonePgn(newGame.pgn),
                 gameMetadata: {
                     white: null,
                     black: null,
@@ -192,30 +147,81 @@ export const useGameStore = create((set, get) => ({
                     event: null
                 }
             });
+            return true;
         } catch (error) {
             throw Error('Failed to load game: ' + error.message);
         }
-    },
-
-    getCurrentHalfmoveCount: () => {
-        return get().game.plyCount();
-    },
-
-    getCurrentFullmove: () => {
-        return Math.floor((get().getCurrentHalfmoveCount() - 1) / 2) + 1;
-    },
-
-    getPgnHalfmoveCount: () => {
-        return get().pgn.history.moves.length;
-    },
-
-    getPgnFullmoveCount: () => {
-        return Math.floor((get().getPgnHalfmoveCount() - 1) / 2) + 1;
-    },
-
-    renderPgn: () => get().pgn.render(false, false, false),
-
-    uciTillNow: () => {
-        return get().game.history().map(move => move.uci);
     }
 }));
+
+// ========== GROUPED SELECTORS ==========
+
+export const useGame = () => useGameStore(
+    useShallow(state => state.game)
+);
+
+export const useGameDerivedState = () => useGameStore(
+    useShallow(state => ({
+        turn: state.game.turn(),
+        fen: state.game.fen(),
+        inCheck: state.game.inCheck(),
+        halfmoveCount: state.game.plyCount(),
+        fullmoveCount: Math.floor((state.game.plyCount() - 1) / 2) + 1,
+        moves: state.game.history()
+    }))
+);
+
+export const usePgn = () => useGameStore(
+    useShallow(state => state.pgn)
+);
+
+export const usePgnDerivedState = () => useGameStore(
+    useShallow(state => ({
+        moves: state.pgn.history.moves,
+        fullmoveCount: Math.floor((state.pgn.history.moves.length - 1) / 2) + 1,
+        pgnText: state.pgn.render(false, false, false)
+    }))
+);
+
+export const useGameMetadata = () => useGameStore(
+    useShallow(state => state.gameMetadata)
+);
+
+// Action selectors - for components that only need actions
+export const useGameActions = () => useGameStore(
+    useShallow(state => ({
+        makeMove: state.makeMove,
+        undo: state.undo,
+        redo: state.redo,
+        goToMove: state.goToMove,
+    }))
+);
+
+export const useLoadGame = () => useGameStore(
+    useShallow(state => ({
+        loadChesscomGame: state.loadChesscomGame,
+        loadPgnGame: state.loadPgnGame
+    }))
+);
+
+// Finding the king in check - the implementation stays outside the selector body
+export const findKingInCheck = (game) => {
+    if (!game.inCheck()) return null;
+
+    const turn = game.turn();
+
+    for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
+            const square = String.fromCharCode(97 + col) + (8 - row);
+            const piece = game.piece(square);
+            if (piece && piece.type === 'k' && piece.color === turn) {
+                return square;
+            }
+        }
+    }
+    return null;
+};
+
+// Since this returns a primitive (string or null), useShallow is not needed
+export const useKingInCheck = () =>
+    useGameStore(state => findKingInCheck(state.game));

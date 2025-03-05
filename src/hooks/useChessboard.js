@@ -1,5 +1,10 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
-import { useGameStore } from './stores/useGameStore';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import {
+    useGame,
+    useGameActions,
+    useGameDerivedState,
+    useKingInCheck
+} from './stores/useGameStore';
 import { useEngineStore } from './stores/useEngineStore';
 
 export const useChessboard = (boardWidth) => {
@@ -11,21 +16,20 @@ export const useChessboard = (boardWidth) => {
 
     // Get game state from store
     const {
-        getCurrentFen,
         makeMove,
         goToMove,
         undo,
         redo,
-        isKingInCheck,
-        getLegalMovesForSquare,
-        isSquareOccupied
-    } = useGameStore();
+    } = useGameActions();
 
-    // Get engine state from store
+    const { fen, turn } = useGameDerivedState();
+
+    const game = useGame();
+
     const { isAnalysisOn, currentLines } = useEngineStore();
 
     // Get the square of the king in check (if any)
-    const kingInCheck = isKingInCheck();
+    const kingInCheck = useKingInCheck();
 
     // Board settings
     const handleSetOrientedWhite = useCallback((value) => {
@@ -43,7 +47,7 @@ export const useChessboard = (boardWidth) => {
 
         // Only allow piece selection if it's the current player's turn
         const isWhitePiece = piece[0] === 'w';
-        const isWhiteTurn = useGameStore.getState().getCurrentTurn() === 'w';
+        const isWhiteTurn = turn === 'w';
 
         if (isWhitePiece !== isWhiteTurn) {
             setSelectedPiece(null);
@@ -52,11 +56,11 @@ export const useChessboard = (boardWidth) => {
         }
 
         // Get legal moves
-        const legalMoves = getLegalMovesForSquare(square);
+        const legalMoves = game.moves({ square, verbose: true }) || [];
 
         setSelectedPiece(square);
         setPossibleMoves(legalMoves.map(move => move.to));
-    }, [selectedPiece, getLegalMovesForSquare]);
+    }, [selectedPiece, turn, game]);
 
     // Clear selection (used when move is made or board is reset)
     const clearSelection = useCallback(() => {
@@ -82,11 +86,27 @@ export const useChessboard = (boardWidth) => {
         });
     }, [clearSelection, makeMove]);
 
+    // Stable references for currentLines and customArrows to prevent useEffect loops
+    const currentLinesRef = useRef(currentLines);
+    const customArrowsRef = useRef(customArrows);
+
+    useEffect(() => {
+        currentLinesRef.current = currentLines;
+    }, [currentLines]);
+
+    useEffect(() => {
+        customArrowsRef.current = customArrows;
+    }, [customArrows]);
+
     // Function to update arrows
     const updateArrows = useCallback(() => {
+        // Use refs to prevent dependency issues
+        const currentCustomArrows = customArrowsRef.current;
+        const currentLinesData = currentLinesRef.current;
+
         // Only proceed if analyzing and lines exist
-        if (!isAnalysisOn || !currentLines || currentLines.length === 0) {
-            if (customArrows.length > 0) {
+        if (!isAnalysisOn || !currentLinesData || currentLinesData.length === 0) {
+            if (currentCustomArrows.length > 0) {
                 setCustomArrows([]);
             }
             return;
@@ -94,9 +114,9 @@ export const useChessboard = (boardWidth) => {
 
         try {
             // Get the best line (first line)
-            const bestLine = currentLines[0];
+            const bestLine = currentLinesData[0];
             if (!bestLine || !bestLine.pvMoves || bestLine.pvMoves.length === 0) {
-                if (customArrows.length > 0) {
+                if (currentCustomArrows.length > 0) {
                     setCustomArrows([]);
                 }
                 return;
@@ -114,16 +134,16 @@ export const useChessboard = (boardWidth) => {
             setCustomArrows(newArrows);
         } catch (e) {
             console.error("Error setting best move arrow:", e);
-            if (customArrows.length > 0) {
+            if (currentCustomArrows.length > 0) {
                 setCustomArrows([]);
             }
         }
-    }, [isAnalysisOn, currentLines, customArrows, setCustomArrows]);
+    }, [isAnalysisOn, setCustomArrows]);
 
     // Update analysis arrows
     useEffect(() => {
         updateArrows();
-    }, [updateArrows]);
+    }, [updateArrows]); // Update when lines change
 
     // Navigation functions
     const firstMove = useCallback(() => goToMove(-1), [goToMove]);
@@ -153,9 +173,9 @@ export const useChessboard = (boardWidth) => {
 
         // Add possible move indicators that will be visible even with pieces
         possibleMoves.forEach(square => {
-            const isOccupied = isSquareOccupied(square);
+            const isThisSquareOccupied = game.pieces(square) !== null;
 
-            if (isOccupied) {
+            if (isThisSquareOccupied) {
                 // For squares with pieces, use a colored border
                 styles[square] = {
                     ...styles[square],
@@ -175,11 +195,11 @@ export const useChessboard = (boardWidth) => {
         });
 
         return styles;
-    }, [selectedPiece, kingInCheck, possibleMoves, isSquareOccupied]);
+    }, [selectedPiece, kingInCheck, possibleMoves, game]);
 
     return {
         // State
-        position: getCurrentFen(),
+        position: fen,
         orientedWhite,
         selectedPiece,
         possibleMoves,
