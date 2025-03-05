@@ -173,7 +173,7 @@ export const useChessboard = (boardWidth) => {
 
         // Add possible move indicators that will be visible even with pieces
         possibleMoves.forEach(square => {
-            const isThisSquareOccupied = game.pieces(square) !== null;
+            const isThisSquareOccupied = game.pieces(square).length > 0;
 
             if (isThisSquareOccupied) {
                 // For squares with pieces, use a colored border
