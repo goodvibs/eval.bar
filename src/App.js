@@ -1,11 +1,11 @@
 import React from "react";
-import { MainContent } from "./components/MainContent";
+import { AllContent } from "./components/AllContent";
 import {useStockfish} from "./hooks/useStockfish";
 
 export default function App() {
     useStockfish();
 
     return (
-        <MainContent />
+        <AllContent />
     );
 }
