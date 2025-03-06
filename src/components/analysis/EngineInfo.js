@@ -1,9 +1,13 @@
 // Updated EngineInfo component
-import {useEngineConfig, useIsAnalysisOn, useIsEngineReady} from "../../hooks/stores/useEngineStore";
+import {
+    useCurrentSearchDepth,
+    useIsAnalysisOn,
+    useIsEngineReady
+} from "../../hooks/stores/useEngineStore";
 
 export function EngineInfo() {
-    const { isAnalysisOn } = useIsAnalysisOn();
-    const { depth } = useEngineConfig();
+    const isAnalysisOn = useIsAnalysisOn();
+    const currentSearchDepth = useCurrentSearchDepth();
     const isEngineReady = useIsEngineReady();
 
     return (
@@ -16,7 +20,7 @@ export function EngineInfo() {
                 {!isEngineReady
                     ? 'Loading...'
                     : isAnalysisOn
-                        ? `Depth ${depth}`
+                        ? `Depth ${currentSearchDepth}`
                         : 'Ready'
                 }
             </span>
