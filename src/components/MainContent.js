@@ -28,15 +28,11 @@ export function MainContent() {
         }
     }, [isSidebarOpen]);
 
-    const toggleSidebar = useCallback(() => {
-        setSidebarOpen(prev => !prev);
-    }, []);
-
     const { boardWidth, rightPanelWidth } = useBoardResize();
 
     return (
         <div className="flex flex-col min-h-screen bg-slate-700" onKeyDown={handleKeyDown}>
-            <NavigationBar onMenuClick={toggleSidebar} />
+            <NavigationBar />
             <EvaluationBar />
 
             {/* Main layout container */}
