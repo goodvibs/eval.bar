@@ -17,7 +17,7 @@ export function AnalysisPanelHeader() {
     const { formattedEvaluation, advantage } = useEngineAnalysis();
 
     return (
-        <div className="border-b bg-slate-700 border-slate-600 flex items-center justify-between">
+        <div className="border-b bg-slate-700 py-1 border-slate-600 flex items-center justify-between">
             <EvaluationDisplay formattedEvaluation={formattedEvaluation} advantage={advantage} />
             <div className="flex pl-4 flex-1 h-full items-center gap-4">
                 <EngineInfo />

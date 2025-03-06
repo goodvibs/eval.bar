@@ -1,5 +1,4 @@
 import React, { memo } from "react";
-import { GameMetadata } from "./GameMetadata";
 import { ChessboardPanel } from "./chessboard/ChessboardPanel";
 import { AnalysisPanel } from "./analysis/AnalysisPanel";
 import { MoveHistoryPanel } from "./moves/MoveHistoryPanel";
