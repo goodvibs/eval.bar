@@ -1,5 +1,11 @@
 // Updated EngineInfo component
-export function EngineInfo({ isAnalysisOn, depth, engineReady }) {
+import {useEngineConfig, useIsAnalysisOn, useIsEngineReady} from "../../hooks/stores/useEngineStore";
+
+export function EngineInfo() {
+    const { isAnalysisOn } = useIsAnalysisOn();
+    const { depth } = useEngineConfig();
+    const isEngineReady = useIsEngineReady();
+
     return (
         <div className="flex flex-1 flex-col min-w-fit text-xs">
             <div className="flex flex-nowrap items-center gap-1">
@@ -7,7 +13,7 @@ export function EngineInfo({ isAnalysisOn, depth, engineReady }) {
                 <span className="font-medium text-slate-300 flex text-nowrap">Stockfish 16</span>
             </div>
             <span className="text-xs text-slate-400 font-mono">
-                {!engineReady
+                {!isEngineReady
                     ? 'Loading...'
                     : isAnalysisOn
                         ? `Depth ${depth}`

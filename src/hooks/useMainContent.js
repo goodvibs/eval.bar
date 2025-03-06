@@ -12,11 +12,8 @@ export function useMainContent() {
     // Create a ref for the main container
     const mainRef = useRef(null);
 
-    // Get the current FEN from the game store
-    const { fen } = useGameDerivedState();
-
     // Sync the position with the engine
-    usePositionSync({ currentFen: fen });
+    usePositionSync();
 
     // Get board and panel dimensions
     const { boardWidth, rightPanelWidth } = useBoardResize();

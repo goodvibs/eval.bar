@@ -1,6 +1,4 @@
 import { useState, useCallback } from 'react';
-import { useGameDerivedState } from "./stores/useGameStore";
-import { usePositionSync } from "./usePositionSync";
 
 /**
  * Custom hook that contains all the logic for the AllContent component
@@ -10,12 +8,6 @@ import { usePositionSync } from "./usePositionSync";
 export function useAllContent() {
     // Sidebar state
     const [isSidebarOpen, setSidebarOpen] = useState(true);
-
-    // Game state
-    const { fen } = useGameDerivedState();
-
-    // Position synchronization
-    usePositionSync({ currentFen: fen });
 
     // Handlers
     const handleKeyDown = useCallback((e) => {

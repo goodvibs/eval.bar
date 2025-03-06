@@ -3,10 +3,12 @@ import {useEngineActions} from "./stores/useEngineStore";
 import {FEN} from "cm-chess";
 import {useGameDerivedState} from "./stores/useGameStore";
 
-export function usePositionSync( { debounceMs = 100, currentFen }) {
+export function usePositionSync() {
     console.log('usePositionSync');
     // Use a ref to store the timeout ID for debouncing
     const debounceTimerRef = useRef(null);
+
+    const { fen } = useGameDerivedState();
 
     const { turn, moves } = useGameDerivedState();
     const uciMoves = moves.map(move => move.uci).join(' ');
@@ -24,11 +26,11 @@ export function usePositionSync( { debounceMs = 100, currentFen }) {
         debounceTimerRef.current = setTimeout(() => {
 
             setPositionAndGoIfAnalysisOn(
-                FEN.start, currentFen, uciMoves, turn
+                FEN.start, fen, uciMoves, turn
             );
 
             debounceTimerRef.current = null;
-        }, debounceMs);
+        }, 100);
 
         // Cleanup on unmount
         return () => {
@@ -36,5 +38,5 @@ export function usePositionSync( { debounceMs = 100, currentFen }) {
                 clearTimeout(debounceTimerRef.current);
             }
         };
-    }, [currentFen, debounceMs, setPositionAndGoIfAnalysisOn, turn, uciMoves]);
+    }, [fen, setPositionAndGoIfAnalysisOn, turn, uciMoves]);
 }
