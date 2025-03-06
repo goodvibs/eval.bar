@@ -1,21 +1,21 @@
-import React from "react";
+import React, { memo } from "react";
 import { EngineLine } from "./EngineLine";
 import { AnalysisPanelHeader } from "./AnalysisPanelHeader";
-import { useGameActions } from "../../hooks/stores/useGameStore";
-import { useEngineAnalysis, useIsAnalysisOn } from "../../hooks/stores/useEngineStore";
+import { useAnalysisPanel } from "../../hooks/useAnalysisPanel";
 
-export function AnalysisPanel() {
-    const { uciLines, lineEvaluations } = useEngineAnalysis();
-
-    const isAnalysisOn = useIsAnalysisOn();
-
-    const { makeMove } = useGameActions();
-
-    const handleMoveClick = (sanMoves) => {
-        for (let i = 0; i < sanMoves.length; i++) {
-            console.assert(makeMove(sanMoves[i]), `Failed to make move: ${sanMoves[i]}`);
-        }
-    };
+/**
+ * AnalysisPanel component that displays computer analysis and evaluation.
+ * All logic has been moved to the useAnalysisPanel custom hook.
+ */
+export const AnalysisPanel = memo(function AnalysisPanel() {
+    // Get all state and handlers from the custom hook
+    const {
+        uciLines,
+        lineEvaluations,
+        handleMoveClick,
+        showEmptyPrompt,
+        isAnalyzing
+    } = useAnalysisPanel();
 
     return (
         <div className="flex min-h-fit flex-col bg-slate-800 rounded-lg">
@@ -33,13 +33,13 @@ export function AnalysisPanel() {
                     />
                 ))}
 
-                {uciLines.length === 0 && !isAnalysisOn && (
+                {showEmptyPrompt && (
                     <div className="p-4 text-sm text-slate-400 text-center">
                         Click the toggle to turn on computer analysis.
                     </div>
                 )}
 
-                {uciLines.length === 0 && isAnalysisOn && (
+                {isAnalyzing && (
                     <div className="p-4 text-sm text-slate-400 text-center">
                         Analyzing position...
                     </div>
@@ -47,4 +47,4 @@ export function AnalysisPanel() {
             </div>
         </div>
     );
-}
+});

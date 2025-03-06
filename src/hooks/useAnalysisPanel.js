@@ -1,13 +1,6 @@
 import { useCallback } from 'react';
 import { useGameActions } from "./stores/useGameStore";
-import {
-    useCurrentSearchDepth,
-    useEngineActions,
-    useEngineAnalysis,
-    useEngineConfig,
-    useIsAnalysisOn,
-    useIsEngineReady
-} from "./stores/useEngineStore";
+import { useEngineAnalysis, useIsAnalysisOn } from "./stores/useEngineStore";
 
 /**
  * Custom hook that contains all the logic for the AnalysisPanel component
@@ -16,16 +9,10 @@ import {
  */
 export function useAnalysisPanel() {
     // Get analysis data from engine store
-    const { uciLines, lineEvaluations, formattedEvaluation, advantage } = useEngineAnalysis();
+    const { uciLines, lineEvaluations } = useEngineAnalysis();
 
-    // Get engine actions
-    const { startAnalysis, endAnalysis, setAndSendMultiPV, setGoalSearchDepth } = useEngineActions();
-
-    // Get engine state
+    // Get engine analysis state
     const isAnalysisOn = useIsAnalysisOn();
-    const currentSearchDepth = useCurrentSearchDepth();
-    const isEngineReady = useIsEngineReady();
-    const { multiPV, goalSearchDepth } = useEngineConfig();
 
     // Get game actions
     const { makeMove } = useGameActions();
@@ -37,30 +24,23 @@ export function useAnalysisPanel() {
         }
     }, [makeMove]);
 
+    // Computed properties
+    const showEmptyMessage = uciLines.length === 0;
+    const isAnalyzing = showEmptyMessage && isAnalysisOn;
+    const showEmptyPrompt = showEmptyMessage && !isAnalysisOn;
+
     // Return all state and handlers needed by the component
     return {
         // Analysis data
         uciLines,
         lineEvaluations,
-        formattedEvaluation,
-        advantage,
-
-        // Engine state
         isAnalysisOn,
-        currentSearchDepth,
-        isEngineReady,
-        multiPV,
-        goalSearchDepth,
 
         // Handlers
-        startAnalysis,
-        endAnalysis,
-        setAndSendMultiPV,
-        setGoalSearchDepth,
         handleMoveClick,
 
         // Computed properties
-        showEmptyAnalysisMessage: uciLines.length === 0,
-        isAnalyzing: isAnalysisOn && uciLines.length === 0
+        showEmptyPrompt,
+        isAnalyzing
     };
 }
