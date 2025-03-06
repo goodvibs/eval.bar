@@ -33,6 +33,8 @@ export function useStockfish() {
                         console.log('readyok received, Stockfish is ready');
                     }
 
+                    console.log('Engine message:', e.data);
+
                     handleEngineMessage(e.data);
                 });
 

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import {FEN} from "cm-chess";
+import { useShallow } from 'zustand/shallow';
+import { FEN } from "cm-chess";
 
 const processLines = (currentLines) => {
     // Filter out null lines from the fixed-size array
@@ -49,6 +50,7 @@ const processLines = (currentLines) => {
     };
 };
 
+// Create the base store
 export const useEngineStore = create(
     persist(
         (set, get) => ({
@@ -163,18 +165,23 @@ export const useEngineStore = create(
 
             startAnalysis: () => {
                 set({ isAnalysisOn: true });
-
                 get().go();
             },
 
             setPosition: (startFen, currentFen, uciMoves, turn) => {
-                set({startFen, currentFen, uciMoves, turn, currentSearchDepth: 0, currentLines: Array(get().multiPV).fill(null) });
+                set({
+                    startFen,
+                    currentFen,
+                    uciMoves,
+                    turn,
+                    currentSearchDepth: 0,
+                    currentLines: Array(get().multiPV).fill(null)
+                });
             },
 
             goIfAnalysisOn: () => {
                 const { isAnalysisOn, go } = get();
-
-                if (isAnalysisOn ) {
+                if (isAnalysisOn) {
                     go();
                 }
             },
@@ -185,19 +192,11 @@ export const useEngineStore = create(
                 goIfAnalysisOn();
             },
 
-            getAnalysis: () => {
-                const { currentLines } = get();
-                return processLines(currentLines);
-            },
-
-            // Process engine output
             handleEngineMessage: (message) => {
                 const { isAnalysisOn, time } = get();
 
                 // Skip processing empty messages
                 if (!message || typeof message !== 'string') return;
-
-                // console.log('[Engine message]:', message);
 
                 // Parse info strings that contain analysis data
                 if (message.startsWith('info')) {
@@ -317,3 +316,69 @@ export const useEngineStore = create(
         }
     )
 );
+
+// ========== GROUPED SELECTORS ==========
+
+// Analysis-related state selectors
+export const useAnalysisState = () => useEngineStore(
+    useShallow(state => ({
+        isAnalyzing: state.isAnalyzing,
+        isAnalysisOn: state.isAnalysisOn,
+        currentSearchDepth: state.currentSearchDepth,
+        time: state.time
+    }))
+);
+
+// Engine configuration selectors
+export const useEngineConfig = () => useEngineStore(
+    useShallow(state => ({
+        isInitialized: state.isInitialized,
+        multiPV: state.multiPV,
+        goalSearchDepth: state.goalSearchDepth,
+        isMultiPVFlushed: state.isMultiPVFlushed,
+        isEngineReady: state.isEngineReady()
+    }))
+);
+
+// Position state selectors
+export const useEnginePosition = () => useEngineStore(
+    useShallow(state => ({
+        startFen: state.startFen,
+        currentFen: state.currentFen,
+        uciMoves: state.uciMoves,
+        turn: state.turn
+    }))
+);
+
+// Actions selectors
+export const useEngineActions = () => useEngineStore(
+    useShallow(state => ({
+        setMultiPV: state.setMultiPV,
+        sendMultiPV: state.sendMultiPV,
+        setAndSendMultiPV: state.setAndSendMultiPV,
+        setGoalSearchDepth: state.setGoalSearchDepth,
+        go: state.go,
+        startAnalysis: state.startAnalysis,
+        endAnalysis: state.endAnalysis,
+        setPosition: state.setPosition,
+        goIfAnalysisOn: state.goIfAnalysisOn,
+        setPositionAndGoIfAnalysisOn: state.setPositionAndGoIfAnalysisOn
+    }))
+);
+
+// This replaces the getAnalysis method with a selector
+export const useEngineAnalysis = () => {
+    const currentLines = useEngineStore(state => state.currentLines);
+    return processLines(currentLines);
+};
+
+// Individual property selectors for fine-grained subscriptions
+export const useIsAnalyzing = () => useEngineStore(state => state.isAnalyzing);
+export const useIsAnalysisOn = () => useEngineStore(state => state.isAnalysisOn);
+export const useCurrentSearchDepth = () => useEngineStore(state => state.currentSearchDepth);
+
+// For components that only need to know if the engine is ready
+export const useIsEngineReady = () => useEngineStore(state => state.isEngineReady());
+
+// For components that need current lines but don't need the processed analysis
+export const useCurrentLines = () => useEngineStore(state => state.currentLines);

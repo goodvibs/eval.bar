@@ -5,7 +5,7 @@ import {
     useGameDerivedState,
     useKingInCheck
 } from './stores/useGameStore';
-import { useEngineStore } from './stores/useEngineStore';
+import {useCurrentLines, useIsAnalysisOn} from './stores/useEngineStore';
 
 export const useChessboard = (boardWidth) => {
     // UI state
@@ -26,7 +26,8 @@ export const useChessboard = (boardWidth) => {
 
     const game = useGame();
 
-    const { isAnalysisOn, currentLines } = useEngineStore();
+    const isAnalysisOn = useIsAnalysisOn();
+    const currentLines = useCurrentLines();
 
     // Get the square of the king in check (if any)
     const kingInCheck = useKingInCheck();

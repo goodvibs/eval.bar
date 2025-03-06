@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import {useEngineStore} from "./stores/useEngineStore";
+import {useEngineActions} from "./stores/useEngineStore";
 import {FEN} from "cm-chess";
 import {useGameDerivedState} from "./stores/useGameStore";
 
@@ -9,6 +9,8 @@ export function usePositionSync( { debounceMs = 100, currentFen }) {
 
     const { turn, moves } = useGameDerivedState();
     const uciMoves = moves.map(move => move.uci).join(' ');
+
+    const { setPositionAndGoIfAnalysisOn } = useEngineActions();
 
     // Subscribe to FEN changes and update engine
     useEffect(() => {
@@ -20,7 +22,7 @@ export function usePositionSync( { debounceMs = 100, currentFen }) {
         // Set a debounce timer to avoid rapid-fire updates
         debounceTimerRef.current = setTimeout(() => {
 
-            useEngineStore.getState().setPositionAndGoIfAnalysisOn(
+            setPositionAndGoIfAnalysisOn(
                 FEN.start, currentFen, uciMoves, turn
             );
 
@@ -33,5 +35,5 @@ export function usePositionSync( { debounceMs = 100, currentFen }) {
                 clearTimeout(debounceTimerRef.current);
             }
         };
-    }, [currentFen, debounceMs, turn, uciMoves]);
+    }, [currentFen, debounceMs, setPositionAndGoIfAnalysisOn, turn, uciMoves]);
 }

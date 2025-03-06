@@ -1,21 +1,21 @@
 import React from "react";
 import { EngineLine } from "./EngineLine";
 import { AnalysisPanelHeader } from "./AnalysisPanelHeader";
-import {useEngineStore} from "../../hooks/stores/useEngineStore";
 import {useGameActions} from "../../hooks/stores/useGameStore";
+import {
+    useCurrentSearchDepth,
+    useEngineActions, useEngineConfig,
+    useIsAnalysisOn,
+    useIsEngineReady
+} from "../../hooks/stores/useEngineStore";
 
 export function AnalysisPanel({ advantage, formattedEvaluation, uciLines, lineEvaluations }) {
-    const {
-        isAnalysisOn,
-        currentSearchDepth,
-        goalSearchDepth,
-        multiPV,
-        setAndSendMultiPV,
-        setGoalSearchDepth,
-        startAnalysis,
-        endAnalysis,
-        isEngineReady,
-    } = useEngineStore();
+    const { startAnalysis, endAnalysis, setAndSendMultiPV, setGoalSearchDepth } = useEngineActions();
+
+    const isAnalysisOn = useIsAnalysisOn();
+    const currentSearchDepth = useCurrentSearchDepth();
+    const isEngineReady = useIsEngineReady();
+    const { multiPV, goalSearchDepth } = useEngineConfig();
 
     const { makeMove } = useGameActions();
 
@@ -36,7 +36,7 @@ export function AnalysisPanel({ advantage, formattedEvaluation, uciLines, lineEv
                 handleAnalysisOff={endAnalysis}
                 handleMultiPVChange={setAndSendMultiPV}
                 handleGoalDepthChange={setGoalSearchDepth}
-                engineReady={isEngineReady()}
+                engineReady={isEngineReady}
                 goalSearchDepth={goalSearchDepth}
                 multiPV={multiPV}
             />

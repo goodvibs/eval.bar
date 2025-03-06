@@ -12,7 +12,7 @@ import { MoveHistoryPanel } from "./moves/MoveHistoryPanel";
 import { useBoardResize } from "../hooks/useBoardResize";
 import { useChessGameImport } from "../hooks/useUrlImport";
 import {usePositionSync} from "../hooks/usePositionSync";
-import {useEngineStore} from "../hooks/stores/useEngineStore";
+import {useEngineAnalysis} from "../hooks/stores/useEngineStore";
 import {useStockfish} from "../hooks/useStockfish";
 import {useGameDerivedState} from "../hooks/stores/useGameStore";
 
@@ -24,7 +24,7 @@ export function MainContent() {
     const mainRef = useRef(null);
 
     const { fen } = useGameDerivedState();
-    usePositionSync({ fen });
+    usePositionSync({ currentFen: fen });
 
     const {
         cp,
@@ -33,7 +33,7 @@ export function MainContent() {
         formattedEvaluation,
         uciLines,
         lineEvaluations
-    } = useEngineStore().getAnalysis();
+    } = useEngineAnalysis();
 
     const {
         loading,
