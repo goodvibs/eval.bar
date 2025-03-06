@@ -2,7 +2,7 @@ import { Chessboard } from "react-chessboard";
 import { ChessboardControls } from "./ChessboardControls";
 import React from "react";
 import { useChessboardPanel } from "../../hooks/useChessboardPanel";
-import {GameMetadata} from "../GameMetadata";
+import { GameMetadata } from "../GameMetadata";
 
 export function ChessboardPanel({ boardWidth }) {
     const {
@@ -24,8 +24,14 @@ export function ChessboardPanel({ boardWidth }) {
         lastMove
     } = useChessboardPanel(boardWidth);
 
+    // Create a style object for the container using the boardWidth prop
+    const containerStyle = {
+        maxWidth: `${boardWidth}px`
+    };
+
     return (
-        <div className={`flex flex-col gap-4 overflow-hidden`} style={{maxWidth: `${boardWidth}px`}}>
+        <div className="flex flex-col gap-4 overflow-hidden" style={containerStyle}>
+            {/* GameMetadata with the same width constraint as the chessboard */}
             <GameMetadata />
             <div
                 className="flex z-0 flex-col duration-300 transition-all w-fit max-w-full gap-3"
