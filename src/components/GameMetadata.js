@@ -14,7 +14,7 @@ export function GameMetadata() {
     return (
         <div className="flex flex-col gap-2 w-full">
             {/* Players - No wrapping, will scroll horizontally */}
-            <div className="flex gap-2 text-slate-100 justify-between items-center w-full overflow-x-auto whitespace-nowrap">
+            <div className="flex gap-2 text-slate-100 justify-between items-center w-full overflow-x-auto scrollbar-none whitespace-nowrap">
                 <div className="flex items-center text-sm font-medium min-w-fit">
                     {gameMetadata.white}
                     <span className="text-xs ml-0.5">({gameMetadata.whiteElo})</span>
