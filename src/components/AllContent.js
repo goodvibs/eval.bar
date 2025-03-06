@@ -1,28 +1,24 @@
-import React, {useState, useCallback} from "react";
+import React, { memo } from "react";
 import { NavigationBar } from "./navigation/NavigationBar";
 import { EvaluationBar } from "./EvaluationBar";
 import { Sidebar } from "./sidebar/Sidebar";
-import {usePositionSync} from "../hooks/usePositionSync";
-import {useGameDerivedState} from "../hooks/stores/useGameStore";
-import {MainContent} from "./MainContent";
+import { MainContent } from "./MainContent";
+import { useAllContent } from "../hooks/useAllContent";
 
-export function AllContent() {
-    console.log('AllContent');
+/**
+ * AllContent component that acts as the main layout container for the application.
+ * All logic has been moved to the useAllContent custom hook.
+ */
+export const AllContent = memo(function AllContent() {
+    console.log('AllContent rendered');
 
-    const [isSidebarOpen, setSidebarOpen] = useState(true);
-
-    const { fen } = useGameDerivedState();
-    usePositionSync({ currentFen: fen });
-
-    // Handle keyboard events for accessibility
-    const handleKeyDown = useCallback((e) => {
-        if (e.key === 'Escape') {
-            if (isSidebarOpen) {
-                setSidebarOpen(false);
-            }
-        }
-    }, [isSidebarOpen]);
-
+    // Get all state and handlers from the custom hook
+    const {
+        isSidebarOpen,
+        handleKeyDown,
+        handleOpenSidebar,
+        handleCloseSidebar
+    } = useAllContent();
 
     return (
         <div className="flex flex-col min-h-screen bg-slate-700" onKeyDown={handleKeyDown}>
@@ -33,12 +29,12 @@ export function AllContent() {
                 {/* Sidebar */}
                 <Sidebar
                     isOpen={isSidebarOpen}
-                    onOpen={() => setSidebarOpen(true)}
-                    onClose={() => setSidebarOpen(false)}
+                    onOpen={handleOpenSidebar}
+                    onClose={handleCloseSidebar}
                 />
 
                 <MainContent />
             </div>
         </div>
     );
-}
+});
