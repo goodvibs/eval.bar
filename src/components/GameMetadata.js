@@ -12,9 +12,9 @@ export function GameMetadata() {
     if (!gameMetadata.white || !gameMetadata.black) return null;
 
     return (
-        <div className="flex flex-col gap-2 px-4">
+        <div className="flex flex-col gap-2">
             {/* Players */}
-            <div className="flex gap-2 text-slate-100 justify-between items-center">
+            <div className="flex gap-2 flex-nowrap text-slate-100 justify-between items-center">
                 <div className="flex flex-wrap items-center text-sm font-medium">
                     {gameMetadata.white}
                     <span className="text-xs ml-0.5">({gameMetadata.whiteElo})</span>
@@ -24,7 +24,7 @@ export function GameMetadata() {
                 </div>
                 {gameMetadata.result && (
                     <span className={`
-                        px-2 py-1 rounded text-xs text-nowrap min-w-fit font-mono
+                        px-2 rounded text-xs text-nowrap min-w-fit font-mono
                         ${usernameGameResult === 'win' ? 'bg-emerald-600' : 
                         usernameGameResult === 'loss' ? 'bg-rose-600' :
                             'bg-slate-600'}

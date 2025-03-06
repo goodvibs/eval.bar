@@ -24,13 +24,8 @@ export const MainContent = memo(function MainContent() {
             ref={mainRef}
             className="flex justify-center flex-wrap gap-4 lg:pl-1 p-4 min-h-[calc(100vh-3rem)] overflow-auto"
         >
-            {/* Chess board section */}
-            <div className="flex h-fit flex-col gap-4">
-                <GameMetadata />
-                <ChessboardPanel boardWidth={boardWidth} />
-            </div>
+            <ChessboardPanel boardWidth={boardWidth} />
 
-            {/* Analysis section */}
             <div
                 className="flex flex-col min-w-72 gap-4"
                 style={rightPanelStyle}

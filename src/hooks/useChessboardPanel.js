@@ -7,7 +7,7 @@ import {
 } from './stores/useGameStore';
 import {useCurrentLines, useIsAnalysisOn} from './stores/useEngineStore';
 
-export const useChessboard = (boardWidth) => {
+export const useChessboardPanel = (boardWidth) => {
     // UI state
     const [orientedWhite, setOrientedWhite] = useState(true);
     const [selectedPiece, setSelectedPiece] = useState(null);
