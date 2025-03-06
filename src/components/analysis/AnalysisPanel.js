@@ -4,12 +4,13 @@ import { AnalysisPanelHeader } from "./AnalysisPanelHeader";
 import {useGameActions} from "../../hooks/stores/useGameStore";
 import {
     useCurrentSearchDepth,
-    useEngineActions, useEngineConfig,
+    useEngineActions, useEngineAnalysis, useEngineConfig,
     useIsAnalysisOn,
     useIsEngineReady
 } from "../../hooks/stores/useEngineStore";
 
-export function AnalysisPanel({ advantage, formattedEvaluation, uciLines, lineEvaluations }) {
+export function AnalysisPanel() {
+    const { uciLines, lineEvaluations, formattedEvaluation, advantage } = useEngineAnalysis();
     const { startAnalysis, endAnalysis, setAndSendMultiPV, setGoalSearchDepth } = useEngineActions();
 
     const isAnalysisOn = useIsAnalysisOn();

@@ -1,80 +1,43 @@
-import React, {useState, useRef, useCallback, useEffect} from "react";
-import { useLocation } from "react-router-dom";
+import React, {useState, useRef, useCallback} from "react";
 import { NavigationBar } from "./navigation/NavigationBar";
 import { EvaluationBar } from "./EvaluationBar";
 import { Sidebar } from "./sidebar/Sidebar";
-import { LoadingOverlay } from "./LoadingOverlay";
-import { ExtensionPrompt } from "./ExtensionPrompt";
 import { GameMetadata } from "./GameMetadata";
 import { ChessboardPanel } from "./chessboard/ChessboardPanel";
 import { AnalysisPanel } from "./analysis/AnalysisPanel";
 import { MoveHistoryPanel } from "./moves/MoveHistoryPanel";
 import { useBoardResize } from "../hooks/useBoardResize";
-import { useChessGameImport } from "../hooks/useUrlImport";
 import {usePositionSync} from "../hooks/usePositionSync";
-import {useEngineAnalysis} from "../hooks/stores/useEngineStore";
-import {useStockfish} from "../hooks/useStockfish";
 import {useGameDerivedState} from "../hooks/stores/useGameStore";
 
 export function MainContent() {
-    useStockfish();
+    console.log('MainContent');
 
     const [isSidebarOpen, setSidebarOpen] = useState(true);
-    const location = useLocation();
     const mainRef = useRef(null);
 
     const { fen } = useGameDerivedState();
     usePositionSync({ currentFen: fen });
-
-    const {
-        cp,
-        mate,
-        advantage,
-        formattedEvaluation,
-        uciLines,
-        lineEvaluations
-    } = useEngineAnalysis();
-
-    const {
-        loading,
-        error,
-        showExtensionPrompt,
-        setLoading,
-        setError,
-        setShowExtensionPrompt
-    } = useChessGameImport(location.pathname);
 
     // Handle keyboard events for accessibility
     const handleKeyDown = useCallback((e) => {
         if (e.key === 'Escape') {
             if (isSidebarOpen) {
                 setSidebarOpen(false);
-            } else if (showExtensionPrompt) {
-                setShowExtensionPrompt(false);
             }
         }
-    }, [isSidebarOpen, showExtensionPrompt, setShowExtensionPrompt]);
-
-    // Close the loading overlay
-    const handleCloseOverlay = useCallback(() => {
-        setLoading(false);
-        setError(null);
-    }, [setLoading, setError]);
+    }, [isSidebarOpen]);
 
     const toggleSidebar = useCallback(() => {
         setSidebarOpen(prev => !prev);
     }, []);
 
-    const { boardWidth, rightPanelWidth } = useBoardResize({});
+    const { boardWidth, rightPanelWidth } = useBoardResize();
 
     return (
         <div className="flex flex-col min-h-screen bg-slate-700" onKeyDown={handleKeyDown}>
             <NavigationBar onMenuClick={toggleSidebar} />
-            <EvaluationBar
-                cp={cp}
-                mate={mate}
-                advantage={advantage}
-            />
+            <EvaluationBar />
 
             {/* Main layout container */}
             <div className="flex flex-col lg:flex-row w-full flex-grow overflow-hidden">
@@ -102,31 +65,12 @@ export function MainContent() {
                             className="flex flex-col min-w-72 gap-4"
                             style={{ width: rightPanelWidth }}
                         >
-                            <AnalysisPanel
-                                advantage={advantage}
-                                formattedEvaluation={formattedEvaluation}
-                                uciLines={uciLines}
-                                lineEvaluations={lineEvaluations}
-                            />
+                            <AnalysisPanel />
                             <MoveHistoryPanel />
                         </div>
                     </main>
                 </div>
             </div>
-
-            {/* Overlays */}
-            {loading && (
-                <LoadingOverlay
-                    message="Importing your Chess.com game..."
-                    error={error}
-                    onClose={handleCloseOverlay}
-                />
-            )}
-
-            <ExtensionPrompt
-                hidden={!showExtensionPrompt}
-                close={() => setShowExtensionPrompt(false)}
-            />
         </div>
     );
 }

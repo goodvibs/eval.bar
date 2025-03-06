@@ -1,72 +1,71 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef } from 'react';
 import { useEngineStore } from "./stores/useEngineStore";
 
-export function useStockfish() {
-    const {
-        handleEngineMessage,
-        multiPV,
-        setIsInitialized,
-    } = useEngineStore();
+// Create a module-level variable to track if the engine has been initialized
+// This ensures initialization happens only once across the application
+let stockfishInitialized = false;
 
+export function useStockfish() {
+    console.log('useStockfish');
     const engineRef = useRef(null);
 
-    // Initialize engine
-    const initEngine = useCallback(() => {
-        if (!engineRef.current) {
+    const engineStore = useEngineStore.getState();
+
+    useEffect(() => {
+        // Only initialize if not already done
+        if (!stockfishInitialized) {
+            console.log('Initializing Stockfish engine');
+
             try {
-                console.log('Initializing Stockfish engine');
                 engineRef.current = new Worker('stockfish.wasm.js');
 
                 // Initial UCI setup
                 engineRef.current.postMessage('uci');
-                engineRef.current.postMessage(`setoption name MultiPV value ${multiPV}`);
+
+                engineRef.current.postMessage(`setoption name MultiPV value ${engineStore.multiPV}`);
+
                 engineRef.current.postMessage('isready');
                 engineRef.current.postMessage('ucinewgame');
 
-                // Listen for engine messages
-                console.log('Waiting for readyok message');
-
-                engineRef.current.addEventListener('message', (e) => {
+                // Create a message handler that always gets the latest store reference
+                const messageHandler = (e) => {
                     // Handle "readyok" message to update engine ready state
                     if (e.data === "readyok") {
-                        setIsInitialized(true);
+                        engineStore.setIsInitialized(true);
                         console.log('readyok received, Stockfish is ready');
                     }
 
-                    console.log('Engine message:', e.data);
+                    // Always use the latest message handler from the store
+                    engineStore.handleEngineMessage(e.data);
+                };
 
-                    handleEngineMessage(e.data);
-                });
+                engineRef.current.addEventListener('message', messageHandler);
 
                 // Expose engine to window for direct store access
                 window.stockfish = engineRef.current;
 
-                return true;
+                // Mark as initialized globally
+                stockfishInitialized = true;
+
+                // Cleanup function
+                return () => {
+                    // Only do cleanup if this is the component that initialized the engine
+                    if (engineRef.current) {
+                        engineRef.current.removeEventListener('message', messageHandler);
+                        engineRef.current.terminate();
+                        engineRef.current = null;
+                        window.stockfish = null;
+                        stockfishInitialized = false;
+
+                        // Use the current store reference
+                        engineStore.setIsInitialized(false);
+                    }
+                };
             } catch (error) {
                 console.error('Failed to initialize Stockfish engine:', error);
-                setIsInitialized(false);
-                return false;
+                engineStore.setIsInitialized(false);
+                stockfishInitialized = false;
             }
         }
-        return true;
-    }, [handleEngineMessage, multiPV, setIsInitialized]);
-
-    useEffect(() => {
-        // Initialize engine on component mount
-        initEngine();
-
-        // Cleanup function to terminate engine on unmount
-        return () => {
-            if (engineRef.current) {
-                engineRef.current.terminate();
-                engineRef.current = null;
-
-                // Clean up window reference
-                window.stockfish = null;
-                setIsInitialized(false);
-            }
-        };
-    }, [initEngine, setIsInitialized]);
-
-    // No need to return anything - the store will handle engine commands
+    }, [engineStore]); // Empty dependency array ensures this runs only once
 }

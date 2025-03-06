@@ -1,4 +1,5 @@
 import React, {useMemo} from "react";
+import {useEngineAnalysis} from "../hooks/stores/useEngineStore";
 
 const calcBarPercentage = (advantage, cp, mate) => {
     if (advantage === 'equal') {
@@ -15,7 +16,9 @@ const calcBarPercentage = (advantage, cp, mate) => {
     return Math.min(Math.max(percentage, 2), 98);
 }
 
-export function EvaluationBar({ advantage, cp, mate, height = "h-1.5" }) {
+export function EvaluationBar() {
+    const { advantage, cp, mate } = useEngineAnalysis();
+
     // Create marker positions (as percentages)
     const markers = useMemo(() => {
         return [10, 20, 30, 40, 50, 60, 70, 80, 90].map(pos => ({
@@ -29,7 +32,7 @@ export function EvaluationBar({ advantage, cp, mate, height = "h-1.5" }) {
 
     return (
         <div className="flex flex-col w-full">
-            <div className={`flex ${height} relative`}>
+            <div className={`flex h-1.5 relative`}>
                 {/* White's side of the evaluation bar */}
                 <div
                     className="bg-slate-100 transition-all duration-300 ease-out"
