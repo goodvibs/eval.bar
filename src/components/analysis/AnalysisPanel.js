@@ -1,22 +1,13 @@
 import React from "react";
 import { EngineLine } from "./EngineLine";
 import { AnalysisPanelHeader } from "./AnalysisPanelHeader";
-import {useGameActions} from "../../hooks/stores/useGameStore";
-import {
-    useCurrentSearchDepth,
-    useEngineActions, useEngineAnalysis, useEngineConfig,
-    useIsAnalysisOn,
-    useIsEngineReady
-} from "../../hooks/stores/useEngineStore";
+import { useGameActions } from "../../hooks/stores/useGameStore";
+import { useEngineAnalysis, useIsAnalysisOn } from "../../hooks/stores/useEngineStore";
 
 export function AnalysisPanel() {
-    const { uciLines, lineEvaluations, formattedEvaluation, advantage } = useEngineAnalysis();
-    const { startAnalysis, endAnalysis, setAndSendMultiPV, setGoalSearchDepth } = useEngineActions();
+    const { uciLines, lineEvaluations } = useEngineAnalysis();
 
     const isAnalysisOn = useIsAnalysisOn();
-    const currentSearchDepth = useCurrentSearchDepth();
-    const isEngineReady = useIsEngineReady();
-    const { multiPV, goalSearchDepth } = useEngineConfig();
 
     const { makeMove } = useGameActions();
 
@@ -28,19 +19,7 @@ export function AnalysisPanel() {
 
     return (
         <div className="flex min-h-fit flex-col bg-slate-800 rounded-lg">
-            <AnalysisPanelHeader
-                isAnalysisOn={isAnalysisOn}
-                depth={currentSearchDepth}
-                formattedEvaluation={formattedEvaluation}
-                advantage={advantage}
-                handleAnalysisOn={startAnalysis}
-                handleAnalysisOff={endAnalysis}
-                handleMultiPVChange={setAndSendMultiPV}
-                handleGoalDepthChange={setGoalSearchDepth}
-                engineReady={isEngineReady}
-                goalSearchDepth={goalSearchDepth}
-                multiPV={multiPV}
-            />
+            <AnalysisPanelHeader />
 
             <div className="flex flex-1 flex-col divide-y divide-slate-700">
                 {uciLines.map((line, idx) => (
