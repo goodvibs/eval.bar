@@ -87,64 +87,37 @@ export const useChessboardPanel = (boardWidth) => {
         });
     }, [clearSelection, makeMove]);
 
-    // Stable references for currentLines and customArrows to prevent useEffect loops
-    const currentLinesRef = useRef(currentLines);
-    const customArrowsRef = useRef(customArrows);
-
+    // Update analysis arrows
     useEffect(() => {
-        currentLinesRef.current = currentLines;
-    }, [currentLines]);
-
-    useEffect(() => {
-        customArrowsRef.current = customArrows;
-    }, [customArrows]);
-
-    // Function to update arrows
-    const updateArrows = useCallback(() => {
-        // Use refs to prevent dependency issues
-        const currentCustomArrows = customArrowsRef.current;
-        const currentLinesData = currentLinesRef.current;
 
         // Only proceed if analyzing and lines exist
-        if (!isAnalysisOn || !currentLinesData || currentLinesData.length === 0) {
-            if (currentCustomArrows.length > 0) {
+        if (!isAnalysisOn || currentLines.length === 0) {
+            if (customArrows.length > 0) {
                 setCustomArrows([]);
             }
             return;
         }
 
-        try {
-            // Get the best line (first line)
-            const bestLine = currentLinesData[0];
-            if (!bestLine || !bestLine.pvMoves || bestLine.pvMoves.length === 0) {
-                if (currentCustomArrows.length > 0) {
-                    setCustomArrows([]);
-                }
-                return;
-            }
-
-            // Get the first move in the best line
-            const uciMove = bestLine.pvMoves[0];
-
-            const from = uciMove.substring(0, 2);
-            const to = uciMove.substring(2, 4);
-
-            // Create new arrow array
-            const newArrows = [[from, to, "#285b8d"]];
-
-            setCustomArrows(newArrows);
-        } catch (e) {
-            console.error("Error setting best move arrow:", e);
-            if (currentCustomArrows.length > 0) {
+        // Get the best line (first line)
+        const bestLine = currentLines[0];
+        if (!bestLine || !bestLine.pvMoves || bestLine.pvMoves.length === 0) {
+            if (customArrows.length > 0) {
                 setCustomArrows([]);
             }
+            return;
         }
-    }, [isAnalysisOn, setCustomArrows]);
 
-    // Update analysis arrows
-    useEffect(() => {
-        updateArrows();
-    }, [updateArrows]); // Update when lines change
+        // Get the first move in the best line
+        const uciMove = bestLine.pvMoves[0];
+
+        const from = uciMove.substring(0, 2);
+        const to = uciMove.substring(2, 4);
+
+        // Create new arrow array
+        const newArrows = [[from, to, "#285b8d"]];
+
+        setCustomArrows(newArrows);
+    }, [currentLines, customArrows.length, isAnalysisOn]); // Update when lines change
 
     // Navigation functions
     const firstMove = useCallback(() => goToMove(-1), [goToMove]);
@@ -174,7 +147,7 @@ export const useChessboardPanel = (boardWidth) => {
 
         // Add possible move indicators that will be visible even with pieces
         possibleMoves.forEach(square => {
-            const isThisSquareOccupied = game.pieces(square).length > 0;
+            const isThisSquareOccupied = game.piece(square) !== null;
 
             if (isThisSquareOccupied) {
                 // For squares with pieces, use a colored border
