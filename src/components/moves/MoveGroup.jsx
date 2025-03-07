@@ -4,7 +4,7 @@ import {MoveButton} from './MoveButton';
 export function MoveGroup({ number, white, black, groupIndex, currentMoveIndex, goToMove }) {
     return (
         <div className="flex gap-1 items-center">
-            <span className="text-slate-500 text-sm">{number}.</span>
+            <span className="text-slate-500 text-normal">{number}.</span>
 
             {/* White's move */}
             <MoveButton
