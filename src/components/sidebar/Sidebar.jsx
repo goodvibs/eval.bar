@@ -59,7 +59,7 @@ export function Sidebar({ isOpen, onOpen, onClose }) {
                 <div className="flex flex-col p-4 lg:pr-3 gap-4 h-full overflow-y-auto lg:overflow-y-auto scrollbar-track-transparent">
                     {/* Mobile header with close button */}
                     <div className="flex lg:hidden items-center justify-between py-4">
-                        <h1 className="flex font-bold tracking-tight text-2xl text-slate-400">
+                        <h1 className="flex font-bold tracking-tight text-2xl text-slate-300">
                             Import a Chess Game
                         </h1>
                         <div className="flex items-center justify-end">
