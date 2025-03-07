@@ -6,7 +6,7 @@ export function EvaluationDisplay({ formattedEvaluation, advantage }) {
     );
 
     return (
-        <div className={`flex font-mono px-2 text-lg font-bold rounded-3xl ${evalBgColor}`}>
+        <div className={`flex font-mono px-2 py-0.5 text-2xl font-bold rounded-3xl ${evalBgColor}`}>
             {formattedEvaluation}
         </div>
     );

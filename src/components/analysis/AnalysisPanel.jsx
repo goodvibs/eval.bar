@@ -40,7 +40,7 @@ export const AnalysisPanel = memo(function AnalysisPanel() {
                 )}
 
                 {isAnalyzing && (
-                    <div className="p-4 text-sm text-slate-400 text-center">
+                    <div className="p-4 text-normal text-slate-400 text-center">
                         Analyzing position...
                     </div>
                 )}

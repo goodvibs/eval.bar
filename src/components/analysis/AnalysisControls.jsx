@@ -3,7 +3,7 @@ import {AnalysisSettingsButton} from "./AnalysisSettingsButton";
 
 export function AnalysisControls({ disabled, isAnalysisOn, handleAnalysisOn, handleAnalysisOff, handleMultiPVChange, handleGoalDepthChange, goalSearchDepth, multiPV }) {
     return (
-        <div className="flex items-center gap-2 px-2">
+        <div className="flex items-center gap-2">
             <AnalysisSettingsButton
                 isAnalysisOn={isAnalysisOn}
                 handleMultiPVChange={handleMultiPVChange}
