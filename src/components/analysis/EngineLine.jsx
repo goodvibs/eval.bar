@@ -45,7 +45,7 @@ export function EngineLine({ uciMoves, evaluation, isMainLine, isLastLine, onMov
     // const sanMoves = uciMoves;
 
     return (
-        <div className="flex items-center hover:bg-slate-700 transition-colors text-normal gap-2">
+        <div className="flex items-center hover:bg-slate-700 transition-colors text-base gap-2">
             <div className={`flex whitespace-nowrap font-mono pl-0.5 pr-1 border-r-2 border-slate-500 rounded-r-3xl ${isMainLine ? "font-bold" : ""} ${isLastLine ? "rounded-bl-lg" : ""} ${evalBgColor}`}>
                 {evaluation.formattedEvaluation}
             </div>
