@@ -29,7 +29,7 @@ export function Sidebar({ isOpen, onOpen, onClose }) {
                 w-full
                 min-w-0 lg:min-w-72 lg:w-72 lg:max-h-[calc(100vh-3rem)]
                 lg:flex lg:flex-col lg:flex-grow
-                bg-slate-700
+                bg-slate-700 bg-opacity-85 backdrop-blur
                 ${isOpen ? 'outline outline-1 outline-slate-500 lg:outline-none' : ''}
                 z-40
                 transform transition-transform duration-1000 lg:transform-none
@@ -39,7 +39,7 @@ export function Sidebar({ isOpen, onOpen, onClose }) {
                 <button
                     onClick={onOpen}
                     className={`
-                        lg:hidden absolute right-0 top-1/2 -translate-y-1/2 translate-x-full border border-l-0 border-slate-500
+                        lg:hidden bg-opacity-85 backdrop-blur absolute right-0 top-1/2 -translate-y-1/2 translate-x-full border border-l-0 border-slate-500
                         bg-slate-700 hover:bg-slate-600 text-slate-200
                         p-2 rounded-r-lg
                     `}
@@ -59,7 +59,7 @@ export function Sidebar({ isOpen, onOpen, onClose }) {
                 <div className="flex flex-col p-4 lg:pr-3 gap-4 h-full overflow-y-auto lg:overflow-y-auto scrollbar-track-transparent">
                     {/* Mobile header with close button */}
                     <div className="flex lg:hidden items-center justify-between py-4">
-                        <h1 className="flex justify-center font-medium text-2xl text-slate-200">
+                        <h1 className="flex font-bold tracking-tight text-2xl text-slate-400">
                             Import a Chess Game
                         </h1>
                         <div className="flex items-center justify-end">
@@ -69,7 +69,7 @@ export function Sidebar({ isOpen, onOpen, onClose }) {
                                 aria-label="Close menu"
                             >
                                 <svg
-                                    className="w-6 h-6 text-slate-200"
+                                    className="w-7 h-7 text-slate-300"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -77,7 +77,7 @@ export function Sidebar({ isOpen, onOpen, onClose }) {
                                     <path
                                         strokeLinecap="round"
                                         strokeLinejoin="round"
-                                        strokeWidth={2}
+                                        strokeWidth={3}
                                         d="M6 18L18 6M6 6l12 12"
                                     />
                                 </svg>

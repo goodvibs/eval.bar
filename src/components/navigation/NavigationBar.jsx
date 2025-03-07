@@ -12,7 +12,7 @@ export function NavigationBar() {
             <nav className="flex items-center py-2 px-4 justify-between text-sm text-slate-100">
                 <a
                     href="/"
-                    className="flex text-xl lg:text-base hover:text-slate-300"
+                    className="flex text-xl hover:text-slate-300"
                 >
                     eval.bar
                 </a>
