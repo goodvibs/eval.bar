@@ -8,7 +8,7 @@ export function GamesList({ games, username, handleGameSelect }) {
                 scrollbar-thin scrollbar-thumb-transparent hover:scrollbar-thumb-slate-600
                 active:scrollbar-thumb-slate-600 scrollbar-track-transparent">
                 {games.length === 0 ? (
-                    <div className="text-slate-400 text-sm text-center p-4">
+                    <div className="text-slate-400 text-normal text-center p-4">
                         No games found. Enter a Chess.com username and click "Retrieve Games" to fetch the user's games for the selected month.
                     </div>
                 ) : (

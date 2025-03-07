@@ -20,7 +20,7 @@ export function ChesscomImportForm({
                     value={username}
                     onChange={(e) => setUsername(e.target.value.trim())}
                     placeholder="IMRosen"
-                    className="p-2 bg-slate-800 outline-none rounded text-slate-200 border border-slate-600"
+                    className="p-2 bg-slate-800 text-lg outline-none rounded-lg text-slate-200 border border-slate-600"
                 />
             </div>
 
@@ -33,7 +33,7 @@ export function ChesscomImportForm({
                     type="month"
                     value={selectedDate}
                     onChange={(e) => setSelectedDate(e.target.value)}
-                    className="p-2 bg-slate-800 rounded outline-none text-slate-200 border border-slate-600"
+                    className="p-2 bg-slate-800 text-lg rounded-lg outline-none text-slate-200 border border-slate-600"
                     placeholder='YYYY-MM'
                 />
             </div>
@@ -41,7 +41,7 @@ export function ChesscomImportForm({
             <button
                 type="submit"
                 disabled={!selectedDate || isLoading}
-                className="bg-emerald-600 transition-all text-slate-100 p-2 rounded hover:bg-emerald-500 disabled:opacity-50 disabled:hover:bg-emerald-600"
+                className="bg-emerald-600 transition-all text-lg font-semibold tracking-tight text-slate-100 py-2 rounded-lg hover:bg-emerald-500 disabled:opacity-50 disabled:hover:bg-emerald-600"
             >
                 {isLoading ? 'Loading...' : 'Retrieve Games'}
             </button>

@@ -27,7 +27,7 @@ export function MoveHistoryPanel() {
         <div className="flex flex-col rounded-lg">
             <MoveHistoryHeader />
             {moveGroups.length === 0 && (
-                <div className="p-4 bg-slate-800 text-sm text-slate-400 text-center rounded-b-lg">
+                <div className="p-4 bg-slate-800 text-normal text-slate-400 text-center rounded-b-lg">
                     Play a move or import a game to see your move history here.
                 </div>
             )}

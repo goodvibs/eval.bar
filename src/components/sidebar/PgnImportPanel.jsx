@@ -45,7 +45,7 @@ export function PgnImportPanel({ show, closeSidebar }) {
                         setError(''); // Clear error when input changes
                     }}
                     placeholder="1. e4 e5 2. Nf3 Nc6 ..."
-                    className="h-48 p-2 bg-slate-800 rounded text-slate-200 border border-slate-600 outline-none resize-none font-mono text-sm"
+                    className="h-48 min-h-48 p-2 bg-slate-800 rounded-lg text-normal text-slate-200 border border-slate-600 outline-none font-mono"
                 />
             </label>
 
@@ -55,17 +55,17 @@ export function PgnImportPanel({ show, closeSidebar }) {
                 </div>
             )}
 
-            <div className="flex gap-2">
+            <div className="flex gap-1">
                 <button
                     type="submit"
-                    className="flex-1 bg-emerald-600 text-slate-100 p-2 rounded hover:bg-emerald-500 active:bg-emerald-700 transition-colors"
+                    className="flex-1 bg-emerald-600 transition-all text-lg font-semibold tracking-tight text-slate-100 py-2 rounded-lg hover:bg-emerald-500 disabled:opacity-50 disabled:hover:bg-emerald-600"
                 >
                     Import Game
                 </button>
                 <button
                     type="button" // Explicitly set type to button to prevent form submission
                     onClick={handleClear}
-                    className="px-3 py-2 text-slate-300 hover:text-slate-100 hover:bg-slate-700 rounded transition-colors"
+                    className="px-3 py-2 text-lg text-slate-300 hover:text-slate-100 hover:bg-slate-700 rounded transition-colors"
                 >
                     Clear
                 </button>
