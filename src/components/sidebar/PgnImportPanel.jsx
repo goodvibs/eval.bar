@@ -45,7 +45,7 @@ export function PgnImportPanel({ show, closeSidebar }) {
                         setError(''); // Clear error when input changes
                     }}
                     placeholder="1. e4 e5 2. Nf3 Nc6 ..."
-                    className="h-48 min-h-48 p-2 bg-slate-800 rounded-lg text-normal text-slate-200 border border-slate-600 outline-none font-mono"
+                    className="h-48 min-h-48 p-2 bg-slate-800 rounded-lg text-base text-slate-200 border border-slate-600 outline-none font-mono"
                 />
             </label>
 

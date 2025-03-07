@@ -34,13 +34,13 @@ export const AnalysisPanel = memo(function AnalysisPanel() {
                 ))}
 
                 {showEmptyPrompt && (
-                    <div className="p-4 text-normal text-slate-400 text-center">
+                    <div className="p-4 text-base text-slate-400 text-center">
                         Click the toggle to turn on computer analysis.
                     </div>
                 )}
 
                 {isAnalyzing && (
-                    <div className="p-4 text-normal text-slate-400 text-center">
+                    <div className="p-4 text-base text-slate-400 text-center">
                         Analyzing position...
                     </div>
                 )}
