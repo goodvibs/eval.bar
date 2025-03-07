@@ -19,20 +19,20 @@ export function AnalysisToggle({ disabled, isAnalysisOn, handleAnalysisOn, handl
                     disabled={disabled}
                 />
                 <div className={`
-                    relative flex items-center w-14 h-7 rounded-full transition-all duration-300 ease-in-out bg-size-200 bg-pos-0 hover:bg-pos-100
+                    relative flex items-center w-14 h-7 rounded-full border-2 border-slate-400 transition-all bg-slate-400 duration-300 ease-in-out
                     ${isAnalysisOn
-                    ? 'bg-gradient-to-r from-green-400 to-orange-500'
-                    : 'bg-gradient-to-r from-gray-400 to-gray-300'
+                    ? 'bg-opacity-100'
+                    : 'bg-opacity-0'
                 }
                     ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
                 `}>
                     {/* Toggle handle with icon */}
                     <div className={`
-                        absolute h-5 w-5 rounded-full transition-all duration-300
-                        flex items-center justify-center
+                        absolute h-4 w-4 rounded-full transition-all duration-300
+                        flex items-center justify-center bg-slate-950
                         ${isAnalysisOn
-                        ? 'translate-x-8 bg-gradient-to-br from-white to-slate-100'
-                        : 'translate-x-1 bg-gradient-to-br from-slate-100 to-slate-200'
+                        ? 'translate-x-8'
+                        : 'translate-x-1'
                     }
                         shadow-md
                     `}>
