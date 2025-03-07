@@ -3,11 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@firebasegen/default-connector": "file:dataconnect-generated/js/default-connector",
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
     "chess-tools": "^0.3.0",
     "cm-chess": "^3.5.1",
     "cm-pgn": "^3.3.2",
@@ -15,37 +11,21 @@
     "react-chessboard": "^4.7.2",
     "react-dom": "^18.2.0",
     "react-router-dom": "^7.2.0",
-    "react-scripts": "5.0.1",
     "stockfish": "^15.0.0",
     "stockfish.js": "^10.0.2",
-    "tailwind-scrollbar": "^3.1.0",
-    "tailwindcss": "^3.2.4",
-    "web-vitals": "^2.1.4",
     "zustand": "^5.0.3"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "deploy": "npm run build && firebase deploy"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.3",
+    "tailwind-scrollbar": "^3.0.0",
+    "tailwindcss": "^3.4.17",
+    "vite": "^6.2.0"
   }
 }
