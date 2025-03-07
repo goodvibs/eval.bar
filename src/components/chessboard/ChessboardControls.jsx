@@ -10,8 +10,8 @@ export function ChessboardControls({
                                        setOrientedWhite
                                    }) {
     return (
-        <div className="flex flex-1 gap-2">
-            <div className="flex flex-1 justify-start p-2">
+        <div className="flex flex-1 gap-2 items-center px-2">
+            <div className="flex flex-1 justify-start">
                 <ChessboardSettingsButton/>
             </div>
             <button onClick={firstMove} className="rounded-full bg-slate-600 hover:bg-slate-500 transition duration-100">
@@ -35,7 +35,7 @@ export function ChessboardControls({
                 </svg>
             </button>
 
-            <div className="flex flex-1 justify-end p-2">
+            <div className="flex flex-1 justify-end">
                 <ChessboardFlipOrientationButton orientedWhite={orientedWhite} setOrientedWhite={setOrientedWhite}/>
             </div>
         </div>
