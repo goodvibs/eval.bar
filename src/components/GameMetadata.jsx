@@ -24,7 +24,7 @@ export function GameMetadata() {
                 </div>
                 {gameMetadata.result && (
                     <span className={`
-                        px-2 rounded text-xs text-nowrap min-w-fit font-mono
+                        px-2 rounded-xl text-sm text-nowrap min-w-fit font-mono
                         ${usernameGameResult === 'win' ? 'bg-emerald-600' :
                         usernameGameResult === 'loss' ? 'bg-rose-600' :
                             'bg-slate-600'}

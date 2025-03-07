@@ -38,7 +38,7 @@ export function GameItem({
                             <span className="text-xs">({game.blackElo})</span>
                         </div>
                         <span className={`
-                            px-2 rounded text-xs text-nowrap min-w-fit font-mono
+                            px-2 rounded-xl text-xs text-nowrap min-w-fit font-mono
                             ${resultBackgroundColor}
                         `}>
                             {game.result}
