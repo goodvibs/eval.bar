@@ -1,5 +1,4 @@
 import { AnalyzeIcon } from "./AnalyzeIcon";
-import { StopIcon } from "./StopIcon";
 
 export function AnalysisToggle({ disabled, isAnalysisOn, handleAnalysisOn, handleAnalysisOff }) {
     return (
