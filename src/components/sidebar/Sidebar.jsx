@@ -1,7 +1,7 @@
-import {SidebarTabButton} from "./SidebarTabButton";
-import React from "react";
-import {ChesscomImportPanel} from "./ChesscomImportPanel";
-import {PgnImportPanel} from "./PgnImportPanel";
+import { SidebarTabButton } from './SidebarTabButton';
+import React from 'react';
+import { ChesscomImportPanel } from './ChesscomImportPanel';
+import { PgnImportPanel } from './PgnImportPanel';
 
 export function Sidebar({ isOpen, onOpen, onClose }) {
     const [currTab, setCurrTab] = React.useState(0);
@@ -34,7 +34,8 @@ export function Sidebar({ isOpen, onOpen, onClose }) {
                 z-40
                 transform transition-transform duration-1000 lg:transform-none
                 ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-            `}>
+            `}
+            >
                 {/* Pull-out tab - only for opening on mobile */}
                 <button
                     onClick={onOpen}

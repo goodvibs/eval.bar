@@ -1,19 +1,18 @@
 import React from 'react';
-import {GameItemMetadata} from "./GameItemMetadata";
-import {GamePreview} from "./GamePreview";
-import {useGetUsernameGameResult} from "../../hooks/useGetUsernameGameResult";
+import { GameItemMetadata } from './GameItemMetadata';
+import { GamePreview } from './GamePreview';
+import { useGetUsernameGameResult } from '../../hooks/useGetUsernameGameResult';
 
-export function GameItem({
-                             game,
-                             username,
-                             onSelect
-                         }) {
+export function GameItem({ game, username, onSelect }) {
     const [isHovered, setIsHovered] = React.useState(false);
     const gameResult = useGetUsernameGameResult(game, username);
 
     const resultBackgroundColor =
-        gameResult === 'win' ? 'bg-emerald-600' :
-            gameResult === 'loss' ? 'bg-rose-600' : 'bg-slate-600';
+        gameResult === 'win'
+            ? 'bg-emerald-600'
+            : gameResult === 'loss'
+              ? 'bg-rose-600'
+              : 'bg-slate-600';
 
     return (
         <div className="relative">
@@ -37,10 +36,12 @@ export function GameItem({
                             {game.black}
                             <span className="text-xs">({game.blackElo})</span>
                         </div>
-                        <span className={`
+                        <span
+                            className={`
                             px-2 rounded-xl text-xs text-nowrap min-w-fit font-mono
                             ${resultBackgroundColor}
-                        `}>
+                        `}
+                        >
                             {game.result}
                         </span>
                     </div>

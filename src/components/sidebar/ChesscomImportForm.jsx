@@ -1,13 +1,13 @@
 import React from 'react';
 
 export function ChesscomImportForm({
-                        username,
-                        setUsername,
-                        selectedDate,
-                        setSelectedDate,
-                        handleFetchGames,
-                        isLoading
-                    }) {
+    username,
+    setUsername,
+    selectedDate,
+    setSelectedDate,
+    handleFetchGames,
+    isLoading,
+}) {
     return (
         <form onSubmit={handleFetchGames} className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
@@ -18,7 +18,7 @@ export function ChesscomImportForm({
                     id="username"
                     type="text"
                     value={username}
-                    onChange={(e) => setUsername(e.target.value.trim())}
+                    onChange={e => setUsername(e.target.value.trim())}
                     placeholder="IMRosen"
                     className="p-2 bg-slate-800 text-lg outline-none rounded-lg text-slate-200 border border-slate-600"
                 />
@@ -32,9 +32,9 @@ export function ChesscomImportForm({
                     id="month"
                     type="month"
                     value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
+                    onChange={e => setSelectedDate(e.target.value)}
                     className="p-2 bg-slate-800 text-lg rounded-lg outline-none text-slate-200 border border-slate-600"
-                    placeholder='YYYY-MM'
+                    placeholder="YYYY-MM"
                 />
             </div>
 

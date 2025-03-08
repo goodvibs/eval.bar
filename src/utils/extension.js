@@ -8,21 +8,25 @@ import { detectBrowser } from './browserDetection';
  * @returns {Promise<Object>} Object with installed status and browser info
  */
 export function checkExtensionInstalled() {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
         const browser = detectBrowser();
 
         // Method 1: Try Chrome/Firefox/Edge extension API
-        if ((browser === "chrome" || browser === "edge" || browser === "firefox") &&
+        if (
+            (browser === 'chrome' || browser === 'edge' || browser === 'firefox') &&
             typeof window !== 'undefined' &&
             window.chrome &&
-            window.chrome.runtime) {
+            window.chrome.runtime
+        ) {
             try {
                 // Replace with your actual extension ID when published
-                const extensionId = "your_extension_id_here";
-                window.chrome.runtime.sendMessage(extensionId, {message: "is_extension_installed"},
-                    function(response) {
+                const extensionId = 'your_extension_id_here';
+                window.chrome.runtime.sendMessage(
+                    extensionId,
+                    { message: 'is_extension_installed' },
+                    function (response) {
                         if (response && response.installed) {
-                            resolve({installed: true, version: response.version, browser});
+                            resolve({ installed: true, version: response.version, browser });
                         }
                         // If no response, fall through to the next method
                     }
@@ -35,7 +39,7 @@ export function checkExtensionInstalled() {
 
         // Method 2: Look for a global variable
         if (typeof window !== 'undefined' && window.EvalBarExtension) {
-            resolve({installed: true, version: window.EvalBarExtension.version, browser});
+            resolve({ installed: true, version: window.EvalBarExtension.version, browser });
             return;
         }
 
@@ -48,32 +52,32 @@ export function checkExtensionInstalled() {
             // Set a timeout for fallback
             const timeoutId = setTimeout(() => {
                 iframe.remove();
-                resolve({installed: false, browser});
+                resolve({ installed: false, browser });
             }, 500);
 
             // Try to use custom protocol
             iframe.onload = () => {
                 clearTimeout(timeoutId);
                 iframe.remove();
-                resolve({installed: true, browser});
+                resolve({ installed: true, browser });
             };
 
             iframe.onerror = () => {
                 clearTimeout(timeoutId);
                 iframe.remove();
-                resolve({installed: false, browser});
+                resolve({ installed: false, browser });
             };
 
             // Try to open with your custom protocol
             iframe.src = 'evalbar-extension://version';
         } else {
             // If document is not available (e.g., server-side rendering)
-            resolve({installed: false, browser});
+            resolve({ installed: false, browser });
         }
 
         // Set a fallback timeout in case all detection methods fail
         setTimeout(() => {
-            resolve({installed: false, browser});
+            resolve({ installed: false, browser });
         }, 1000);
     });
 }

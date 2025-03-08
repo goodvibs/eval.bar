@@ -1,7 +1,16 @@
-import {AnalysisToggle} from "./AnalysisToggle";
-import {AnalysisSettingsButton} from "./AnalysisSettingsButton";
+import { AnalysisToggle } from './AnalysisToggle';
+import { AnalysisSettingsButton } from './AnalysisSettingsButton';
 
-export function AnalysisControls({ disabled, isAnalysisOn, handleAnalysisOn, handleAnalysisOff, handleMultiPVChange, handleGoalDepthChange, goalSearchDepth, multiPV }) {
+export function AnalysisControls({
+    disabled,
+    isAnalysisOn,
+    handleAnalysisOn,
+    handleAnalysisOff,
+    handleMultiPVChange,
+    handleGoalDepthChange,
+    goalSearchDepth,
+    multiPV,
+}) {
     return (
         <div className="flex items-center gap-2">
             <AnalysisSettingsButton

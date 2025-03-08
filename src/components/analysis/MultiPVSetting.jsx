@@ -8,7 +8,7 @@ export function MultiPVSetting({ isAnalysisOn, multiPV, handleMultiPVChange }) {
                 id="multipv-select"
                 className="w-full bg-slate-700 text-slate-200 text-base rounded px-2 py-2 border border-slate-600 disabled:opacity-50 outline-none"
                 value={multiPV}
-                onChange={(e) => handleMultiPVChange(parseInt(e.target.value))}
+                onChange={e => handleMultiPVChange(parseInt(e.target.value))}
                 disabled={isAnalysisOn}
             >
                 <option value={1}>1 line</option>

@@ -11,27 +11,27 @@ export function detectBrowser() {
 
     // Safari detection
     if (/Safari/i.test(userAgent) && !/Chrome/i.test(userAgent)) {
-        return "safari";
+        return 'safari';
     }
     // Firefox detection
     else if (/Firefox/i.test(userAgent)) {
-        return "firefox";
+        return 'firefox';
     }
     // Edge detection
     else if (/Edg/i.test(userAgent)) {
-        return "edge";
+        return 'edge';
     }
     // Opera detection
     else if (/OPR/i.test(userAgent)) {
-        return "opera";
+        return 'opera';
     }
     // Chrome detection
     else if (/Chrome/i.test(userAgent)) {
-        return "chrome";
+        return 'chrome';
     }
     // Other browsers
     else {
-        return "other";
+        return 'other';
     }
 }
 
@@ -42,16 +42,16 @@ export function detectBrowser() {
  */
 export function getExtensionStoreUrl(browser) {
     // These URLs need to be updated with your actual extension IDs when published
-    switch(browser) {
-        case "chrome":
-        case "opera":
-        case "edge":
-            return "https://chrome.google.com/webstore/detail/your-extension-id";
-        case "firefox":
-            return "https://addons.mozilla.org/firefox/addon/your-extension-id";
-        case "safari":
-            return "https://apps.apple.com/app/your-extension-id";
+    switch (browser) {
+        case 'chrome':
+        case 'opera':
+        case 'edge':
+            return 'https://chrome.google.com/webstore/detail/your-extension-id';
+        case 'firefox':
+            return 'https://addons.mozilla.org/firefox/addon/your-extension-id';
+        case 'safari':
+            return 'https://apps.apple.com/app/your-extension-id';
         default:
-            return "#";
+            return '#';
     }
 }

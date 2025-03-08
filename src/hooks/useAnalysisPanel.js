@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import { useGameActions } from "./stores/useGameStore";
-import { useEngineAnalysis, useIsAnalysisOn } from "./stores/useEngineStore";
+import { useGameActions } from './stores/useGameStore';
+import { useEngineAnalysis, useIsAnalysisOn } from './stores/useEngineStore';
 
 /**
  * Custom hook that contains all the logic for the AnalysisPanel component
@@ -18,11 +18,14 @@ export function useAnalysisPanel() {
     const { makeMove } = useGameActions();
 
     // Handler for clicking on moves in the analysis lines
-    const handleMoveClick = useCallback((sanMoves) => {
-        for (let i = 0; i < sanMoves.length; i++) {
-            console.assert(makeMove(sanMoves[i]), `Failed to make move: ${sanMoves[i]}`);
-        }
-    }, [makeMove]);
+    const handleMoveClick = useCallback(
+        sanMoves => {
+            for (let i = 0; i < sanMoves.length; i++) {
+                console.assert(makeMove(sanMoves[i]), `Failed to make move: ${sanMoves[i]}`);
+            }
+        },
+        [makeMove]
+    );
 
     // Computed properties
     const showEmptyMessage = uciLines.length === 0;
@@ -41,6 +44,6 @@ export function useAnalysisPanel() {
 
         // Computed properties
         showEmptyPrompt,
-        isAnalyzing
+        isAnalyzing,
     };
 }

@@ -1,5 +1,5 @@
-import React from "react";
-import {useGameStore} from "../../hooks/stores/useGameStore";
+import React from 'react';
+import { useGameStore } from '../../hooks/stores/useGameStore';
 
 function MovePair({ moveNumber, whiteMove, blackMove, currentMoveIndex, onMoveClick }) {
     const whiteMoveIndex = (moveNumber - 1) * 2;
@@ -8,9 +8,7 @@ function MovePair({ moveNumber, whiteMove, blackMove, currentMoveIndex, onMoveCl
     return (
         <div className="flex text-sm">
             {/* Move number */}
-            <div className="flex-none w-8 text-slate-500 py-1 px-2">
-                {moveNumber}.
-            </div>
+            <div className="flex-none w-8 text-slate-500 py-1 px-2">{moveNumber}.</div>
 
             {/* White's move */}
             <button
@@ -36,11 +34,7 @@ function MovePair({ moveNumber, whiteMove, blackMove, currentMoveIndex, onMoveCl
 }
 
 export function MoveHistoryPairsPanel() {
-    const {
-        gameHistoryCopy,
-        currentMoveIndex,
-        goToMove
-    } = useGameStore();
+    const { gameHistoryCopy, currentMoveIndex, goToMove } = useGameStore();
 
     // Group moves into pairs
     const movePairs = [];
@@ -48,7 +42,7 @@ export function MoveHistoryPairsPanel() {
         movePairs.push({
             moveNumber: Math.floor(i / 2) + 1,
             whiteMove: gameHistoryCopy[i],
-            blackMove: gameHistoryCopy[i + 1]
+            blackMove: gameHistoryCopy[i + 1],
         });
     }
 

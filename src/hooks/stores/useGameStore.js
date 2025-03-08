@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { useShallow } from 'zustand/shallow';
 import { Chess } from 'cm-chess';
-import { Pgn } from "cm-pgn/src/Pgn";
+import { Pgn } from 'cm-pgn/src/Pgn';
 
 function processPgn(pgn) {
     pgn = pgn.trimEnd();
@@ -35,11 +35,11 @@ const useGameStore = create((set, get) => ({
         variant: null,
         finalPosition: null,
         url: null,
-        event: null
+        event: null,
     },
 
     // Actions that modify state
-    makeMove: (move) => {
+    makeMove: move => {
         const { game } = get();
         const moveResult = game.move(move);
 
@@ -73,7 +73,7 @@ const useGameStore = create((set, get) => ({
         }
     },
 
-    goToMove: (index) => {
+    goToMove: index => {
         const { pgn } = get();
         const moveHistory = pgn.history.moves;
         const moveCount = moveHistory.length;
@@ -89,7 +89,7 @@ const useGameStore = create((set, get) => ({
         set({ game: newGame });
     },
 
-    loadChesscomGame: (chesscomGame) => {
+    loadChesscomGame: chesscomGame => {
         try {
             if (!chesscomGame.isSupported) {
                 return false;
@@ -114,8 +114,8 @@ const useGameStore = create((set, get) => ({
                     variant: chesscomGame.variant,
                     finalPosition: chesscomGame.fen,
                     url: chesscomGame.url,
-                    event: chesscomGame.event
-                }
+                    event: chesscomGame.event,
+                },
             });
             return true;
         } catch (error) {
@@ -123,7 +123,7 @@ const useGameStore = create((set, get) => ({
         }
     },
 
-    loadPgnGame: (pgnString) => {
+    loadPgnGame: pgnString => {
         try {
             const newGame = new Chess();
             newGame.loadPgn(processPgn(pgnString));
@@ -144,68 +144,66 @@ const useGameStore = create((set, get) => ({
                     variant: null,
                     finalPosition: null,
                     url: null,
-                    event: null
-                }
+                    event: null,
+                },
             });
             return true;
         } catch (error) {
             throw Error('Failed to load game: ' + error.message);
         }
-    }
+    },
 }));
 
 // ========== GROUPED SELECTORS ==========
 
-export const useGame = () => useGameStore(
-    useShallow(state => state.game)
-);
+export const useGame = () => useGameStore(useShallow(state => state.game));
 
-export const useGameDerivedState = () => useGameStore(
-    useShallow(state => ({
-        turn: state.game.turn(),
-        fen: state.game.fen(),
-        inCheck: state.game.inCheck(),
-        halfmoveCount: state.game.plyCount(),
-        fullmoveCount: Math.floor((state.game.plyCount() - 1) / 2) + 1,
-        moves: state.game.history()
-    }))
-);
+export const useGameDerivedState = () =>
+    useGameStore(
+        useShallow(state => ({
+            turn: state.game.turn(),
+            fen: state.game.fen(),
+            inCheck: state.game.inCheck(),
+            halfmoveCount: state.game.plyCount(),
+            fullmoveCount: Math.floor((state.game.plyCount() - 1) / 2) + 1,
+            moves: state.game.history(),
+        }))
+    );
 
-export const usePgn = () => useGameStore(
-    useShallow(state => state.pgn)
-);
+export const usePgn = () => useGameStore(useShallow(state => state.pgn));
 
-export const usePgnDerivedState = () => useGameStore(
-    useShallow(state => ({
-        moves: state.pgn.history.moves,
-        fullmoveCount: Math.floor((state.pgn.history.moves.length - 1) / 2) + 1,
-        pgnText: state.pgn.render(false, false, false)
-    }))
-);
+export const usePgnDerivedState = () =>
+    useGameStore(
+        useShallow(state => ({
+            moves: state.pgn.history.moves,
+            fullmoveCount: Math.floor((state.pgn.history.moves.length - 1) / 2) + 1,
+            pgnText: state.pgn.render(false, false, false),
+        }))
+    );
 
-export const useGameMetadata = () => useGameStore(
-    useShallow(state => state.gameMetadata)
-);
+export const useGameMetadata = () => useGameStore(useShallow(state => state.gameMetadata));
 
 // Action selectors - for components that only need actions
-export const useGameActions = () => useGameStore(
-    useShallow(state => ({
-        makeMove: state.makeMove,
-        undo: state.undo,
-        redo: state.redo,
-        goToMove: state.goToMove,
-    }))
-);
+export const useGameActions = () =>
+    useGameStore(
+        useShallow(state => ({
+            makeMove: state.makeMove,
+            undo: state.undo,
+            redo: state.redo,
+            goToMove: state.goToMove,
+        }))
+    );
 
-export const useLoadGame = () => useGameStore(
-    useShallow(state => ({
-        loadChesscomGame: state.loadChesscomGame,
-        loadPgnGame: state.loadPgnGame
-    }))
-);
+export const useLoadGame = () =>
+    useGameStore(
+        useShallow(state => ({
+            loadChesscomGame: state.loadChesscomGame,
+            loadPgnGame: state.loadPgnGame,
+        }))
+    );
 
 // Finding the king in check - the implementation stays outside the selector body
-export const findKingInCheck = (game) => {
+export const findKingInCheck = game => {
     if (!game.inCheck()) return null;
 
     const turn = game.turn();
@@ -223,5 +221,4 @@ export const findKingInCheck = (game) => {
 };
 
 // Since this returns a primitive (string or null), useShallow is not needed
-export const useKingInCheck = () =>
-    useGameStore(state => findKingInCheck(state.game));
+export const useKingInCheck = () => useGameStore(state => findKingInCheck(state.game));

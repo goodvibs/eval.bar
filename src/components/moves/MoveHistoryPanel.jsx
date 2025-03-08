@@ -1,7 +1,11 @@
-import {useGameActions, useGameDerivedState, usePgnDerivedState} from "../../hooks/stores/useGameStore";
-import {MoveHistoryHeader} from "./MoveHistoryHeader";
-import {MoveHistoryList} from "./MoveHistoryList";
-import React from "react";
+import {
+    useGameActions,
+    useGameDerivedState,
+    usePgnDerivedState,
+} from '../../hooks/stores/useGameStore';
+import { MoveHistoryHeader } from './MoveHistoryHeader';
+import { MoveHistoryList } from './MoveHistoryList';
+import React from 'react';
 
 function groupMovesIntoPairs(moveHistory) {
     const moveGroups = [];

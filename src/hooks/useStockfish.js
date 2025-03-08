@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useEngineStore } from "./stores/useEngineStore";
+import { useEngineStore } from './stores/useEngineStore';
 
 // Create a module-level variable to track if the engine has been initialized
 // This ensures initialization happens only once across the application
@@ -22,15 +22,17 @@ export function useStockfish() {
                 // Initial UCI setup
                 engineRef.current.postMessage('uci');
 
-                engineRef.current.postMessage(`setoption name MultiPV value ${engineStore.multiPV}`);
+                engineRef.current.postMessage(
+                    `setoption name MultiPV value ${engineStore.multiPV}`
+                );
 
                 engineRef.current.postMessage('isready');
                 engineRef.current.postMessage('ucinewgame');
 
                 // Create a message handler that always gets the latest store reference
-                const messageHandler = (e) => {
+                const messageHandler = e => {
                     // Handle "readyok" message to update engine ready state
-                    if (e.data === "readyok") {
+                    if (e.data === 'readyok') {
                         engineStore.setIsInitialized(true);
                         console.log('readyok received, Stockfish is ready');
                     }

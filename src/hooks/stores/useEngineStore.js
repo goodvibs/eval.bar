@@ -1,9 +1,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useShallow } from 'zustand/shallow';
-import { FEN } from "cm-chess";
+import { FEN } from 'cm-chess';
 
-const processLines = (currentLines) => {
+const processLines = currentLines => {
     // Filter out null lines from the fixed-size array
     const validLines = currentLines.filter(line => line !== null);
 
@@ -24,8 +24,8 @@ const processLines = (currentLines) => {
                 advantage: line.advantage,
                 cp: line.cp,
                 mate: line.mate,
-                formattedEvaluation
-            }
+                formattedEvaluation,
+            },
         };
     });
 
@@ -37,7 +37,7 @@ const processLines = (currentLines) => {
         advantage: 'equal',
         cp: null,
         mate: null,
-        formattedEvaluation: '(º~º)'
+        formattedEvaluation: '(º~º)',
     };
 
     return {
@@ -79,10 +79,10 @@ export const useEngineStore = create(
             turn: 'w', // Current turn (w or b)
 
             // Set engine ready status
-            setIsInitialized: (isInitialized) => set({ isInitialized: isInitialized }),
+            setIsInitialized: isInitialized => set({ isInitialized: isInitialized }),
 
-            setMultiPV: (value) => {
-                set((state) => {
+            setMultiPV: value => {
+                set(state => {
                     // Create new array for the lines with the new size
                     let newLines;
 
@@ -100,7 +100,7 @@ export const useEngineStore = create(
                     return {
                         multiPV: value,
                         isMultiPVFlushed: false,
-                        currentLines: newLines
+                        currentLines: newLines,
                     };
                 });
             },
@@ -111,26 +111,36 @@ export const useEngineStore = create(
                 set({ isMultiPVFlushed: true });
             },
 
-            setAndSendMultiPV: (value) => {
+            setAndSendMultiPV: value => {
                 const { setMultiPV, sendMultiPV } = get();
                 setMultiPV(value);
                 sendMultiPV();
             },
 
-            setGoalSearchDepth: (value) => {
+            setGoalSearchDepth: value => {
                 set({ goalSearchDepth: value });
                 set({ isGoalSearchDepthFlushed: false });
             },
 
             isEngineReady: () => {
-                const { isInitialized, multiPV, goalSearchDepth, startFen, currentFen, turn, isMultiPVFlushed } = get();
-                return isInitialized &&
+                const {
+                    isInitialized,
+                    multiPV,
+                    goalSearchDepth,
+                    startFen,
+                    currentFen,
+                    turn,
+                    isMultiPVFlushed,
+                } = get();
+                return (
+                    isInitialized &&
                     multiPV !== null &&
                     goalSearchDepth !== null &&
                     startFen !== null &&
                     currentFen !== null &&
                     turn !== null &&
-                    isMultiPVFlushed;
+                    isMultiPVFlushed
+                );
             },
 
             go: () => {
@@ -145,7 +155,12 @@ export const useEngineStore = create(
                     return;
                 }
 
-                set({ isAnalyzing: true, isGoalSearchDepthFlushed: true, time: 0, currentLines: Array(multiPV).fill(null) });
+                set({
+                    isAnalyzing: true,
+                    isGoalSearchDepthFlushed: true,
+                    time: 0,
+                    currentLines: Array(multiPV).fill(null),
+                });
 
                 window.stockfish.postMessage('stop');
                 // window.stockfish.postMessage('position fen ' + startFen + (uciMoves ? ' moves ' + uciMoves : ''));
@@ -175,7 +190,7 @@ export const useEngineStore = create(
                     uciMoves,
                     turn,
                     currentSearchDepth: 0,
-                    currentLines: Array(get().multiPV).fill(null)
+                    currentLines: Array(get().multiPV).fill(null),
                 });
             },
 
@@ -192,7 +207,7 @@ export const useEngineStore = create(
                 goIfAnalysisOn();
             },
 
-            handleEngineMessage: (message) => {
+            handleEngineMessage: message => {
                 const { isAnalysisOn, time } = get();
 
                 // Skip processing empty messages
@@ -217,8 +232,7 @@ export const useEngineStore = create(
                         if (parsedTime < time) {
                             console.log('Time decreased:', parsedTime, time);
                             return;
-                        }
-                        else if (time === 0) {
+                        } else if (time === 0) {
                             if (parsedTime > 100) {
                                 console.warn('Time is too high, skipping. Time:', parsedTime);
                                 return;
@@ -260,7 +274,8 @@ export const useEngineStore = create(
                                 mate = null;
                             }
 
-                            const [self_color, opponent_color] = turn === 'w' ? ['white', 'black'] : ['black', 'white'];
+                            const [self_color, opponent_color] =
+                                turn === 'w' ? ['white', 'black'] : ['black', 'white'];
                             const advantage = scoreValue > 0 ? self_color : opponent_color;
 
                             // Extract PV (move sequence) - just the raw UCI moves
@@ -278,7 +293,7 @@ export const useEngineStore = create(
                             };
 
                             // Update the current lines in the store using fixed-size array approach
-                            set((state) => {
+                            set(state => {
                                 // Create a new array of the current size if needed
                                 let updatedLines = Array(state.multiPV).fill(null);
 
@@ -295,8 +310,7 @@ export const useEngineStore = create(
                         } catch (error) {
                             console.error('Error parsing engine message:', error, message);
                         }
-                    }
-                    else {
+                    } else {
                         console.warn('Skipping incomplete analysis:', message);
                     }
                 }
@@ -305,11 +319,11 @@ export const useEngineStore = create(
                 else if (message.startsWith('bestmove')) {
                     set({ isAnalyzing: false });
                 }
-            }
+            },
         }),
         {
             name: 'engine-settings',
-            partialize: (state) => ({
+            partialize: state => ({
                 multiPV: state.multiPV,
                 goalSearchDepth: state.goalSearchDepth,
             }),
@@ -320,51 +334,55 @@ export const useEngineStore = create(
 // ========== GROUPED SELECTORS ==========
 
 // Analysis-related state selectors
-export const useAnalysisState = () => useEngineStore(
-    useShallow(state => ({
-        isAnalyzing: state.isAnalyzing,
-        isAnalysisOn: state.isAnalysisOn,
-        currentSearchDepth: state.currentSearchDepth,
-        time: state.time
-    }))
-);
+export const useAnalysisState = () =>
+    useEngineStore(
+        useShallow(state => ({
+            isAnalyzing: state.isAnalyzing,
+            isAnalysisOn: state.isAnalysisOn,
+            currentSearchDepth: state.currentSearchDepth,
+            time: state.time,
+        }))
+    );
 
 // Engine configuration selectors
-export const useEngineConfig = () => useEngineStore(
-    useShallow(state => ({
-        isInitialized: state.isInitialized,
-        multiPV: state.multiPV,
-        goalSearchDepth: state.goalSearchDepth,
-        isMultiPVFlushed: state.isMultiPVFlushed,
-        isEngineReady: state.isEngineReady()
-    }))
-);
+export const useEngineConfig = () =>
+    useEngineStore(
+        useShallow(state => ({
+            isInitialized: state.isInitialized,
+            multiPV: state.multiPV,
+            goalSearchDepth: state.goalSearchDepth,
+            isMultiPVFlushed: state.isMultiPVFlushed,
+            isEngineReady: state.isEngineReady(),
+        }))
+    );
 
 // Position state selectors
-export const useEnginePosition = () => useEngineStore(
-    useShallow(state => ({
-        startFen: state.startFen,
-        currentFen: state.currentFen,
-        uciMoves: state.uciMoves,
-        turn: state.turn
-    }))
-);
+export const useEnginePosition = () =>
+    useEngineStore(
+        useShallow(state => ({
+            startFen: state.startFen,
+            currentFen: state.currentFen,
+            uciMoves: state.uciMoves,
+            turn: state.turn,
+        }))
+    );
 
 // Actions selectors
-export const useEngineActions = () => useEngineStore(
-    useShallow(state => ({
-        setMultiPV: state.setMultiPV,
-        sendMultiPV: state.sendMultiPV,
-        setAndSendMultiPV: state.setAndSendMultiPV,
-        setGoalSearchDepth: state.setGoalSearchDepth,
-        go: state.go,
-        startAnalysis: state.startAnalysis,
-        endAnalysis: state.endAnalysis,
-        setPosition: state.setPosition,
-        goIfAnalysisOn: state.goIfAnalysisOn,
-        setPositionAndGoIfAnalysisOn: state.setPositionAndGoIfAnalysisOn
-    }))
-);
+export const useEngineActions = () =>
+    useEngineStore(
+        useShallow(state => ({
+            setMultiPV: state.setMultiPV,
+            sendMultiPV: state.sendMultiPV,
+            setAndSendMultiPV: state.setAndSendMultiPV,
+            setGoalSearchDepth: state.setGoalSearchDepth,
+            go: state.go,
+            startAnalysis: state.startAnalysis,
+            endAnalysis: state.endAnalysis,
+            setPosition: state.setPosition,
+            goIfAnalysisOn: state.goIfAnalysisOn,
+            setPositionAndGoIfAnalysisOn: state.setPositionAndGoIfAnalysisOn,
+        }))
+    );
 
 // This replaces the getAnalysis method with a selector
 export const useEngineAnalysis = () => {

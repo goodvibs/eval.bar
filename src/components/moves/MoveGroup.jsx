@@ -1,5 +1,5 @@
 import React from 'react';
-import {MoveButton} from './MoveButton';
+import { MoveButton } from './MoveButton';
 
 export function MoveGroup({ number, white, black, groupIndex, currentMoveIndex, goToMove }) {
     return (

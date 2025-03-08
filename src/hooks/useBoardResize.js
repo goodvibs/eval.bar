@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import {useGameMetadata} from "./stores/useGameStore";
+import { useGameMetadata } from './stores/useGameStore';
 
 /**
  * Custom hook to handle chessboard and right panel resizing based on available screen space
@@ -36,14 +36,12 @@ export function useBoardResize() {
                 setBoardWidth(idealBoardWidth);
                 const rightPanelWidth = availableWidth - idealBoardWidth;
                 setRightPanelWidth(rightPanelWidth);
-            }
-            else if (availableWidth >= minBoardSize + minRightPanelWidth) {
+            } else if (availableWidth >= minBoardSize + minRightPanelWidth) {
                 // reduce board width to fit right panel
                 const rightPanelWidth = minRightPanelWidth;
                 setRightPanelWidth(rightPanelWidth);
                 setBoardWidth(availableWidth - rightPanelWidth);
-            }
-            else {
+            } else {
                 // wrap right panel to new line
                 setBoardWidth(idealBoardWidth);
                 setRightPanelWidth(window.innerWidth - padding);

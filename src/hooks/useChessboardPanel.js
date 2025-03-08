@@ -3,11 +3,11 @@ import {
     useGame,
     useGameActions,
     useGameDerivedState,
-    useKingInCheck
+    useKingInCheck,
 } from './stores/useGameStore';
-import {useCurrentLines, useIsAnalysisOn} from './stores/useEngineStore';
+import { useCurrentLines, useIsAnalysisOn } from './stores/useEngineStore';
 
-export const useChessboardPanel = (boardWidth) => {
+export const useChessboardPanel = boardWidth => {
     // UI state
     const [orientedWhite, setOrientedWhite] = useState(true);
     const [selectedPiece, setSelectedPiece] = useState(null);
@@ -15,12 +15,7 @@ export const useChessboardPanel = (boardWidth) => {
     const [customArrows, setCustomArrows] = useState([]);
 
     // Get game state from store
-    const {
-        makeMove,
-        goToMove,
-        undo,
-        redo,
-    } = useGameActions();
+    const { makeMove, goToMove, undo, redo } = useGameActions();
 
     const { fen, turn } = useGameDerivedState();
 
@@ -33,35 +28,38 @@ export const useChessboardPanel = (boardWidth) => {
     const kingInCheck = useKingInCheck();
 
     // Board settings
-    const handleSetOrientedWhite = useCallback((value) => {
+    const handleSetOrientedWhite = useCallback(value => {
         setOrientedWhite(value);
     }, []);
 
     // Piece selection and move highlighting
-    const selectPiece = useCallback((piece, square) => {
-        // If the same piece is clicked again, deselect it
-        if (selectedPiece === square) {
-            setSelectedPiece(null);
-            setPossibleMoves([]);
-            return;
-        }
+    const selectPiece = useCallback(
+        (piece, square) => {
+            // If the same piece is clicked again, deselect it
+            if (selectedPiece === square) {
+                setSelectedPiece(null);
+                setPossibleMoves([]);
+                return;
+            }
 
-        // Only allow piece selection if it's the current player's turn
-        const isWhitePiece = piece[0] === 'w';
-        const isWhiteTurn = turn === 'w';
+            // Only allow piece selection if it's the current player's turn
+            const isWhitePiece = piece[0] === 'w';
+            const isWhiteTurn = turn === 'w';
 
-        if (isWhitePiece !== isWhiteTurn) {
-            setSelectedPiece(null);
-            setPossibleMoves([]);
-            return;
-        }
+            if (isWhitePiece !== isWhiteTurn) {
+                setSelectedPiece(null);
+                setPossibleMoves([]);
+                return;
+            }
 
-        // Get legal moves
-        const legalMoves = game.moves({ square, verbose: true }) || [];
+            // Get legal moves
+            const legalMoves = game.moves({ square, verbose: true }) || [];
 
-        setSelectedPiece(square);
-        setPossibleMoves(legalMoves.map(move => move.to));
-    }, [selectedPiece, turn, game]);
+            setSelectedPiece(square);
+            setPossibleMoves(legalMoves.map(move => move.to));
+        },
+        [selectedPiece, turn, game]
+    );
 
     // Clear selection (used when move is made or board is reset)
     const clearSelection = useCallback(() => {
@@ -70,26 +68,31 @@ export const useChessboardPanel = (boardWidth) => {
     }, []);
 
     // Handle piece click to show possible moves
-    const handlePieceClick = useCallback((piece, square) => {
-        selectPiece(piece, square);
-    }, [selectPiece]);
+    const handlePieceClick = useCallback(
+        (piece, square) => {
+            selectPiece(piece, square);
+        },
+        [selectPiece]
+    );
 
     // Handle piece drop to make a move
-    const onPieceDrop = useCallback((sourceSquare, targetSquare, promotion) => {
-        // Clear selection and dots when a move is made
-        clearSelection();
+    const onPieceDrop = useCallback(
+        (sourceSquare, targetSquare, promotion) => {
+            // Clear selection and dots when a move is made
+            clearSelection();
 
-        // Make the move through the game store
-        return makeMove({
-            from: sourceSquare,
-            to: targetSquare,
-            promotion: promotion ? promotion[1].toLowerCase() : undefined,
-        });
-    }, [clearSelection, makeMove]);
+            // Make the move through the game store
+            return makeMove({
+                from: sourceSquare,
+                to: targetSquare,
+                promotion: promotion ? promotion[1].toLowerCase() : undefined,
+            });
+        },
+        [clearSelection, makeMove]
+    );
 
     // Update analysis arrows
     useEffect(() => {
-
         // Only proceed if analyzing and lines exist
         if (!isAnalysisOn || currentLines.length === 0) {
             if (customArrows.length > 0) {
@@ -114,7 +117,7 @@ export const useChessboardPanel = (boardWidth) => {
         const to = uciMove.substring(2, 4);
 
         // Create new arrow array
-        const newArrows = [[from, to, "#285b8d"]];
+        const newArrows = [[from, to, '#285b8d']];
 
         setCustomArrows(newArrows);
     }, [currentLines, customArrows.length, isAnalysisOn]); // Update when lines change
@@ -132,16 +135,16 @@ export const useChessboardPanel = (boardWidth) => {
         // Highlight selected piece
         if (selectedPiece) {
             styles[selectedPiece] = {
-                backgroundColor: "rgb(255, 217, 102, 0.1)"
+                backgroundColor: 'rgb(255, 217, 102, 0.1)',
             };
         }
 
         // Highlight king in check
         if (kingInCheck) {
             styles[kingInCheck] = {
-                backgroundColor: "rgba(255, 0, 0, 0.3)",
-                boxShadow: "0 0 10px 0 rgba(255, 0, 0, 0.6)",
-                borderRadius: "20%",
+                backgroundColor: 'rgba(255, 0, 0, 0.3)',
+                boxShadow: '0 0 10px 0 rgba(255, 0, 0, 0.6)',
+                borderRadius: '20%',
             };
         }
 
@@ -153,17 +156,18 @@ export const useChessboardPanel = (boardWidth) => {
                 // For squares with pieces, use a colored border
                 styles[square] = {
                     ...styles[square],
-                    boxShadow: "inset 0 0 0 4px rgba(0, 0, 0, 0.3)",
-                    borderRadius: "50%"
+                    boxShadow: 'inset 0 0 0 4px rgba(0, 0, 0, 0.3)',
+                    borderRadius: '50%',
                 };
             } else {
                 // For empty squares, use the dot indicator
                 styles[square] = {
                     ...styles[square],
-                    backgroundImage: "radial-gradient(circle, rgba(0, 0, 0, 0.2) 25%, transparent 25%)",
-                    backgroundPosition: "center",
-                    backgroundSize: "50%",
-                    backgroundRepeat: "no-repeat",
+                    backgroundImage:
+                        'radial-gradient(circle, rgba(0, 0, 0, 0.2) 25%, transparent 25%)',
+                    backgroundPosition: 'center',
+                    backgroundSize: '50%',
+                    backgroundRepeat: 'no-repeat',
                 };
             }
         });
@@ -193,6 +197,6 @@ export const useChessboardPanel = (boardWidth) => {
         firstMove,
         previousMove,
         nextMove,
-        lastMove
+        lastMove,
     };
 };

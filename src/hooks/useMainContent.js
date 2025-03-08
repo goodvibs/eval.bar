@@ -1,7 +1,7 @@
 import { useRef, useMemo } from 'react';
-import { useBoardResize } from "./useBoardResize";
-import { usePositionSync } from "./usePositionSync";
-import { useGameDerivedState } from "./stores/useGameStore";
+import { useBoardResize } from './useBoardResize';
+import { usePositionSync } from './usePositionSync';
+import { useGameDerivedState } from './stores/useGameStore';
 
 /**
  * Custom hook that contains all the logic for the MainContent component
@@ -19,14 +19,17 @@ export function useMainContent() {
     const { boardWidth, rightPanelWidth } = useBoardResize();
 
     // Create memoized style object for the right panel to prevent unnecessary renders
-    const rightPanelStyle = useMemo(() => ({
-        width: rightPanelWidth
-    }), [rightPanelWidth]);
+    const rightPanelStyle = useMemo(
+        () => ({
+            width: rightPanelWidth,
+        }),
+        [rightPanelWidth]
+    );
 
     // Return all values needed by the component
     return {
         mainRef,
         boardWidth,
-        rightPanelStyle
+        rightPanelStyle,
     };
 }

@@ -1,4 +1,4 @@
-import {FEN} from "cm-chess";
+import { FEN } from 'cm-chess';
 
 export function extractPgnHeaders(pgn) {
     const headers = {};
@@ -15,8 +15,8 @@ export function extractPgnHeaders(pgn) {
 export function isSupportedVariant(headers) {
     // List of supported variants
     const supportedVariants = [
-        undefined,  // Standard chess (no Variant tag)
-        'Standard' // Some sites explicitly mark standard games
+        undefined, // Standard chess (no Variant tag)
+        'Standard', // Some sites explicitly mark standard games
     ];
 
     // Variant is unsupported
@@ -84,9 +84,7 @@ export function processChesscomGame(game) {
         whiteElo: game.white.rating,
         blackElo: game.black.rating,
         date: new Date(game.end_time * 1000),
-        result: game.white.result === 'win' ? '1-0' :
-            game.black.result === 'win' ? '0-1' :
-                '½-½',
+        result: game.white.result === 'win' ? '1-0' : game.black.result === 'win' ? '0-1' : '½-½',
         timeControl: formatTimeControl(game.time_control),
         pgn: game.pgn,
         // Add fields from headers
@@ -95,7 +93,7 @@ export function processChesscomGame(game) {
         variant: headers.Variant,
         isSupported,
         event: headers.Event,
-        finalPosition: game.fen // For the preview
+        finalPosition: game.fen, // For the preview
     };
 }
 
@@ -146,7 +144,7 @@ function parseChesscomDate(dateStr) {
         const currentDate = new Date();
         return {
             year: currentDate.getFullYear(),
-            month: currentDate.getMonth() + 1 // months are 0-based
+            month: currentDate.getMonth() + 1, // months are 0-based
         };
     }
 }
@@ -166,9 +164,10 @@ export async function fetchChesscomGame(gameType, gameId) {
         // Step 1: Get game metadata from the callback endpoint
         const gameMetaResponse = await fetch(`https://www.chess.com/callback/live/game/${gameId}`, {
             headers: {
-                'Accept': 'application/json',
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-            }
+                Accept: 'application/json',
+                'User-Agent':
+                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            },
         });
 
         if (!gameMetaResponse.ok) {
@@ -196,9 +195,10 @@ export async function fetchChesscomGame(gameType, gameId) {
 
         // Step 3: Find the specific game by ID in the archive
         const gameIdStr = gameId.toString();
-        const targetGame = gamesArchive.find(game =>
-            game.id.includes(gameIdStr) ||
-            (game.id.includes('/game/') && game.id.includes(gameIdStr))
+        const targetGame = gamesArchive.find(
+            game =>
+                game.id.includes(gameIdStr) ||
+                (game.id.includes('/game/') && game.id.includes(gameIdStr))
         );
 
         if (!targetGame) {
@@ -208,7 +208,7 @@ export async function fetchChesscomGame(gameType, gameId) {
         // Return the pgn and game object
         return {
             pgn: targetGame.pgn,
-            game: targetGame
+            game: targetGame,
         };
     } catch (error) {
         console.error('Error fetching Chess.com game:', error);

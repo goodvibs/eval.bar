@@ -1,7 +1,6 @@
-import React from "react";
-import {useGameDerivedState} from "../../hooks/stores/useGameStore";
-import {Chess} from "cm-chess";
-
+import React from 'react';
+import { useGameDerivedState } from '../../hooks/stores/useGameStore';
+import { Chess } from 'cm-chess';
 
 const uciMovesToSan = (initialFen, uciMoves) => {
     if (!initialFen || !uciMoves || uciMoves.length === 0) {
@@ -16,7 +15,7 @@ const uciMovesToSan = (initialFen, uciMoves) => {
         const to = uciMove.substring(2, 4);
         const promotion = uciMove.length > 4 ? uciMove.substring(4, 5) : '';
 
-        const move = position.move({from, to, promotion});
+        const move = position.move({ from, to, promotion });
         if (!move) {
             console.error(`Invalid move in engine line: ${uciMove} in position ${position.fen()}`);
             break;
@@ -26,7 +25,7 @@ const uciMovesToSan = (initialFen, uciMoves) => {
     }
 
     return formattedMoves;
-}
+};
 
 export function EngineLine({ uciMoves, evaluation, isMainLine, isLastLine, onMoveClick }) {
     const { turn, halfmoveCount, fen } = useGameDerivedState();
@@ -35,18 +34,21 @@ export function EngineLine({ uciMoves, evaluation, isMainLine, isLastLine, onMov
     const baseIsBlackMove = turn === 'b';
 
     // Determine background color based on winning color using our utility
-    const evalBgColor = evaluation.advantage === 'equal' ? "bg-slate-500 text-slate-100" : (
-        evaluation.advantage === 'white'
-        ? "bg-slate-100 text-slate-900"
-        : "bg-slate-900 text-slate-100"
-    );
+    const evalBgColor =
+        evaluation.advantage === 'equal'
+            ? 'bg-slate-500 text-slate-100'
+            : evaluation.advantage === 'white'
+              ? 'bg-slate-100 text-slate-900'
+              : 'bg-slate-900 text-slate-100';
 
     const sanMoves = uciMovesToSan(fen, uciMoves);
     // const sanMoves = uciMoves;
 
     return (
         <div className="flex items-center hover:bg-slate-700 transition-colors text-base gap-2">
-            <div className={`flex whitespace-nowrap font-mono pl-0.5 pr-1 border-r-2 border-slate-500 rounded-r-3xl ${isMainLine ? "font-bold" : ""} ${isLastLine ? "rounded-bl-lg" : ""} ${evalBgColor}`}>
+            <div
+                className={`flex whitespace-nowrap font-mono pl-0.5 pr-1 border-r-2 border-slate-500 rounded-r-3xl ${isMainLine ? 'font-bold' : ''} ${isLastLine ? 'rounded-bl-lg' : ''} ${evalBgColor}`}
+            >
                 {evaluation.formattedEvaluation}
             </div>
             <div className="flex gap-1 text-slate-300 whitespace-nowrap overflow-x-auto scrollbar-none">
@@ -63,7 +65,8 @@ export function EngineLine({ uciMoves, evaluation, isMainLine, isLastLine, onMov
                         >
                             {showMoveNumber && (
                                 <span className="text-slate-500 mr-1">
-                                    {number}{isBlackMove ? '...' : '.'}
+                                    {number}
+                                    {isBlackMove ? '...' : '.'}
                                 </span>
                             )}
                             {san}

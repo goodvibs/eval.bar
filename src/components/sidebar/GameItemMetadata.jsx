@@ -26,9 +26,7 @@ export function GameItemMetadata({ game }) {
                 <span className="flex flex-nowrap">{game.timeControl}</span>
             </span>
             {!game.isSupported && (
-                <span className="text-yellow-500">
-                    {game.variant || 'Unsupported variant'}
-                </span>
+                <span className="text-yellow-500">{game.variant || 'Unsupported variant'}</span>
             )}
         </div>
     );

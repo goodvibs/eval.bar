@@ -1,5 +1,5 @@
-import React, {useMemo} from "react";
-import {useEngineAnalysis} from "../hooks/stores/useEngineStore";
+import React, { useMemo } from 'react';
+import { useEngineAnalysis } from '../hooks/stores/useEngineStore';
 
 const calcBarPercentage = (advantage, cp, mate) => {
     if (advantage === 'equal') {
@@ -11,10 +11,11 @@ const calcBarPercentage = (advantage, cp, mate) => {
     }
 
     const coefficient = 0.2; // Controls the curve steepness
-    const percentage = (1 / (1 + Math.exp(-((advantage === 'white' ? cp : -cp) / 100) * coefficient))) * 100;
-     // Clamp between 2-98%
+    const percentage =
+        (1 / (1 + Math.exp(-((advantage === 'white' ? cp : -cp) / 100) * coefficient))) * 100;
+    // Clamp between 2-98%
     return Math.min(Math.max(percentage, 2), 98);
-}
+};
 
 export function EvaluationBar() {
     const { advantage, cp, mate } = useEngineAnalysis();
@@ -24,11 +25,14 @@ export function EvaluationBar() {
         return [10, 20, 30, 40, 50, 60, 70, 80, 90].map(pos => ({
             position: pos,
             // Opacity increases as we get closer to the center (50%)
-            opacity: 1 - Math.abs(50 - pos) / 50
+            opacity: 1 - Math.abs(50 - pos) / 50,
         }));
     }, []);
 
-    const barPercentage = useMemo(() => calcBarPercentage(advantage, cp, mate), [advantage, cp, mate]);
+    const barPercentage = useMemo(
+        () => calcBarPercentage(advantage, cp, mate),
+        [advantage, cp, mate]
+    );
 
     return (
         <div className="flex flex-col w-full">
@@ -40,9 +44,7 @@ export function EvaluationBar() {
                 />
 
                 {/* Black's side of the evaluation bar */}
-                <div
-                    className="bg-slate-900 flex-1 transition-all duration-300 ease-out"
-                />
+                <div className="bg-slate-900 flex-1 transition-all duration-300 ease-out" />
 
                 {/* Marker bars */}
                 {markers.map(({ position, opacity }) => (
@@ -52,7 +54,7 @@ export function EvaluationBar() {
                         style={{
                             left: `${position}%`,
                             opacity: opacity,
-                            pointerEvents: 'none' // Ensures markers don't interfere with interactions
+                            pointerEvents: 'none', // Ensures markers don't interfere with interactions
                         }}
                     />
                 ))}

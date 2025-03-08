@@ -1,8 +1,8 @@
-import React from "react";
-import {GitHubButton} from "./GitHubButton";
-import {AboutButton} from "./AboutButton";
-import {DonateButton} from "./DonateButton";
-import {AboutDialog} from "./AboutDialog";
+import React from 'react';
+import { GitHubButton } from './GitHubButton';
+import { AboutButton } from './AboutButton';
+import { DonateButton } from './DonateButton';
+import { AboutDialog } from './AboutDialog';
 
 export function NavigationBar() {
     const [showAbout, setShowAbout] = React.useState(false);

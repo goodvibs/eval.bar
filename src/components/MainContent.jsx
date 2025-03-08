@@ -1,8 +1,8 @@
-import React, { memo } from "react";
-import { ChessboardPanel } from "./chessboard/ChessboardPanel";
-import { AnalysisPanel } from "./analysis/AnalysisPanel";
-import { MoveHistoryPanel } from "./moves/MoveHistoryPanel";
-import { useMainContent } from "../hooks/useMainContent";
+import React, { memo } from 'react';
+import { ChessboardPanel } from './chessboard/ChessboardPanel';
+import { AnalysisPanel } from './analysis/AnalysisPanel';
+import { MoveHistoryPanel } from './moves/MoveHistoryPanel';
+import { useMainContent } from '../hooks/useMainContent';
 
 /**
  * MainContent component that handles the layout of the main content area.
@@ -12,11 +12,7 @@ export const MainContent = memo(function MainContent() {
     console.log('MainContent rendered');
 
     // Get all state and refs from the custom hook
-    const {
-        mainRef,
-        boardWidth,
-        rightPanelStyle
-    } = useMainContent();
+    const { mainRef, boardWidth, rightPanelStyle } = useMainContent();
 
     return (
         <main
@@ -25,10 +21,7 @@ export const MainContent = memo(function MainContent() {
         >
             <ChessboardPanel boardWidth={boardWidth} />
 
-            <div
-                className="flex flex-col min-w-72 gap-4"
-                style={rightPanelStyle}
-            >
+            <div className="flex flex-col min-w-72 gap-4" style={rightPanelStyle}>
                 <AnalysisPanel />
                 <MoveHistoryPanel />
             </div>

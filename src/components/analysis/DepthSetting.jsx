@@ -8,7 +8,7 @@ export function DepthSetting({ isAnalysisOn, goalSearchDepth, handleGoalDepthCha
                 id="depth-select"
                 className="w-full bg-slate-700 text-slate-200 text-base rounded px-2 py-2 border border-slate-600 disabled:opacity-50 outline-none"
                 value={goalSearchDepth}
-                onChange={(e) => handleGoalDepthChange(parseInt(e.target.value))}
+                onChange={e => handleGoalDepthChange(parseInt(e.target.value))}
                 disabled={isAnalysisOn}
             >
                 <option value={15}>15 (fastest)</option>

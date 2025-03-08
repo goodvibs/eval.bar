@@ -1,5 +1,5 @@
-import {persist} from "zustand/middleware";
-import {create} from "zustand";
+import { persist } from 'zustand/middleware';
+import { create } from 'zustand';
 
 export const useChesscomConfigStore = create(
     persist(
@@ -7,16 +7,16 @@ export const useChesscomConfigStore = create(
             chesscomUsername: '',
             autoRetrieveGames: true,
 
-            setChesscomUsername: (username) => {
-                set({chesscomUsername: username});
+            setChesscomUsername: username => {
+                set({ chesscomUsername: username });
             },
 
-            setAutoRetrieveGames: (value) => {
-                set({autoRetrieveGames: value});
-            }
+            setAutoRetrieveGames: value => {
+                set({ autoRetrieveGames: value });
+            },
         }),
         {
-            name: 'chesscom-config-store'
+            name: 'chesscom-config-store',
         }
     )
-)
+);

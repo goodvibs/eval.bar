@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react";
-import {useEngineActions} from "./stores/useEngineStore";
-import {FEN} from "cm-chess";
-import {useGameDerivedState} from "./stores/useGameStore";
+import { useEffect, useRef } from 'react';
+import { useEngineActions } from './stores/useEngineStore';
+import { FEN } from 'cm-chess';
+import { useGameDerivedState } from './stores/useGameStore';
 
 export function usePositionSync() {
     console.log('usePositionSync');
@@ -24,10 +24,7 @@ export function usePositionSync() {
 
         // Set a debounce timer to avoid rapid-fire updates
         debounceTimerRef.current = setTimeout(() => {
-
-            setPositionAndGoIfAnalysisOn(
-                FEN.start, fen, uciMoves, turn
-            );
+            setPositionAndGoIfAnalysisOn(FEN.start, fen, uciMoves, turn);
 
             debounceTimerRef.current = null;
         }, 100);

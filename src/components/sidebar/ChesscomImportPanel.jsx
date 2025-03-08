@@ -1,9 +1,9 @@
 import React from 'react';
-import {fetchChesscomGames} from "../../utils/chesscom";
-import {ChesscomImportForm} from "./ChesscomImportForm";
-import {GamesList} from "./GamesList";
-import {useChesscomConfigStore} from "../../hooks/stores/useChesscomConfigStore";
-import {useLoadGame} from "../../hooks/stores/useGameStore";
+import { fetchChesscomGames } from '../../utils/chesscom';
+import { ChesscomImportForm } from './ChesscomImportForm';
+import { GamesList } from './GamesList';
+import { useChesscomConfigStore } from '../../hooks/stores/useChesscomConfigStore';
+import { useLoadGame } from '../../hooks/stores/useGameStore';
 
 // Get current date and format it as YYYY-MM
 const getCurrentYearMonth = () => {
@@ -22,7 +22,7 @@ export function ChesscomImportPanel({ show, closeSidebar }) {
     const [chesscomUsernameLocal, setChesscomUsernameLocal] = React.useState(chesscomUsername);
     const [selectedDate, setSelectedDate] = React.useState(getCurrentYearMonth());
 
-    const fetchAndUpdateGames = async (e) => {
+    const fetchAndUpdateGames = async e => {
         // If called from a form submission, prevent default behavior
         if (e) e.preventDefault();
 
@@ -50,13 +50,13 @@ export function ChesscomImportPanel({ show, closeSidebar }) {
         }
     }, []);
 
-    const handleGameSelect = (game) => {
+    const handleGameSelect = game => {
         loadChesscomGame(game);
         closeSidebar();
     };
 
     return (
-        <div className={`${show ? "flex" : "hidden"} flex-col gap-4`}>
+        <div className={`${show ? 'flex' : 'hidden'} flex-col gap-4`}>
             <ChesscomImportForm
                 username={chesscomUsernameLocal}
                 setUsername={setChesscomUsernameLocal}
@@ -66,11 +66,7 @@ export function ChesscomImportPanel({ show, closeSidebar }) {
                 isLoading={isLoading}
             />
 
-            {error && (
-                <div className="flex justify-center text-rose-400 text-sm">
-                    {error}
-                </div>
-            )}
+            {error && <div className="flex justify-center text-rose-400 text-sm">{error}</div>}
 
             <GamesList
                 games={games}

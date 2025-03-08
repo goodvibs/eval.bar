@@ -2,16 +2,16 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchChesscomGame } from '../utils/chesscom';
 import { checkExtensionInstalled } from '../utils/extension';
-import {useLoadGame} from './stores/useGameStore';
+import { useLoadGame } from './stores/useGameStore';
 
 // Parse chess.com game URL to extract type and ID
-export const parseChesscomGameUrl = (pathname) => {
+export const parseChesscomGameUrl = pathname => {
     // Match patterns like /game/live/123456789 or /game/daily/123456789
     const matches = pathname.match(/\/game\/(live|daily)\/(\d+)/);
     if (matches && matches.length === 3) {
         return {
             type: matches[1], // 'live' or 'daily'
-            id: matches[2]    // the game ID
+            id: matches[2], // the game ID
         };
     }
     return null;
@@ -54,9 +54,11 @@ export function useChessGameImport(pathname) {
                         const result = await fetchChesscomGame(gameInfo.type, gameInfo.id);
                         loadChesscomGame(result.pgn);
                     } catch (importError) {
-                        if (importError.message?.includes('CORS') ||
+                        if (
+                            importError.message?.includes('CORS') ||
                             importError.message?.includes('network') ||
-                            importError.message?.includes('access control checks')) {
+                            importError.message?.includes('access control checks')
+                        ) {
                             setShowExtensionPrompt(true);
                         } else {
                             setError(importError.message || 'Error importing game');
@@ -64,7 +66,7 @@ export function useChessGameImport(pathname) {
                     }
                 }
             } catch (checkError) {
-                console.error("Error checking extension:", checkError);
+                console.error('Error checking extension:', checkError);
                 setShowExtensionPrompt(true);
             } finally {
                 setLoading(false);
@@ -82,6 +84,6 @@ export function useChessGameImport(pathname) {
         showExtensionPrompt,
         setLoading,
         setError,
-        setShowExtensionPrompt
+        setShowExtensionPrompt,
     };
 }

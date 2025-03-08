@@ -1,16 +1,18 @@
-import React from "react";
-import {EvaluationDisplay} from "./EvaluationDisplay";
-import {EngineInfo} from "./EngineInfo";
-import {AnalysisControls} from "./AnalysisControls";
+import React from 'react';
+import { EvaluationDisplay } from './EvaluationDisplay';
+import { EngineInfo } from './EngineInfo';
+import { AnalysisControls } from './AnalysisControls';
 import {
     useEngineActions,
-    useEngineAnalysis, useEngineConfig, useIsAnalysisOn,
-    useIsEngineReady
-} from "../../hooks/stores/useEngineStore";
+    useEngineAnalysis,
+    useEngineConfig,
+    useIsAnalysisOn,
+    useIsEngineReady,
+} from '../../hooks/stores/useEngineStore';
 
 export function AnalysisPanelHeader() {
-
-    const { startAnalysis, endAnalysis, setAndSendMultiPV, setGoalSearchDepth } = useEngineActions();
+    const { startAnalysis, endAnalysis, setAndSendMultiPV, setGoalSearchDepth } =
+        useEngineActions();
     const isAnalysisOn = useIsAnalysisOn();
     const isEngineReady = useIsEngineReady();
     const { multiPV, goalSearchDepth } = useEngineConfig();
@@ -33,7 +35,6 @@ export function AnalysisPanelHeader() {
                     multiPV={multiPV}
                 />
             </div>
-
         </div>
     );
 }

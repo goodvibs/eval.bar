@@ -1,5 +1,5 @@
 import React from 'react';
-import { Chessboard } from "react-chessboard";
+import { Chessboard } from 'react-chessboard';
 
 export function GamePreview({ game }) {
     return (
@@ -8,8 +8,8 @@ export function GamePreview({ game }) {
                 position={game.finalPosition}
                 boardWidth={100}
                 isDraggable={false}
-                customLightSquareStyle={{backgroundColor: "#cbd5e1"}}
-                customDarkSquareStyle={{backgroundColor: "#64748b"}}
+                customLightSquareStyle={{ backgroundColor: '#cbd5e1' }}
+                customDarkSquareStyle={{ backgroundColor: '#64748b' }}
             />
         </div>
     );

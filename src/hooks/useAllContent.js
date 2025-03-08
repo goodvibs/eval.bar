@@ -10,13 +10,16 @@ export function useAllContent() {
     const [isSidebarOpen, setSidebarOpen] = useState(true);
 
     // Handlers
-    const handleKeyDown = useCallback((e) => {
-        if (e.key === 'Escape') {
-            if (isSidebarOpen) {
-                setSidebarOpen(false);
+    const handleKeyDown = useCallback(
+        e => {
+            if (e.key === 'Escape') {
+                if (isSidebarOpen) {
+                    setSidebarOpen(false);
+                }
             }
-        }
-    }, [isSidebarOpen]);
+        },
+        [isSidebarOpen]
+    );
 
     const handleOpenSidebar = useCallback(() => {
         setSidebarOpen(true);
@@ -34,6 +37,6 @@ export function useAllContent() {
         // Event handlers
         handleKeyDown,
         handleOpenSidebar,
-        handleCloseSidebar
+        handleCloseSidebar,
     };
 }
