@@ -4,18 +4,20 @@
 
 ![eval-bar-demo-trimmed-1.5x.gif](public%2Feval-bar-demo-trimmed-1.5x.gif)
 
-## Supported Import Sources
+## Current Features
+
+### Import Games
 - Chess.com (Enter a Chess.com username to pull the user's games)
     - Username stored in local storage and used to pull games on page load
 - PGN (paste a game in Portable Game Notation to analyze)
 
-## Built-in Analysis Features
-- In-browser analysis using a WebAssembly port of Stockfish
+### Analyze In-Browser
+- In-browser analysis using a WebAssembly port of Stockfish 16
 - View best moves/lines and evaluation scores
 - Visualize overall position evaluation with an evaluation bar
 - Play moves on the board to see how the evaluation changes
 
-## Supported Export Formats
+### Export Games
 - Export games to Lichess.org for further analysis
 - Download or copy a game as PGN
 
