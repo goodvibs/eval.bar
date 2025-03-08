@@ -60,7 +60,7 @@ eval.bar is an open-source chess analysis tool that helps you analyze your games
 Please contribute! I'm open to any and all contributions. Feel free to either implement a feature from the to-do list or suggest a new feature. If you find a bug, please open an issue.
 
 ## Long-Term Vision
-I want to make eval.bar an analysis tool comparable to ChessBase, SCID, and other serious analysis tools, with the following improvements:
+I want to make eval.bar an analysis tool comparable to ChessBase, SCID, and other serious analysis tools, but with the following improvements:
 - Zero installation required (runs in the browser)
 - Beautiful, modern UI (all the other tools look like they're from the 90s)
 - Easy to use, beginner-friendly (no need to read a manual to get started)
