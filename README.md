@@ -4,18 +4,18 @@ eval.bar is an open-source chess analysis tool that helps you analyze your games
 
 ![eval-bar-demo-trimmed-1.5x.gif](public%2Feval-bar-demo-trimmed-1.5x.gif)
 
-## Import Sources
+## Supported Import Sources
 - Chess.com (Enter a Chess.com username to pull the user's games)
     - Username stored in local storage and used to pull games on page load
 - PGN (paste a game in Portable Game Notation to analyze)
 
-## Analysis Features
+## Built-in Analysis Features
 - In-browser analysis using a WebAssembly port of Stockfish
 - View best moves/lines and evaluation scores
 - Visualize overall position evaluation with an evaluation bar
 - Play moves on the board to see how the evaluation changes
 
-## Export Features
+## Supported Export Formats
 - Export games to Lichess.org for further analysis
 - Download or copy a game as PGN
 
@@ -60,4 +60,10 @@ eval.bar is an open-source chess analysis tool that helps you analyze your games
 Please contribute! I'm open to any and all contributions. Feel free to either implement a feature from the to-do list or suggest a new feature. If you find a bug, please open an issue.
 
 ## Long-Term Vision
-I want to make eval.bar an analysis tool on par with or better than ChessBase, SCID, and other serious analysis tools. This is a lofty goal and will take a lot of work.
+I want to make eval.bar an analysis tool comparable to ChessBase, SCID, and other serious analysis tools, with the following improvements:
+- Zero installation required (runs in the browser)
+- Beautiful, modern UI (all the other tools look like they're from the 90s)
+- Easy to use, beginner-friendly (no need to read a manual to get started)
+- Cheaper cloud analysis, and otherwise free (no paywalls)
+- Chess engine development support (Provides a UI for engine developers to test their engines)
+- Open-source (so that the community can contribute and improve the tool)
