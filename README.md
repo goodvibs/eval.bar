@@ -1,6 +1,6 @@
-# eval.bar
+# [eval.bar](https://eval.bar)
 
-eval.bar is an open-source chess analysis tool that helps you analyze your games using Stockfish. Pull your games from Chess.com, or upload a PGN; then, use the built-in analysis tool or export your games to Lichess.org.
+[eval.bar](https://eval.bar) is an open-source chess analysis tool that helps you analyze your games using Stockfish. Pull your games from Chess.com, or upload a PGN; then, use the built-in analysis tool or export your games to Lichess.org.
 
 ![eval-bar-demo-trimmed-1.5x.gif](public%2Feval-bar-demo-trimmed-1.5x.gif)
 
