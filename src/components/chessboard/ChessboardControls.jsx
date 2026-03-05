@@ -14,6 +14,8 @@ export function ChessboardControls({
             <button
                 onClick={firstMove}
                 className="flex flex-1 justify-center rounded-2xl bg-slate-600 hover:bg-slate-500 transition duration-100"
+                title="First move"
+                aria-label="Go to first move"
             >
                 <svg
                     className="fill-slate-300 rotate-180 scale-110"
@@ -28,6 +30,8 @@ export function ChessboardControls({
             <button
                 onClick={previousMove}
                 className="flex flex-1 justify-center rounded-2xl bg-slate-600 hover:bg-slate-500 transition duration-100"
+                title="Previous move"
+                aria-label="Go to previous move"
             >
                 <svg
                     className="fill-slate-300 -translate-x-0.5 rotate-180 scale-110"
@@ -42,6 +46,8 @@ export function ChessboardControls({
             <button
                 onClick={nextMove}
                 className="flex flex-1 justify-center rounded-2xl bg-slate-600 hover:bg-slate-500 transition duration-100"
+                title="Next move"
+                aria-label="Go to next move"
             >
                 <svg
                     className="fill-slate-300 translate-x-0.5 scale-110"
@@ -56,6 +62,8 @@ export function ChessboardControls({
             <button
                 onClick={lastMove}
                 className="flex flex-1 justify-center rounded-2xl bg-slate-600 hover:bg-slate-500 transition duration-100"
+                title="Last move"
+                aria-label="Go to last move"
             >
                 <svg
                     className="fill-slate-300 scale-110"
