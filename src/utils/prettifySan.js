@@ -23,7 +23,7 @@ const PIECE_SYMBOLS = {
  * using Unicode chess symbols.
  *
  * @param {string} san - The chess move in SAN format (e.g., "Nf3", "e4", "Qxd5+")
- * @param {boolean} [filled=false] - Whether to use filled chess symbols (default: false)
+ * @param {boolean} [filled=true] - Whether to use filled chess symbols (default: true)
  * @returns {string} The prettified chess move with Unicode symbols
  */
 export function prettifySan(san, filled = true) {

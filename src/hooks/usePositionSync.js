@@ -4,13 +4,9 @@ import { FEN } from 'cm-chess';
 import { useGameDerivedState } from './stores/useGameStore';
 
 export function usePositionSync() {
-    console.log('usePositionSync');
-    // Use a ref to store the timeout ID for debouncing
     const debounceTimerRef = useRef(null);
 
-    const { fen } = useGameDerivedState();
-
-    const { turn, moves } = useGameDerivedState();
+    const { fen, turn, moves } = useGameDerivedState();
     const uciMoves = moves.map(move => move.uci).join(' ');
 
     const { setPositionAndGoIfAnalysisOn } = useEngineActions();

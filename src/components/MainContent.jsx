@@ -9,8 +9,6 @@ import { useMainContent } from '../hooks/useMainContent';
  * All logic has been moved to the useMainContent custom hook.
  */
 export const MainContent = memo(function MainContent() {
-    console.log('MainContent rendered');
-
     // Get all state and refs from the custom hook
     const { mainRef, boardWidth, rightPanelStyle } = useMainContent();
 

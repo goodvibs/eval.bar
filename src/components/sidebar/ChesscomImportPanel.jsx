@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { fetchChesscomGames } from '../../utils/chesscom';
 import { ChesscomImportForm } from './ChesscomImportForm';
 import { GamesList } from './GamesList';
@@ -22,33 +22,53 @@ export function ChesscomImportPanel({ show, closeSidebar }) {
     const [chesscomUsernameLocal, setChesscomUsernameLocal] = React.useState(chesscomUsername);
     const [selectedDate, setSelectedDate] = React.useState(getCurrentYearMonth());
 
-    const fetchAndUpdateGames = async e => {
-        // If called from a form submission, prevent default behavior
-        if (e) e.preventDefault();
+    const hasAutoFetchedRef = useRef(false);
+    const hasSyncedFromStoreRef = useRef(false);
 
-        if (!chesscomUsernameLocal || !selectedDate) return;
+    // Sync local username once when persisted store hydrates (don't overwrite user input)
+    useEffect(() => {
+        if (chesscomUsername && !hasSyncedFromStoreRef.current) {
+            hasSyncedFromStoreRef.current = true;
+            setChesscomUsernameLocal(chesscomUsername);
+        }
+    }, [chesscomUsername]);
 
+    const fetchGames = useCallback(async (username, date) => {
+        if (!username || !date) return;
         setIsLoading(true);
         setError(null);
-
         try {
-            const [year, month] = selectedDate.split('-');
-            const fetchedGames = await fetchChesscomGames(chesscomUsernameLocal, year, month);
-            let chronologicallyOrderedGames = fetchedGames.toReversed();
-            setGames(chronologicallyOrderedGames);
-            setChesscomUsername(chesscomUsernameLocal);
-        } catch (error) {
+            const [year, month] = date.split('-');
+            const fetchedGames = await fetchChesscomGames(username, year, month);
+            setGames(fetchedGames.toReversed());
+            setChesscomUsername(username);
+        } catch (err) {
             setError('Failed to fetch games. Please check the username and try again.');
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [setChesscomUsername]);
 
-    React.useEffect(() => {
-        if (autoRetrieveGames) {
-            fetchAndUpdateGames();
+    const fetchAndUpdateGames = useCallback(
+        async e => {
+            if (e) e.preventDefault();
+            fetchGames(chesscomUsernameLocal, selectedDate);
+        },
+        [fetchGames, chesscomUsernameLocal, selectedDate]
+    );
+
+    // Auto-fetch on mount when autoRetrieveGames is true and we have a username (from store or after hydration)
+    useEffect(() => {
+        if (
+            autoRetrieveGames &&
+            chesscomUsername &&
+            selectedDate &&
+            !hasAutoFetchedRef.current
+        ) {
+            hasAutoFetchedRef.current = true;
+            fetchGames(chesscomUsername, selectedDate);
         }
-    }, []);
+    }, [autoRetrieveGames, chesscomUsername, selectedDate, fetchGames]);
 
     const handleGameSelect = game => {
         loadChesscomGame(game);

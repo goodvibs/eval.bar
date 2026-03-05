@@ -31,9 +31,8 @@ export function checkExtensionInstalled() {
                         // If no response, fall through to the next method
                     }
                 );
-            } catch (e) {
+            } catch {
                 // Chrome API not available, continue to next method
-                console.log('Chrome extension API not available:', e);
             }
         }
 

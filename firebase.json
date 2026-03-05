@@ -47,15 +47,6 @@
             "value": "application/wasm"
           }
         ]
-      },
-      {
-        "source": "stockfishWorker.js",
-        "headers": [
-          {
-            "key": "Service-Worker-Allowed",
-            "value": "/"
-          }
-        ]
       }
     ]
   }

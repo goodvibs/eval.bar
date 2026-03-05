@@ -10,8 +10,6 @@ import { useAllContent } from '../hooks/useAllContent';
  * All logic has been moved to the useAllContent custom hook.
  */
 export const AllContent = memo(function AllContent() {
-    console.log('AllContent rendered');
-
     // Get all state and handlers from the custom hook
     const { isSidebarOpen, handleKeyDown, handleOpenSidebar, handleCloseSidebar } = useAllContent();
 

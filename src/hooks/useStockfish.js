@@ -6,7 +6,6 @@ import { useEngineStore } from './stores/useEngineStore';
 let stockfishInitialized = false;
 
 export function useStockfish() {
-    console.log('useStockfish');
     const engineRef = useRef(null);
 
     const engineStore = useEngineStore.getState();
@@ -14,10 +13,8 @@ export function useStockfish() {
     useEffect(() => {
         // Only initialize if not already done
         if (!stockfishInitialized) {
-            console.log('Initializing Stockfish engine');
-
             try {
-                engineRef.current = new Worker('stockfish.wasm.js');
+                engineRef.current = new Worker('/stockfish.wasm.js');
 
                 // Initial UCI setup
                 engineRef.current.postMessage('uci');
@@ -34,7 +31,6 @@ export function useStockfish() {
                     // Handle "readyok" message to update engine ready state
                     if (e.data === 'readyok') {
                         engineStore.setIsInitialized(true);
-                        console.log('readyok received, Stockfish is ready');
                     }
 
                     // Always use the latest message handler from the store
@@ -69,5 +65,5 @@ export function useStockfish() {
                 stockfishInitialized = false;
             }
         }
-    }, [engineStore]); // Empty dependency array ensures this runs only once
+    }, [engineStore]);
 }

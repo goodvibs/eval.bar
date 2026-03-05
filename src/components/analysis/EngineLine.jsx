@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useGameDerivedState } from '../../hooks/stores/useGameStore';
 import { Chess } from 'cm-chess';
 
@@ -41,8 +41,7 @@ export function EngineLine({ uciMoves, evaluation, isMainLine, isLastLine, onMov
               ? 'bg-slate-100 text-slate-900'
               : 'bg-slate-900 text-slate-100';
 
-    const sanMoves = uciMovesToSan(fen, uciMoves);
-    // const sanMoves = uciMoves;
+    const sanMoves = useMemo(() => uciMovesToSan(fen, uciMoves), [fen, uciMoves]);
 
     return (
         <div className="flex items-center hover:bg-slate-700 transition-colors text-base gap-2">

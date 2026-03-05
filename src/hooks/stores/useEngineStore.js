@@ -106,6 +106,7 @@ export const useEngineStore = create(
             },
 
             sendMultiPV: () => {
+                if (!window.stockfish) return;
                 const { multiPV } = get();
                 window.stockfish.postMessage(`setoption name MultiPV value ${multiPV}`);
                 set({ isMultiPVFlushed: true });
@@ -162,8 +163,8 @@ export const useEngineStore = create(
                     currentLines: Array(multiPV).fill(null),
                 });
 
+                if (!window.stockfish) return;
                 window.stockfish.postMessage('stop');
-                // window.stockfish.postMessage('position fen ' + startFen + (uciMoves ? ' moves ' + uciMoves : ''));
                 window.stockfish.postMessage(`position fen ${currentFen}`);
                 window.stockfish.postMessage(`go depth ${goalSearchDepth}`);
             },
@@ -175,7 +176,9 @@ export const useEngineStore = create(
                     isAnalyzing: false,
                     currentLines: Array(multiPV).fill(null),
                 });
-                window.stockfish.postMessage('stop');
+                if (window.stockfish) {
+                    window.stockfish.postMessage('stop');
+                }
             },
 
             startAnalysis: () => {
@@ -230,11 +233,9 @@ export const useEngineStore = create(
                     if (timeMatch) {
                         const parsedTime = parseInt(timeMatch[1], 10);
                         if (parsedTime < time) {
-                            console.log('Time decreased:', parsedTime, time);
                             return;
                         } else if (time === 0) {
                             if (parsedTime > 100) {
-                                console.warn('Time is too high, skipping. Time:', parsedTime);
                                 return;
                             }
                         }
@@ -310,8 +311,6 @@ export const useEngineStore = create(
                         } catch (error) {
                             console.error('Error parsing engine message:', error, message);
                         }
-                    } else {
-                        console.warn('Skipping incomplete analysis:', message);
                     }
                 }
 
