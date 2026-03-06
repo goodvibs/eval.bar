@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useGameDerivedState, usePgnDerivedState } from '../../hooks/stores/useGameStore';
 import { analyzeOnLichess } from '../../utils/lichess';
+import { IconButton } from '../ui/IconButton';
+import { CopyIcon } from '../ui/icons/CopyIcon';
+import { DownloadIcon } from '../ui/icons/DownloadIcon';
 
 export function MoveHistoryHeader() {
     const { fullmoveCount: currentFullmove, turn } = useGameDerivedState();
@@ -157,46 +160,19 @@ export function MoveHistoryHeader() {
                     {copied ? (
                         <span className="text-xs text-emerald-400 font-medium">Copied!</span>
                     ) : (
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-4 w-4"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
-                            />
-                        </svg>
+                        <CopyIcon className="h-4 w-4" />
                     )}
                 </button>
 
                 {/* Download PGN Button */}
-                <button
+                <IconButton
+                    icon={<DownloadIcon className="h-4 w-4" />}
+                    label="Download PGN file"
+                    title="Download PGN"
                     onClick={handleDownloadPgn}
                     disabled={!hasExportableContent}
-                    className="text-sm text-slate-300 hover:text-slate-100 transition-colors p-1 rounded hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                    title="Download PGN"
-                    aria-label="Download PGN file"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                        />
-                    </svg>
-                </button>
+                    className="disabled:opacity-50 disabled:cursor-not-allowed"
+                />
             </div>
         </div>
     );

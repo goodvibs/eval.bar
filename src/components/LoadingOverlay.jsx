@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from './ui/Button';
 
 export function LoadingOverlay({ message, error, onClose }) {
     return (
@@ -27,12 +28,9 @@ export function LoadingOverlay({ message, error, onClose }) {
                         <p className="text-sm text-slate-400 mb-6">
                             Make sure you're using a valid chess.com game URL and try again.
                         </p>
-                        <button
-                            onClick={onClose}
-                            className="bg-slate-700 hover:bg-slate-600 text-slate-100 px-4 py-2 rounded transition-colors"
-                        >
+                        <Button variant="secondary" onClick={onClose}>
                             Close
-                        </button>
+                        </Button>
                     </>
                 ) : (
                     <>

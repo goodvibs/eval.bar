@@ -11,10 +11,16 @@ import { useAllContent } from '../hooks/useAllContent';
  */
 export const AllContent = memo(function AllContent() {
     // Get all state and handlers from the custom hook
-    const { isSidebarOpen, handleKeyDown, handleOpenSidebar, handleCloseSidebar } = useAllContent();
+    const { isSidebarOpen, handleOpenSidebar, handleCloseSidebar } = useAllContent();
 
     return (
-        <div className="flex flex-col min-h-screen bg-slate-700" onKeyDown={handleKeyDown}>
+        <div className="flex flex-col min-h-screen bg-slate-700">
+            <a
+                href="#main-content"
+                className="absolute left-[-9999px] focus:left-4 focus:top-4 focus:z-[50] focus:px-4 focus:py-2 focus:bg-slate-800 focus:text-slate-100 focus:rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400"
+            >
+                Skip to main content
+            </a>
             <NavigationBar />
             <EvaluationBar />
 
@@ -26,7 +32,7 @@ export const AllContent = memo(function AllContent() {
                     onClose={handleCloseSidebar}
                 />
 
-                <MainContent />
+                <MainContent onOpenSidebar={handleOpenSidebar} />
             </div>
         </div>
     );

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { detectBrowser, getExtensionStoreUrl } from '../utils/browserDetection';
+import { Button } from './ui/Button';
 
 export function ExtensionPrompt({ hidden, close }) {
     const [browser, setBrowser] = useState('other');
@@ -97,12 +98,9 @@ export function ExtensionPrompt({ hidden, close }) {
                     >
                         Install Extension
                     </a>
-                    <button
-                        onClick={close}
-                        className="bg-slate-700 hover:bg-slate-600 active:bg-slate-800 text-slate-200 px-4 py-2 rounded transition-colors"
-                    >
+                    <Button variant="secondary" onClick={close}>
                         Use Alternatives
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

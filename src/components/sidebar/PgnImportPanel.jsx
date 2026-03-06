@@ -1,5 +1,9 @@
 import React, { useRef } from 'react';
 import { useLoadGame } from '../../hooks/stores/useGameStore';
+import { Button } from '../ui/Button';
+import { Textarea } from '../ui/Textarea';
+import { UploadIcon } from '../ui/icons/UploadIcon';
+import { TrashIcon } from '../ui/icons/TrashIcon';
 
 export function PgnImportPanel({ show, closeSidebar }) {
     const [pgnText, setPgnText] = React.useState('');
@@ -64,7 +68,7 @@ export function PgnImportPanel({ show, closeSidebar }) {
                 <span className="text-sm lg:text-xs font-medium text-slate-300">
                     Paste PGN (Portable Game Notation)
                 </span>
-                <textarea
+                <Textarea
                     id="pgn-input"
                     value={pgnText}
                     onChange={e => {
@@ -72,7 +76,7 @@ export function PgnImportPanel({ show, closeSidebar }) {
                         setError(''); // Clear error when input changes
                     }}
                     placeholder="1. e4 e5 2. Nf3 Nc6 ..."
-                    className="h-48 min-h-48 p-2 bg-slate-800 rounded-lg text-base text-slate-200 border border-slate-600 outline-none font-mono"
+                    className="h-48 min-h-48 text-base"
                 />
             </label>
 
@@ -84,26 +88,29 @@ export function PgnImportPanel({ show, closeSidebar }) {
 
             <div className="flex flex-col gap-2">
                 <div className="flex gap-1">
-                    <button
+                    <Button
                         type="submit"
-                        className="flex-1 bg-emerald-600 transition-all text-lg font-semibold tracking-tight text-slate-100 py-2 rounded-lg hover:bg-emerald-500 disabled:opacity-50 disabled:hover:bg-emerald-600"
+                        variant="primary"
+                        className="flex-1 text-lg tracking-tight"
                     >
                         Import Game
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         type="button"
+                        variant="secondary"
                         onClick={handleClear}
-                        className="px-3 py-2 text-lg text-slate-300 hover:text-slate-100 hover:bg-slate-700 rounded transition-colors"
+                        icon={<TrashIcon className="w-4 h-4" />}
                     >
                         Clear
-                    </button>
+                    </Button>
                 </div>
                 <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="text-sm text-slate-400 hover:text-slate-200 py-1 rounded transition-colors"
+                    className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-lg border border-slate-600 border-dashed text-slate-300 hover:border-slate-500 hover:bg-slate-700/50 transition-colors"
                 >
-                    Or upload PGN file
+                    <UploadIcon className="w-4 h-4" />
+                    Upload PGN file
                 </button>
             </div>
         </form>

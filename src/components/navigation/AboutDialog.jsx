@@ -1,4 +1,6 @@
 import React from 'react';
+import { IconButton } from '../ui/IconButton';
+import { CloseIcon } from '../ui/icons/CloseIcon';
 
 export function AboutDialog({ showAbout, setShowAbout }) {
     return (
@@ -23,25 +25,12 @@ export function AboutDialog({ showAbout, setShowAbout }) {
                 <div className="flex justify-between items-start mb-4">
                     <h2 className="text-lg font-semibold text-slate-100">About eval.bar</h2>
                     <div className="flex items-center justify-end">
-                        <button
+                        <IconButton
+                            icon={<CloseIcon className="w-4 h-4 text-slate-200" />}
+                            label="Close menu"
                             onClick={() => setShowAbout(false)}
-                            className="p-2 hover:bg-slate-600 rounded-full"
-                            aria-label="Close menu"
-                        >
-                            <svg
-                                className="w-4 h-4 text-slate-200"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M6 18L18 6M6 6l12 12"
-                                />
-                            </svg>
-                        </button>
+                            className="rounded-full"
+                        />
                     </div>
                 </div>
                 <div className="text-slate-300 gap-2 space-y-4">

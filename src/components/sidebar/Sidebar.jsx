@@ -1,10 +1,29 @@
 import { SidebarTabButton } from './SidebarTabButton';
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { ChesscomImportPanel } from './ChesscomImportPanel';
 import { PgnImportPanel } from './PgnImportPanel';
+import { IconButton } from '../ui/IconButton';
+import { CloseIcon } from '../ui/icons/CloseIcon';
 
 export function Sidebar({ isOpen, onOpen, onClose }) {
     const [currTab, setCurrTab] = React.useState(0);
+    const openButtonRef = useRef(null);
+    const sidebarContentRef = useRef(null);
+
+    useEffect(() => {
+        if (isOpen) {
+            const firstFocusable = sidebarContentRef.current?.querySelector(
+                'button:not([aria-hidden]), input:not([type="hidden"]), textarea, [href]'
+            );
+            firstFocusable?.focus();
+        } else {
+            openButtonRef.current?.focus();
+        }
+    }, [isOpen]);
+
+    const handleClose = () => {
+        onClose();
+    };
 
     return (
         <>
@@ -18,7 +37,7 @@ export function Sidebar({ isOpen, onOpen, onClose }) {
                 z-30
                 ${isOpen ? 'backdrop-blur bg-opacity-50 pointer-events-auto' : 'bg-opacity-0'}
                 `}
-                onClick={onClose}
+                onClick={handleClose}
             />
 
             {/* Sidebar wrapper - fixed on mobile, flex item on desktop */}
@@ -38,6 +57,7 @@ export function Sidebar({ isOpen, onOpen, onClose }) {
             >
                 {/* Pull-out tab - only for opening on mobile */}
                 <button
+                    ref={openButtonRef}
                     onClick={onOpen}
                     className={`
                         lg:hidden bg-opacity-85 backdrop-blur absolute right-0 top-1/2 -translate-y-1/2 translate-x-full border border-l-0 border-slate-500
@@ -57,32 +77,22 @@ export function Sidebar({ isOpen, onOpen, onClose }) {
                     </svg>
                 </button>
 
-                <div className="flex flex-col p-4 lg:pr-3 gap-4 h-full overflow-y-auto lg:overflow-y-auto scrollbar-track-transparent">
+                <div
+                    ref={sidebarContentRef}
+                    className="flex flex-col p-4 lg:pr-3 gap-4 h-full overflow-y-auto lg:overflow-y-auto scrollbar-track-transparent"
+                >
                     {/* Mobile header with close button */}
                     <div className="flex lg:hidden items-center justify-between py-4">
                         <h1 className="flex font-bold tracking-tight text-2xl text-slate-300">
                             Import a Chess Game
                         </h1>
                         <div className="flex items-center justify-end">
-                            <button
-                                onClick={onClose}
-                                className="p-2 hover:bg-slate-600 rounded-full"
-                                aria-label="Close menu"
-                            >
-                                <svg
-                                    className="w-7 h-7 text-slate-300"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={3}
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
-                            </button>
+                            <IconButton
+                                icon={<CloseIcon className="w-7 h-7 text-slate-300" />}
+                                label="Close menu"
+                                onClick={handleClose}
+                                className="rounded-full"
+                            />
                         </div>
                     </div>
 
@@ -100,8 +110,8 @@ export function Sidebar({ isOpen, onOpen, onClose }) {
                                 onClick={() => setCurrTab(1)}
                             />
                         </div>
-                        <ChesscomImportPanel show={currTab === 0} closeSidebar={onClose} />
-                        <PgnImportPanel show={currTab === 1} closeSidebar={onClose} />
+                        <ChesscomImportPanel show={currTab === 0} closeSidebar={handleClose} />
+                        <PgnImportPanel show={currTab === 1} closeSidebar={handleClose} />
                     </div>
                 </div>
             </aside>
