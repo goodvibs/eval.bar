@@ -40,7 +40,7 @@ export function ChesscomImportForm({
 
             <button
                 type="submit"
-                disabled={!selectedDate || isLoading}
+                disabled={!username?.trim() || !selectedDate || isLoading}
                 className="bg-emerald-600 transition-all text-lg font-semibold tracking-tight text-slate-100 py-2 rounded-lg hover:bg-emerald-500 disabled:opacity-50 disabled:hover:bg-emerald-600"
             >
                 {isLoading ? 'Loading...' : 'Retrieve Games'}
