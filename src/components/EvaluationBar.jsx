@@ -18,7 +18,7 @@ const calcBarPercentage = (advantage, cp, mate) => {
 };
 
 export function EvaluationBar() {
-    const { advantage, cp, mate } = useEngineAnalysis();
+    const { advantage, cp, mate, formattedEvaluation } = useEngineAnalysis();
 
     // Create marker positions (as percentages)
     const markers = useMemo(() => {
@@ -35,7 +35,7 @@ export function EvaluationBar() {
     );
 
     return (
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full" title={formattedEvaluation}>
             <div className={`flex h-1.5 relative`}>
                 {/* White's side of the evaluation bar */}
                 <div
